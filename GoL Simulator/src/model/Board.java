@@ -1,5 +1,7 @@
 package model;
 
+import controller.TimeKeeper;
+
 /**
  * Class for the game board. Contains the actual board and the methods for
  * iterating to the next generation, along with game rules for the board. The
@@ -15,12 +17,16 @@ public class Board {
     private int minToSurvive;
     private int maxToSurvive;
     private int birth;
-    private boolean isPaused;
     
     /**
      * As this is a singleton, the constructor is private.
      */
     private Board() {
+        currentBoard = new byte[10][10];
+        currentBoard[2][2] = 1;
+        currentBoard[2][3] = 1;
+        currentBoard[2][4] = 1;
+        currentBoard[3][2] = 1;
     }
     
     /**
@@ -95,7 +101,7 @@ public class Board {
     }
     
     /**
-     * Counts the number of neighbors for a given cell. Method is private,
+     * Counts the number of neighbours for a given cell. Method is private,
      * and used by the nextGeneration() method. Try-catch statements used
      * to handle out of bounds exceptions.
      * @param cell The game board.
