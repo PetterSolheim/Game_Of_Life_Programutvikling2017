@@ -4,7 +4,6 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import model.Board;
-import model.TestBoard;
 
 /**
  * Provides same functionality as a regular canvas, but allows for fluid resizing.
@@ -20,20 +19,6 @@ public class ResizableCanvas extends Canvas {
     private GraphicsContext gc;
     private int spaceBetweenCells;
 
-    /**
-     * Inherits from canvas constructor and initialize a local GraphicsContext2D.
-     * @param width Determines width of canvas
-     * @param height Determines height of canvas
-     */
-    public ResizableCanvas(double width, double height) {
-        super(width, height);
-        gc = this.getGraphicsContext2D();
-        backGroundColor = Color.WHITE;
-        deadCellColor = Color.ORANGE;
-        livingCellColor = Color.RED;
-        cellSize = 10;
-        spaceBetweenCells = 5;
-    }
 
     /**
      * Default constructor. Needed by FXML loader to initialize canvas properly. Don't use this.
@@ -41,7 +26,6 @@ public class ResizableCanvas extends Canvas {
     public ResizableCanvas (){
         super(1000d,1000d);
         gc = this.getGraphicsContext2D();
-        System.out.println("Default constructor called.");
         gc = this.getGraphicsContext2D();
         backGroundColor = Color.WHITE;
         deadCellColor = Color.ORANGE;
@@ -53,7 +37,7 @@ public class ResizableCanvas extends Canvas {
      * Provides the ability to draw a grid of cells, both living and dead.
      * @param b Board class containing a two dimensional byte array.
      */
-    public void draw(TestBoard b) {
+    public void draw(Board b) {
         float xPos = -spaceBetweenCells - cellSize;
         float yPos = -spaceBetweenCells - cellSize;
         for (int row = 0; row < b.getBoard().length; row++) {
