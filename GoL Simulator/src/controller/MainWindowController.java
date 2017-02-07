@@ -7,21 +7,32 @@ package controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.canvas.Canvas;
+import model.TestBoard;
+import view.ResizableCanvas;
 
 /**
- * FXML Controller class
- *
+ * FXML Controller class for the main window.
+ * The main window consists of two toolbars, one at the top and one at the bottom. 
+ * In the middle is the canvas which is the visual representation of the cells/Board.
  * @author peven
  */
 public class MainWindowController implements Initializable {
 
+    @FXML
+    private ResizableCanvas canvas;
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+        System.out.println("Controller Main initialize.");
+        TestBoard b = new TestBoard();
+        canvas.draw(b);
+        
+        
     }    
     
 }
