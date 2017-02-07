@@ -1,0 +1,180 @@
+<Project>
+  <Name>Untitled</Name>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>Untitled</Name>
+    <Language>Java</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>Board</Name>
+        <Access>Public</Access>
+        <Location left="1229" top="45" />
+        <Size width="267" height="417" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private static Board instanse</Member>
+        <Member type="Field">private int generationCount</Member>
+        <Member type="Field">private int cellCount</Member>
+        <Member type="Field">private byteArray currentBoard</Member>
+        <Member type="Field">private byteArray originalBoard</Member>
+        <Member type="Field">private int minToSurvive</Member>
+        <Member type="Field">private int maxToSurvive</Member>
+        <Member type="Field">private int birth</Member>
+        <Member type="Field">private boolean isPaused</Member>
+        <Member type="Method">public byteArray getBoard()</Member>
+        <Member type="Method">public int getCellCount()</Member>
+        <Member type="Method">public void setCellCount(int newCount)</Member>
+        <Member type="Method">public void setGenerationCount(int newCount)</Member>
+        <Member type="Method">public int getGenerationCount()</Member>
+        <Member type="Method">public void resetBoard()</Member>
+        <Member type="Method">public void nextGeneration()</Member>
+        <Member type="Method">public void setCellState()</Member>
+        <Member type="Method">public void setRules(int min, int max, int birth)</Member>
+        <Member type="Method">public Board getInstance()</Member>
+        <Member type="Method">public void setIsPaused()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Canvas</Name>
+        <Access>Public</Access>
+        <Location left="352" top="488" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>MainWindowController</Name>
+        <Access>Public</Access>
+        <Location left="656" top="135" />
+        <Size width="197" height="383" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private Board myBoard</Member>
+        <Member type="Field">private ResizingCanvas canvas</Member>
+        <Member type="Field">private ColorPicker liveColorPicker</Member>
+        <Member type="Field">private ColorPicker boardColorPicker</Member>
+        <Member type="Field">private Slider cellSizeSlider</Member>
+        <Member type="Field">private Slider cellSizeDropdown</Member>
+        <Member type="Field">private Label lblCellCount</Member>
+        <Member type="Field">private Label lblGenertionCount</Member>
+        <Member type="Field">private Button btnPlay</Member>
+        <Member type="Field">private Button btnOpen</Member>
+        <Member type="Field">private Button btnSettings</Member>
+        <Member type="Method">public void showSettings()</Member>
+        <Member type="Method">public void play()</Member>
+        <Member type="Method">public void changeCellSize()</Member>
+        <Member type="Method">public void changeFPS()</Member>
+        <Member type="Method">public void exit()</Member>
+        <Member type="Method">public void open()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>GameRulesWindowController</Name>
+        <Access>Public</Access>
+        <Location left="912" top="259" />
+        <Size width="227" height="247" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private TextField txtMinToSurvive</Member>
+        <Member type="Field">private TextField txtMaxToSurvive</Member>
+        <Member type="Field">private TextField txtBirth</Member>
+        <Member type="Field">private Button btnSave</Member>
+        <Member type="Field">private Button btnCancel</Member>
+        <Member type="Field">private Alert AlertBox</Member>
+        <Member type="Method">public void close()</Member>
+        <Member type="Method">public void save()</Member>
+        <Member type="Method">public void invalidInputAlert()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>FileParser</Name>
+        <Access>Public</Access>
+        <Location left="656" top="585" />
+        <Size width="207" height="120" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private BufferedReader reader</Member>
+        <Member type="Method">public ArrayByte parseBoard(File file)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Main</Name>
+        <Access>Public</Access>
+        <Location left="871" top="18" />
+        <Size width="162" height="216" />
+        <Collapsed>True</Collapsed>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ResizableCanvas</Name>
+        <Access>Public</Access>
+        <Location left="293" top="151" />
+        <Size width="290" height="230" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">private int cellSize</Member>
+        <Member type="Field">private Color backgroundColor</Member>
+        <Member type="Field">private Color cellColor</Member>
+        <Member type="Field">private GraphicsContext gc</Member>
+        <Member type="Method">public void draw(Board myBoard)</Member>
+        <Member type="Method">public void settCellSize(int newCellSize)</Member>
+        <Member type="Method">public void settBackgroundColor(Color newColor)</Member>
+        <Member type="Method">public void setCellColor(Color newColor)</Member>
+        <Member type="Method">public boolean isResizable()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Association" first="2" second="4">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="2" second="0">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>882</X>
+          <Y>201</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="5" second="2">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="2" second="3">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="2" second="6">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="3" second="0">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Generalization" first="6" second="1">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+      </Relationship>
+      <Relationship type="Association" first="0" second="0">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+</Project>
