@@ -5,7 +5,11 @@
 <?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.canvas.Canvas?>
+<?import view.ResizableCanvas?>
 
 <AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
-    
+    <children>
+        <ResizableCanvas fx:id="canvas" height="1000" width="1000"/>
+    </children>
 </AnchorPane>

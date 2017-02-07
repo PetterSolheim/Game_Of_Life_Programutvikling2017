@@ -95,7 +95,7 @@ public class Board {
     }
     
     /**
-     * Counts the number of neighbours for a given cell. Method is private,
+     * Counts the number of neighbors for a given cell. Method is private,
      * and used by the nextGeneration() method. Try-catch statements used
      * to handle out of bounds exceptions.
      * @param cell The game board.
