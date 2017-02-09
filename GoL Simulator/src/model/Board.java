@@ -92,6 +92,10 @@ public class Board {
             maxToSurvive = max;
             this.birth = birth;
         }
+        else {
+            throw new IllegalArgumentException("Values entered must be no lower"
+                    + "than 0, and no higher than 8!");
+        }
     }
 
     /**
