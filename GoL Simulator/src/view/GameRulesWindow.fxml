@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox id="VBox" prefHeight="220" prefWidth="400" stylesheets="@GameRulesWindowCSS.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameRulesWindowController">
+<VBox id="VBox" prefHeight="220" prefWidth="400" stylesheets="css/GameRulesWindow.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameRulesWindowController">
     <children>
         <Label>Ruleset</Label>
         <Label wrapText="true">This is where you change the ruleset which the simulator
