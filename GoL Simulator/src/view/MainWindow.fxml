@@ -7,15 +7,25 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.canvas.Canvas?>
 <?import view.ResizableCanvas?>
+<?import javafx.scene.image.*?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
+<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController" stylesheets="/css/main.css">
     <children>
         <VBox id="wrapper">
             <HBox id="topBar">
-                <Button text="PlayPause"
+                <Button fx:id="Reset" text="Reset" onAction="#reset"/>
+                <Button fx:id="Play" onAction="#play"/>
+                <Button text="Stop"
+                        onAction="#play"/>
+                <Button text="Rules"
                         onAction="#play"/>
             </HBox>
-            <ResizableCanvas fx:id="canvas" height="1000" width="1000"/>
+            <ResizableCanvas fx:id="canvas" height="500" width="500"/>
+            <HBox id="botBar">
+                <children>
+                    <Slider fx:id="cellSize" valueChanging="#changeCellSize" />
+                </children>
+            </HBox>
         </VBox>
     </children>
 </AnchorPane>

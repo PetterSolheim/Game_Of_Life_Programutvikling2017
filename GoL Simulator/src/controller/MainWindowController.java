@@ -39,7 +39,9 @@ public class MainWindowController implements Initializable {
         isPaused = true;
         canvas.draw(b);
     }
-
+    @FXML private void reset (){
+        
+    }
     @FXML private void play() {
         if (isPaused) {
             isPaused = false;
