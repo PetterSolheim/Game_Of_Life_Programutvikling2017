@@ -20,14 +20,11 @@ public class Timer extends AnimationTimer{
     
     @Override
     public void handle(long currentTime) {
-        timeBetweenGeneration = 100l;
-        System.out.println("Before if: " + currentTime + " " + nextGeneration);
-        if (nextGeneration < currentTime) {
-            System.out.println("After if:  " + currentTime + " " + nextGeneration);
-            nextGeneration = currentTime + timeBetweenGeneration;
-            //nextGeneration = 0;
+        if (nextGeneration < currentTime ) {
+            nextGeneration = currentTime + 2000000000l; // 9 
             controller.initiateNextGeneration();
             System.out.println();
+            //stop ();
         }
     }
     public void setNextGenerationTimer (long time){
