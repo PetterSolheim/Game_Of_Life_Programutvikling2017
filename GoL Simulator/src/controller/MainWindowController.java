@@ -65,7 +65,7 @@ public class MainWindowController implements Initializable {
     
     public void showGameRulesWindow() throws Exception {
         Stage settings = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("view/GameRulesWindow.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/view/GameRulesWindow.fxml"));
         Scene scene = new Scene(root);
 
         settings.setResizable(false);
