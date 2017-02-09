@@ -19,46 +19,54 @@ import model.Board;
  * @author aleks
  */
 public class GameRulesWindowController implements Initializable {
-    
-    @FXML private javafx.scene.control.Button btnCancel;
-    @FXML private javafx.scene.control.Button btnSave;
-    @FXML private javafx.scene.control.TextField txtMin;
-    @FXML private javafx.scene.control.TextField txtMax;
-    @FXML private javafx.scene.control.TextField txtBirth;
+
+    @FXML
+    private javafx.scene.control.Button btnCancel;
+    @FXML
+    private javafx.scene.control.Button btnSave;
+    @FXML
+    private javafx.scene.control.TextField txtMin;
+    @FXML
+    private javafx.scene.control.TextField txtMax;
+    @FXML
+    private javafx.scene.control.TextField txtBirth;
     Board myBoard = Board.getInstance();
-    
-    @FXML public void cancel() {
+
+    @FXML
+    public void cancel() {
         Stage stage = (Stage) btnCancel.getScene().getWindow();
         stage.close();
-        
+
     }
-    
-    @FXML public void save() {
-        int min = Integer.parseInt(txtMin.getText());
-        int max = Integer.parseInt(txtMax.getText());
-        int birth = Integer.parseInt(txtBirth.getText());
-        
+
+    @FXML
+    public void save() {
         try {
+            int min = Integer.parseInt(txtMin.getText());
+            int max = Integer.parseInt(txtMax.getText());
+            int birth = Integer.parseInt(txtBirth.getText());
+
             myBoard.setRules(min, max, birth);
             Stage stage = (Stage) btnSave.getScene().getWindow();
-        }
-        catch(IllegalArgumentException e) {
+            stage.close();
+        } catch (IllegalArgumentException e) {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Error");
-            alert.setHeaderText(null);
+            alert.setHeaderText("Invalid input");
             alert.setContentText(e.getMessage());
+            alert.showAndWait();
         }
     }
-    
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         String min = String.valueOf(myBoard.getMinToSurvive());
         String max = String.valueOf(myBoard.getMaxToSurvive());
         String birth = String.valueOf(myBoard.getBirth());
-        
+
         txtMin.setText(min);
         txtMax.setText(max);
         txtBirth.setText(birth);
-    }    
-    
+    }
+
 }

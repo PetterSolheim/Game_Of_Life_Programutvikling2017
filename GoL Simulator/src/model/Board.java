@@ -93,8 +93,10 @@ public class Board {
             this.birth = birth;
         }
         else {
+            System.out.println("Error registered");
             throw new IllegalArgumentException("Values entered must be no lower"
-                    + "than 0, and no higher than 8!");
+                    + " than 0, and no higher than 8!");
+            
         }
     }
 
