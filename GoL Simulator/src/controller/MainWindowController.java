@@ -11,6 +11,7 @@ import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
+import javafx.scene.control.Slider;
 import model.Board;
 import view.ResizableCanvas;
 
@@ -23,9 +24,8 @@ import view.ResizableCanvas;
  */
 public class MainWindowController implements Initializable {
 
-    @FXML
-    private ResizableCanvas canvas;
-
+    @FXML private ResizableCanvas canvas;
+    @FXML private Slider cellSize;
     private Board b;
     private Timer time;
     private boolean isPaused;
@@ -40,8 +40,7 @@ public class MainWindowController implements Initializable {
         canvas.draw(b);
     }
 
-    @FXML
-    private void play() {
+    @FXML private void play() {
         if (isPaused) {
             isPaused = false;
             time.start();
@@ -49,6 +48,9 @@ public class MainWindowController implements Initializable {
             isPaused = true;
             time.stop();
         }
+    }
+    @FXML private void changeCellSize (){
+        cellSize.getValue();
     }
     public void initiateNextGeneration (){
         b.nextGeneration();
