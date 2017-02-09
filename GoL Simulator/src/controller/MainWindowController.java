@@ -7,11 +7,14 @@ package controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
-import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.canvas.Canvas;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Slider;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import model.Board;
 import view.ResizableCanvas;
 
@@ -52,15 +55,21 @@ public class MainWindowController implements Initializable {
     @FXML private void changeCellSize (){
         cellSize.getValue();
     }
+    
     public void initiateNextGeneration (){
         b.nextGeneration();
         canvas.draw(b);
     }
-    private void setIsPaused() {
-        isPaused = !isPaused;
-    }
+    
+    public void showGameRulesWindow() throws Exception {
+        Stage settings = new Stage();
+        Parent root = FXMLLoader.load(getClass().getResource("view/GameRulesWindow.fxml"));
+        Scene scene = new Scene(root);
 
-    private boolean getIsPaused() {
-        return isPaused;
+        settings.setResizable(false);
+        settings.initModality(Modality.APPLICATION_MODAL);
+        settings.setScene(scene);
+        settings.setTitle("Settings");
+        settings.show();
     }
 }
