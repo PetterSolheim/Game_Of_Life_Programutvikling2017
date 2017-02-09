@@ -12,7 +12,6 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.canvas.Canvas;
 import model.Board;
-import model.TestBoard;
 import view.ResizableCanvas;
 
 /**
@@ -22,47 +21,39 @@ import view.ResizableCanvas;
  *
  * @author peven
  */
-public class MainWindowController extends AnimationTimer implements Initializable {
+public class MainWindowController implements Initializable {
 
     @FXML
     private ResizableCanvas canvas;
 
-    private TimeKeeper time;
-
     private Board b;
+    private Timer time;
     private boolean isPaused;
-    private long nextGeneration;
-    private float timeBetweenGenerations;
-
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         b = Board.getInstance();
+        time = new Timer (this);
         isPaused = true;
         canvas.draw(b);
     }
 
     @FXML
-    protected void play() {
+    private void play() {
         if (isPaused) {
-            nextGeneration = System.nanoTime();
-            start();
+            isPaused = false;
+            time.start();
         } else {
-            stop();
+            isPaused = true;
+            time.stop();
         }
     }
-
-    @Override
-    public void handle(long currentTime) {
-        if (currentTime > nextGeneration) {
-            nextGeneration += timeBetweenGenerations;
-            b.nextGeneration();
-            canvas.draw(b);
-        }
+    public void initiateNextGeneration (){
+        b.nextGeneration();
+        canvas.draw(b);
     }
-
     private void setIsPaused() {
         isPaused = !isPaused;
     }
