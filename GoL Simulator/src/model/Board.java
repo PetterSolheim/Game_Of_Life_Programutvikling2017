@@ -174,6 +174,19 @@ public class Board {
 
         return neighbours;
     }
+    
+    /**
+     * Method which toggles the state of a specified cell (if it is alive, it
+     * becomes dead, if it is dead, it becomes alive).
+     * @param x
+     * @param y 
+     */
+    public void toggleCellState(int x, int y) {
+        if(currentBoard[x][y] == 1)
+            currentBoard[x][y] = 0;
+        else
+            currentBoard[x][y] = 1;
+    }
 
     /**
      *
