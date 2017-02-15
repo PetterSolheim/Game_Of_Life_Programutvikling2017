@@ -1,7 +1,6 @@
 package model;
 
 //import controller.TimeKeeper;
-
 /**
  * Class for the game board. Contains the actual board and the methods for
  * iterating to the next generation, along with game rules for the board. The
@@ -23,26 +22,26 @@ public class Board {
      * As this is a singleton, the constructor is private.
      */
     private Board() {
-        currentBoard = new byte[][] {
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 1, 1, 1, 0, 0},
-        {0, 0, 1, 1, 1, 0, 0},
-        {0, 0, 1, 1, 1, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 1, 1, 1, 0, 0},
-        {0, 0, 1, 1, 1, 0, 0},
-        {0, 0, 1, 1, 1, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0}
-    };
+        currentBoard = new byte[][]{
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0}
+        };
     }
 
     /**
@@ -91,12 +90,10 @@ public class Board {
             minToSurvive = min;
             maxToSurvive = max;
             this.birth = birth;
-        }
-        else {
-            System.out.println("Error registered");
+        } else {
             throw new IllegalArgumentException("Values entered must be no lower"
                     + " than 0, and no higher than 8!");
-            
+
         }
     }
 
@@ -131,71 +128,48 @@ public class Board {
 
     /**
      * Counts the number of neighbours for a given cell. Method is private, and
-     * used by the nextGeneration() method. Try-catch statements used to handle
-     * out of bounds exceptions.
+     * used by the nextGeneration() method. 
      *
      * @param cell The game board.
-     * @param x The x axis of the cell.
-     * @param y The y axis of the cell.
+     * @param x The first index of the cell to have neighbours counted.
+     * @param y The second index of the cell to have neighbours counted.
      * @return The number of neighbours.
      */
     private int countNeighbours(byte[][] cell, int x, int y) {
         int neighbours = 0;
-
-        try {
-            if (cell[x][y + 1] == 1) {
-                neighbours++;
-            }
-        } catch (Exception e) {
+        int xLastIndex = cell.length - 1;
+        int yLastIndex = cell[0].length - 1;
+        
+        if (y+1 <= yLastIndex) {
+            neighbours += cell[x][y+1];
         }
 
-        try {
-            if (cell[x - 1][y + 1] == 1) {
-                neighbours++;
-            }
-        } catch (Exception e) {
+        if (x-1 >= 0 && y+1 <= yLastIndex) {
+            neighbours += cell[x-1][y+1];
         }
 
-        try {
-            if (cell[x - 1][y] == 1) {
-                neighbours++;
-            }
-        } catch (Exception e) {
+        if (x-1 >= 0) {
+            neighbours += cell[x-1][y];
         }
 
-        try {
-            if (cell[x - 1][y - 1] == 1) {
-                neighbours++;
-            }
-        } catch (Exception e) {
+        if (x-1 >= 0 && y-1 >= 0) {
+            neighbours += cell[x-1][y-1];
         }
 
-        try {
-            if (cell[x][y - 1] == 1) {
-                neighbours++;
-            }
-        } catch (Exception e) {
+        if (y-1 >= 0) {
+            neighbours += cell[x][y-1];
         }
 
-        try {
-            if (cell[x + 1][y - 1] == 1) {
-                neighbours++;
-            }
-        } catch (Exception e) {
+        if (x+1 <= xLastIndex && y-1 >= 0) {
+            neighbours += cell[x+1][y-1];
         }
 
-        try {
-            if (cell[x + 1][y] == 1) {
-                neighbours++;
-            }
-        } catch (Exception e) {
+        if (x+1 <= xLastIndex) {
+            neighbours += cell[x+1][y];
         }
 
-        try {
-            if (cell[x + 1][y + 1] == 1) {
-                neighbours++;
-            }
-        } catch (Exception e) {
+        if (x+1 <= xLastIndex && y+1 <= yLastIndex) {
+            neighbours += cell[x+1][y+1];
         }
 
         return neighbours;
