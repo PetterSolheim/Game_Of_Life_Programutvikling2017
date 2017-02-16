@@ -32,7 +32,7 @@ public class ResizableCanvas extends Canvas {
         backGroundColor = Color.GREY;
         deadCellColor = Color.WHITE;
         livingCellColor = Color.BLACK;
-        cellSize = 10;
+        cellSize = 25;
         spaceBetweenCells = 2;
     }
 
