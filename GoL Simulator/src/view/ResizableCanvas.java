@@ -54,11 +54,11 @@ public class ResizableCanvas extends Canvas {
         
     }
     
-        public int cellClickedX(double x) {
+        public int cellClickedRow(double x) {
             return (int) (x/(cellSize+spaceBetweenCells));
         }
         
-        public int cellClickedY(double y) {
+        public int cellClickedCol(double y) {
             return (int) (y/(cellSize+spaceBetweenCells));
         }
 
