@@ -21,17 +21,14 @@ public class Timer extends AnimationTimer{
     @Override
     public void handle(long currentTime) {
         if (nextGeneration < currentTime ) {
-            nextGeneration = currentTime + 100000000; // 9 
-            controller.initiateNextGeneration();
-            System.out.println();
-            //stop ();
+            nextGeneration = currentTime + timeBetweenGeneration;
+            controller.createNextGeneration();
         }
     }
-    public void setNextGenerationTimer (long time){
-        this.nextGeneration = time;
+    public void setNextGenerationTimer (long timeInNanoSeconds){
+        this.timeBetweenGeneration = timeInNanoSeconds;
     }
     public Timer (MainWindowController controller){
         this.controller = controller;
-        this.timeBetweenGeneration = 2;
     }
 }
