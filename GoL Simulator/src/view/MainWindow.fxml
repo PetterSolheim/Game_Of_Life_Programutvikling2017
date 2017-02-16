@@ -7,25 +7,51 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.canvas.Canvas?>
 <?import view.ResizableCanvas?>
+<?import javafx.scene.text.*?>
 <?import javafx.scene.image.*?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 
-<AnchorPane id="AnchorPane" prefHeight="400.0" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController" stylesheets="/css/main.css">
+<FlowPane fx:id="rootNode" prefHeight="400.0" maxWidth="-Infinity" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController" stylesheets="/css/main.css">
     <children>
         <VBox id="wrapper">
+            <MenuBar fx:id="menuBar">
+                <menus>
+                    <Menu mnemonicParsing="false" text="File">
+                        <items>
+                            <MenuItem mnemonicParsing="false" text="New" />
+                        </items>
+                        <items>
+                            <MenuItem mnemonicParsing="false" text="Open" />
+                        </items>
+                        <items>
+                            <MenuItem mnemonicParsing="false" text="Save" />
+                        </items>
+                        <items>
+                            <MenuItem mnemonicParsing="false" text="Settings" onAction="#showGameRulesWindow" />
+                        </items>
+                        <items>
+                            <MenuItem mnemonicParsing="false" text="Exit" onAction="#quit" />
+                        </items>
+                    </Menu>
+                </menus>
+            </MenuBar>
             <HBox id="topBar">
                 <Button fx:id="Reset" text="Reset" onAction="#reset"/>
                 <Button fx:id="Play" onAction="#play"/>
-                <Button text="Stop"
-                        onAction="#play"/>
-                <Button text="Rules"
-                        onAction="#showGameRulesWindow"/>
+                <Button text="Stop" onAction="#play"/>
+                <Button text="Rules" onAction="#showGameRulesWindow"/>
             </HBox>
             <ResizableCanvas fx:id="canvas" height="500" width="500"/>
             <HBox id="botBar">
                 <children>
-                    <Slider fx:id="cellSize" valueChanging="#changeCellSize" />
+                    <Slider fx:id="cellSizeSlider"/>
+                    <Text fx:id="showCellSize" />
+                    <Slider fx:id="fpsSlider"/>                 
+                    <Text fx:id="showFps" />
                 </children>
             </HBox>
         </VBox>
     </children>
-</AnchorPane>
+</FlowPane>

@@ -42,7 +42,6 @@ public class ResizableCanvas extends Canvas {
         float yPos = -spaceBetweenCells - cellSize;
         for (int row = 0; row < b.getBoard().length; row++) {
             xPos = -spaceBetweenCells - cellSize;
-            gc.fillText(Integer.toString(row), xPos, yPos);
             yPos += spaceBetweenCells + cellSize;
             for (int col = 0; col < b.getBoard()[0].length; col++) {
                 xPos += spaceBetweenCells + cellSize;
@@ -57,16 +56,21 @@ public class ResizableCanvas extends Canvas {
         }
     }
 
-    public void testD (){
-        gc.fillRect(5, 5, 10, 10);
-    }
-
     /**
      *
-     * @param newCellSize sets the width and height of all cells.
+     * @param b
+     */
+    public void redrawBoard (Board b){
+        gc.clearRect(0, 0, this.getWidth(), this.getHeight());
+        draw(b);
+    }
+    /**
+     *
+     * @param newCellSize set the width and height of all cells.
      */
     public void setCellSize(int newCellSize) {
         this.cellSize = newCellSize;
+        this.spaceBetweenCells = newCellSize / 2;
     }
 
     /**
@@ -79,7 +83,7 @@ public class ResizableCanvas extends Canvas {
 
     /**
      *
-     * @param newCellColor sets/change the color of all living cells.
+     * @param newCellColor set/change the color of all living cells.
      */
     public void setLivingCellColor(Color newCellColor) {
         this.setLivingCellColor(newCellColor);
