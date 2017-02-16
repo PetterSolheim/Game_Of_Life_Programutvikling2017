@@ -22,7 +22,7 @@ public class Board {
      * As this is a singleton, the constructor is private.
      */
     private Board() {
-        currentBoard = new byte[80][80];
+        currentBoard = new byte[50][50];
         originalBoard = duplicateBoard(currentBoard);
     }
 

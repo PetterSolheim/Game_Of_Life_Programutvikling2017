@@ -79,8 +79,8 @@ public class MainWindowController implements Initializable {
     }
     
     @FXML public void clickedCell(MouseEvent event) {
-        int row = canvas.cellClickedX(event.getX());
-        int col = canvas.cellClickedY(event.getY());
+        int row = canvas.cellClickedRow(event.getX());
+        int col = canvas.cellClickedCol(event.getY());
         b.toggleCellState(row, col);
         canvas.draw(b);
     }
