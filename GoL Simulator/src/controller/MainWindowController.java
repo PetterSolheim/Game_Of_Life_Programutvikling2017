@@ -18,7 +18,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
 
 import javafx.stage.Modality;
@@ -41,7 +41,7 @@ public class MainWindowController implements Initializable {
     @FXML private Text showCellSize;
     @FXML private Text showFps;
     @FXML private MenuBar menuBar;
-    @FXML private FlowPane rootNode;
+    @FXML private AnchorPane rootNode;
     private Board b;
     private Timer time;
     private boolean isPaused;
@@ -54,7 +54,7 @@ public class MainWindowController implements Initializable {
         b = Board.getInstance();
         time = new Timer(this);
         isPaused = true;
-        menuBar.prefWidthProperty().bind(rootNode.widthProperty()); // setter menyens bredde til rootNoden.
+        //menuBar.prefWidthProperty().bind(rootNode.widthProperty()); // setter menyens bredde til rootNoden.
         cellSizeSlider.setMin(5);
         cellSizeSlider.setValue(10);
         changeCellSizeAndShow();
@@ -83,6 +83,7 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML private void reset() {
+        b.resetBoard();
         canvas.redrawBoard(b);
         time.stop();
     }

@@ -1,67 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.canvas.Canvas?>
 <?import view.ResizableCanvas?>
-<?import javafx.scene.text.*?>
-<?import javafx.scene.image.*?>
+<?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.text.Text?>
 
-<FlowPane fx:id="rootNode" prefHeight="400.0" maxWidth="Infinity" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController" stylesheets="/css/main.css">
+<AnchorPane fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="/css/main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
     <children>
-        <VBox fx:id="wrapper">
-            <children>
-                <MenuBar fx:id="menuBar">
-                    <menus>
-                        <Menu mnemonicParsing="false" text="File">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="New" />
-                            </items>
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Open" />
-                            </items>
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Save" />
-                            </items>
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Settings" onAction="#showGameRulesWindow" />
-                            </items>
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="Exit" onAction="#quit" />
-                            </items>
-                        </Menu>
-                    </menus>
-                </MenuBar>
-            </children>
-            <children>
-                <HBox fx:id="topBar">
-                    <children>
-                        <Button fx:id="btnReset" text="Reset" onAction="#reset"/>
-                        <Button fx:id="btnPlay" onAction="#play"/>
-                        <Button fx:id="btnStop" text="Stop" onAction="#play"/>
-                        <Button fx:id="btnRules" text="Rules" onAction="#showGameRulesWindow"/>
-                    </children>
-                </HBox>
-            </children>
-            <children>
-                <ResizableCanvas fx:id="canvas" onMouseClicked="#clickedCell"/>
-            </children>
-            <children>
-                <HBox fx:id="botBar">
-                    <children>
-                        <Slider fx:id="cellSizeSlider"/>
-                        <Text fx:id="showCellSize" />
-                        <Slider fx:id="fpsSlider"/>                 
-                        <Text fx:id="showFps" />
-                    </children>
-                </HBox>
-            </children>
-        </VBox>
+        <MenuBar fx:id="menuBar" layoutY="2.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0">
+            <menus>
+                <Menu mnemonicParsing="false" text="File">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="New" />
+                    </items>
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Open" />
+                    </items>
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Save" />
+                    </items>
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Settings" />
+                    </items>
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#quit" text="Exit" />
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <ToolBar layoutY="27.0" prefHeight="40.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="27.0">
+            <items>
+                <Button fx:id="btnReset" onAction="#reset" text="Reset" />
+                <Button fx:id="btnPlay" onAction="#play" />
+                <Button fx:id="btnRules" onAction="#showGameRulesWindow" text="Rules" />
+            </items>
+        </ToolBar>
+        <ScrollPane pannable = "true" layoutY="67.0" prefHeight="305.0" prefWidth="600.0" AnchorPane.bottomAnchor="28.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0">
+            <content>
+                    <ResizableCanvas fx:id="canvas" onMouseClicked="#clickedCell" />
+            </content>
+        </ScrollPane>
+        <HBox layoutY="374.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <Slider fx:id="cellSizeSlider" />
+            <Text fx:id="showCellSize" text="placeholder" />
+            <Slider fx:id="fpsSlider" />                 
+            <Text fx:id="showFps" text="placeholder" />
+        </HBox>
+      
+
     </children>
-</FlowPane>
+</AnchorPane>
