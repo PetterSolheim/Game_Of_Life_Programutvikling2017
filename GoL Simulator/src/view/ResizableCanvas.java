@@ -48,22 +48,18 @@ public class ResizableCanvas extends Canvas {
                 } else {
                     gc.setFill(deadCellColor);
                 }
-                gc.fillRect((col+(col*(cellSize+spaceBetweenCells))), (row+(row*(cellSize+spaceBetweenCells))), cellSize, cellSize);
+                gc.fillRect((col*(cellSize+spaceBetweenCells)), (row*(cellSize+spaceBetweenCells)), cellSize, cellSize);
             }
         }
         
     }
     
         public int cellClickedX(double x) {
-            double a = (x/(cellSize+spaceBetweenCells));
-            double b = x - a;
-            return (int)(b/(cellSize+spaceBetweenCells));
+            return (int) (x/(cellSize+spaceBetweenCells));
         }
         
         public int cellClickedY(double y) {
-            double a = (y/(cellSize+spaceBetweenCells));
-            double b = y - a;
-            return (int)(b/(cellSize+spaceBetweenCells));
+            return (int) (y/(cellSize+spaceBetweenCells));
         }
 
     /**
