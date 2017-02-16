@@ -22,26 +22,8 @@ public class Board {
      * As this is a singleton, the constructor is private.
      */
     private Board() {
-        currentBoard = new byte[][]{
-            {0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 1, 1, 1, 0, 0},
-            {0, 0, 1, 1, 1, 0, 0},
-            {0, 0, 1, 1, 1, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 1, 1, 1, 0, 0},
-            {0, 0, 1, 1, 1, 0, 0},
-            {0, 0, 1, 1, 1, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0},
-            {0, 0, 0, 0, 0, 0, 0}
-        };
+        currentBoard = new byte[50][50];
+        originalBoard = duplicateBoard(currentBoard);
     }
 
     /**
@@ -63,6 +45,14 @@ public class Board {
      */
     public byte[][] getBoard() {
         return currentBoard;
+    }
+    
+    public int getHeight() {
+        return currentBoard.length;
+    }
+    
+    public int getWidth() {
+        return currentBoard[0].length;
     }
 
     /**
@@ -182,10 +172,10 @@ public class Board {
      * @param y 
      */
     public void toggleCellState(int x, int y) {
-        if(currentBoard[x][y] == 1)
-            currentBoard[x][y] = 0;
+        if(currentBoard[y][x] == 1)
+            currentBoard[y][x] = 0;
         else
-            currentBoard[x][y] = 1;
+            currentBoard[y][x] = 1;
     }
 
     /**

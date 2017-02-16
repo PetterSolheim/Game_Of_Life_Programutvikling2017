@@ -12,7 +12,7 @@ public class GoLSimulator extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         Parent root = FXMLLoader.load(getClass().getResource("/view/MainWindow.fxml"));
-        Scene scene = new Scene(root, 1000, 1000);
+        Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.show();
     }

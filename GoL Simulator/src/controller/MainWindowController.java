@@ -16,8 +16,10 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.Slider;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.text.Text;
+
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Board;
@@ -65,7 +67,11 @@ public class MainWindowController implements Initializable {
                     canvas.redrawBoard(b);
             }
         });
-        
+
+        @FXML private void reset () {
+          b.resetBoard();
+          canvas.draw(b);
+}
         
         fpsSlider.setMin(0.1d);
         fpsSlider.setValue(2);
@@ -127,6 +133,14 @@ public class MainWindowController implements Initializable {
         settings.setTitle("Settings");
         settings.show();
     }
+    
+    @FXML public void clickedCell(MouseEvent event) {
+        int row = canvas.cellClickedRow(event.getX());
+        int col = canvas.cellClickedCol(event.getY());
+        b.toggleCellState(row, col);
+        canvas.draw(b);
+    }
+
     public void defineSliders(Slider s){
         
     }
