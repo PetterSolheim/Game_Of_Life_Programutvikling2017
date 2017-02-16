@@ -54,11 +54,7 @@ public class MainWindowController implements Initializable {
         b = Board.getInstance();
         time = new Timer(this);
         isPaused = true;
-        //menuBar.prefWidthProperty().bind(rootNode.widthProperty()); // setter menyens bredde til rootNoden.
-        cellSizeSlider.setMin(5);
-        cellSizeSlider.setValue(10);
         changeCellSizeAndShow();
-        cellSizeSlider.setMax(30);
         cellSizeSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable,
@@ -68,10 +64,7 @@ public class MainWindowController implements Initializable {
             }
         });
         
-        fpsSlider.setMin(0.1d);
-        fpsSlider.setValue(2);
         changeFPSAndShow();
-        fpsSlider.setMax(30);
         fpsSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable,
