@@ -7,6 +7,7 @@ package controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
@@ -114,8 +115,8 @@ public class MainWindowController implements Initializable {
         b.nextGeneration();
         canvas.draw(b);
     }
-    public void quit (){
-        
+    @FXML private void quit (){
+        Platform.exit();
     }
     public void showGameRulesWindow() throws Exception {
         Stage settings = new Stage();
