@@ -53,7 +53,6 @@ public class MainWindowController implements Initializable {
         b = Board.getInstance();
         time = new Timer(this);
         isPaused = true;
-        canvas.draw(b);
         menuBar.prefWidthProperty().bind(rootNode.widthProperty()); // setter menyens bredde til rootNoden.
         cellSizeSlider.setMin(5);
         cellSizeSlider.setValue(10);
@@ -67,11 +66,6 @@ public class MainWindowController implements Initializable {
                     canvas.redrawBoard(b);
             }
         });
-
-        @FXML private void reset () {
-          b.resetBoard();
-          canvas.draw(b);
-}
         
         fpsSlider.setMin(0.1d);
         fpsSlider.setValue(2);
@@ -84,11 +78,12 @@ public class MainWindowController implements Initializable {
                     changeFPSAndShow();
             }
         });
+        canvas.draw(b);
     }
 
     @FXML private void reset() {
-        b.reset();
         canvas.redrawBoard(b);
+        time.stop();
     }
 
     @FXML private void play() {

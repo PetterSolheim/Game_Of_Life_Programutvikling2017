@@ -13,45 +13,55 @@
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 
-<FlowPane fx:id="rootNode" prefHeight="400.0" maxWidth="-Infinity" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController" stylesheets="/css/main.css">
+<FlowPane fx:id="rootNode" prefHeight="400.0" maxWidth="Infinity" prefWidth="600.0" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController" stylesheets="/css/main.css">
     <children>
-        <VBox id="wrapper">
-            <MenuBar fx:id="menuBar">
-                <menus>
-                    <Menu mnemonicParsing="false" text="File">
-                        <items>
-                            <MenuItem mnemonicParsing="false" text="New" />
-                        </items>
-                        <items>
-                            <MenuItem mnemonicParsing="false" text="Open" />
-                        </items>
-                        <items>
-                            <MenuItem mnemonicParsing="false" text="Save" />
-                        </items>
-                        <items>
-                            <MenuItem mnemonicParsing="false" text="Settings" onAction="#showGameRulesWindow" />
-                        </items>
-                        <items>
-                            <MenuItem mnemonicParsing="false" text="Exit" onAction="#quit" />
-                        </items>
-                    </Menu>
-                </menus>
-            </MenuBar>
-            <HBox id="topBar">
-                <Button fx:id="Reset" text="Reset" onAction="#reset"/>
-                <Button fx:id="Play" onAction="#play"/>
-                <Button text="Stop" onAction="#play"/>
-                <Button text="Rules" onAction="#showGameRulesWindow"/>
-            </HBox>
-            <ResizableCanvas fx:id="canvas" onMouseClicked="#clickedCell"/>
-            <HBox id="botBar">
-                <children>
-                    <Slider fx:id="cellSizeSlider"/>
-                    <Text fx:id="showCellSize" />
-                    <Slider fx:id="fpsSlider"/>                 
-                    <Text fx:id="showFps" />
-                </children>
-            </HBox>
+        <VBox fx:id="wrapper">
+            <children>
+                <MenuBar fx:id="menuBar">
+                    <menus>
+                        <Menu mnemonicParsing="false" text="File">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="New" />
+                            </items>
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Open" />
+                            </items>
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Save" />
+                            </items>
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Settings" onAction="#showGameRulesWindow" />
+                            </items>
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Exit" onAction="#quit" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+            </children>
+            <children>
+                <HBox fx:id="topBar">
+                    <children>
+                        <Button fx:id="btnReset" text="Reset" onAction="#reset"/>
+                        <Button fx:id="btnPlay" onAction="#play"/>
+                        <Button fx:id="btnStop" text="Stop" onAction="#play"/>
+                        <Button fx:id="btnRules" text="Rules" onAction="#showGameRulesWindow"/>
+                    </children>
+                </HBox>
+            </children>
+            <children>
+                <ResizableCanvas fx:id="canvas" onMouseClicked="#clickedCell"/>
+            </children>
+            <children>
+                <HBox fx:id="botBar">
+                    <children>
+                        <Slider fx:id="cellSizeSlider"/>
+                        <Text fx:id="showCellSize" />
+                        <Slider fx:id="fpsSlider"/>                 
+                        <Text fx:id="showFps" />
+                    </children>
+                </HBox>
+            </children>
         </VBox>
     </children>
 </FlowPane>
