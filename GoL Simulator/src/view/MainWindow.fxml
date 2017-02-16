@@ -20,7 +20,7 @@
                 <Button text="Rules"
                         onAction="#showGameRulesWindow"/>
             </HBox>
-            <ResizableCanvas fx:id="canvas" height="500" width="500"/>
+            <ResizableCanvas fx:id="canvas" onMouseClicked="#clickedCell"/>
             <HBox id="botBar">
                 <children>
                     <Slider fx:id="cellSize" valueChanging="#changeCellSize" />

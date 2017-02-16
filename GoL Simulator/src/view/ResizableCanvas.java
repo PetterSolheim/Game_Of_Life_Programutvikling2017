@@ -24,42 +24,47 @@ public class ResizableCanvas extends Canvas {
      * Default constructor. Needed by FXML loader to initialize canvas properly. Don't use this.
      */
     public ResizableCanvas (){
-        super(1000d,1000d);
+        super(800d,800d);
         gc = this.getGraphicsContext2D();
         gc = this.getGraphicsContext2D();
-        backGroundColor = Color.WHITE;
-        deadCellColor = Color.ORANGE;
-        livingCellColor = Color.RED;
+        backGroundColor = Color.GREY;
+        deadCellColor = Color.WHITE;
+        livingCellColor = Color.BLACK;
         cellSize = 10;
-        spaceBetweenCells = 5;
+        spaceBetweenCells = 2;
     }
     /**
      * Provides the ability to draw a grid of cells, both living and dead.
      * @param b Board class containing a two dimensional byte array.
      */
     public void draw(Board b) {
-        float xPos = -spaceBetweenCells - cellSize;
-        float yPos = -spaceBetweenCells - cellSize;
-        for (int row = 0; row < b.getBoard().length; row++) {
-            xPos = -spaceBetweenCells - cellSize;
-            gc.fillText(Integer.toString(row), xPos, yPos);
-            yPos += spaceBetweenCells + cellSize;
+        this.heightProperty().setValue((b.getHeight()+2)*(cellSize+spaceBetweenCells));
+        this.widthProperty().setValue((b.getWidth()+2)*(cellSize+spaceBetweenCells));
+
+        for (int row = 0; row < b.getBoard().length; row++) {     
             for (int col = 0; col < b.getBoard()[0].length; col++) {
-                xPos += spaceBetweenCells + cellSize;
                 if (b.getBoard()[row][col] == 1) {
                     gc.setFill(livingCellColor);
-                    gc.fillRect(xPos, yPos, cellSize, cellSize);
                 } else {
                     gc.setFill(deadCellColor);
-                    gc.fillRect(xPos, yPos, cellSize, cellSize);
                 }
+                gc.fillRect((col+(col*(cellSize+spaceBetweenCells))), (row+(row*(cellSize+spaceBetweenCells))), cellSize, cellSize);
             }
         }
+        
     }
-
-    public void testD (){
-        gc.fillRect(5, 5, 10, 10);
-    }
+    
+        public int cellClickedX(double x) {
+            double a = (x/(cellSize+spaceBetweenCells));
+            double b = x - a;
+            return (int)(b/(cellSize+spaceBetweenCells));
+        }
+        
+        public int cellClickedY(double y) {
+            double a = (y/(cellSize+spaceBetweenCells));
+            double b = y - a;
+            return (int)(b/(cellSize+spaceBetweenCells));
+        }
 
     /**
      *

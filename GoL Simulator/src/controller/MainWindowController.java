@@ -13,6 +13,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Slider;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Board;
@@ -43,6 +44,8 @@ public class MainWindowController implements Initializable {
         canvas.draw(b);
     }
     @FXML private void reset (){
+        b.resetBoard();
+        canvas.draw(b);
         
     }
     @FXML private void play() {
@@ -73,5 +76,12 @@ public class MainWindowController implements Initializable {
         settings.setScene(scene);
         settings.setTitle("Settings");
         settings.show();
+    }
+    
+    @FXML public void clickedCell(MouseEvent event) {
+        int row = canvas.cellClickedX(event.getX());
+        int col = canvas.cellClickedY(event.getY());
+        b.toggleCellState(row, col);
+        canvas.draw(b);
     }
 }

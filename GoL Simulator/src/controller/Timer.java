@@ -21,7 +21,7 @@ public class Timer extends AnimationTimer{
     @Override
     public void handle(long currentTime) {
         if (nextGeneration < currentTime ) {
-            nextGeneration = currentTime + 2000000000l; // 9 
+            nextGeneration = currentTime + 100000000; // 9 
             controller.initiateNextGeneration();
             System.out.println();
             //stop ();
