@@ -247,6 +247,19 @@ public class Board {
         generationCount = 1;
 
     }
+    
+    @Override
+    public String toString() {
+        StringBuilder tempReturnValue = new StringBuilder();
+        for (int row = 0; row < currentBoard.length; row++) {
+            for (int col = 0; col < currentBoard[row].length; col++) {
+                tempReturnValue.append(currentBoard[row][col]);
+            }
+        }
+        
+        String finalReturnValue = tempReturnValue.toString();
+        return finalReturnValue;
+    }
 
     /**
      * Creates a copy of a 2 dimensional byte array.
