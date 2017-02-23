@@ -18,7 +18,8 @@ public class Board {
     private int birth = 3;
 
     /**
-     * As this is a singleton, the constructor is private.
+     * As this is a singleton, the constructor is private. Default start board
+     * is a blank board of 50 rows and 50 columns.
      */
     private Board() {
         currentBoard = new byte[50][50];

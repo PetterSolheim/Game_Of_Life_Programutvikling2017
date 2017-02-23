@@ -107,7 +107,7 @@ public class MainWindowController implements Initializable {
 
     public void changeCellSizeAndShow() {
         canvas.setCellSize((int) cellSizeSlider.getValue());
-        showCellSize.setText(Integer.toString((int) cellSizeSlider.getValue()));
+        displayCellSize();
     }
 
     public void displayCellSize() {
@@ -117,7 +117,7 @@ public class MainWindowController implements Initializable {
     public void changeFPSAndShow() {
         long newTimer = (long) ((1 / fpsSlider.getValue()) * 1000000000);
         time.setNextGenerationTimer(newTimer);
-        showFps.setText(Double.toString(fpsSlider.getValue()));
+        displayFps();
     }
 
     public void displayFps() {
@@ -147,7 +147,7 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    public void clickedCell(MouseEvent event) {
+    public void toggleClickedCell(MouseEvent event) {
         if (event.getButton().toString().equals("PRIMARY")) {
             int row = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
             int col = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
