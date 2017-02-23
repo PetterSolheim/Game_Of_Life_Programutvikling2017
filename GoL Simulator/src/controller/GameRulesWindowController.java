@@ -53,7 +53,7 @@ public class GameRulesWindowController implements Initializable {
             Alert alert = new Alert(AlertType.INFORMATION);
             alert.setTitle("Error");
             alert.setHeaderText("Invalid input");
-            alert.setContentText(e.getMessage());
+            alert.setContentText("Invalid input: " + e.getMessage());
             alert.showAndWait();
         }
     }

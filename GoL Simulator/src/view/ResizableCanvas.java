@@ -28,7 +28,6 @@ public class ResizableCanvas extends Canvas {
     public ResizableCanvas() {
         super(800d, 800d);
         gc = this.getGraphicsContext2D();
-        gc = this.getGraphicsContext2D();
         backGroundColor = Color.GREY;
         deadCellColor = Color.WHITE;
         livingCellColor = Color.BLACK;
@@ -58,15 +57,6 @@ public class ResizableCanvas extends Canvas {
 
     }
 
-    public int cellClickedRow(double x) {
-        return (int) (x / (cellSize + spaceBetweenCells));
-    }
-
-
-    public int cellClickedCol(double y) {
-        return (int) (y / (cellSize + spaceBetweenCells));
-}
-
     /**
      *
      * @param b
@@ -75,6 +65,7 @@ public class ResizableCanvas extends Canvas {
         gc.clearRect(0, 0, this.getWidth(), this.getHeight());
         draw(b);
     }
+    
     /**
      *
      * @param newCellSize set the width and height of all cells.
@@ -82,6 +73,14 @@ public class ResizableCanvas extends Canvas {
     public void setCellSize(int newCellSize) {
         this.cellSize = newCellSize;
         this.spaceBetweenCells = newCellSize / 2;
+    }
+    
+    public int getCellSize() {
+        return cellSize;
+    }
+    
+    public int getSpaceBetweenCells() {
+        return spaceBetweenCells;
     }
 
     /**

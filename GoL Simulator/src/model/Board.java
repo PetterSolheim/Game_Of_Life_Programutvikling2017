@@ -1,6 +1,5 @@
 package model;
 
-//import controller.TimeKeeper;
 /**
  * Class for the game board. Contains the actual board and the methods for
  * iterating to the next generation, along with game rules for the board. The

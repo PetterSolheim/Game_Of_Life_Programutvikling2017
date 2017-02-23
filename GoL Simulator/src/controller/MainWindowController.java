@@ -16,6 +16,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.MenuBar;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
@@ -35,13 +36,22 @@ import view.ResizableCanvas;
  */
 public class MainWindowController implements Initializable {
 
-    @FXML private ResizableCanvas canvas;
-    @FXML private Slider cellSizeSlider;
-    @FXML private Slider fpsSlider;
-    @FXML private Text showCellSize;
-    @FXML private Text showFps;
-    @FXML private MenuBar menuBar;
-    @FXML private AnchorPane rootNode;
+    @FXML
+    private ResizableCanvas canvas;
+    @FXML
+    private Slider cellSizeSlider;
+    @FXML
+    private Slider fpsSlider;
+    @FXML
+    private Text showCellSize;
+    @FXML
+    private Text showFps;
+    //@FXML
+    //private MenuBar menuBar;
+    //@FXML
+    //private AnchorPane rootNode;
+    @FXML
+    private ScrollPane scrollPane;
     private Board b;
     private Timer time;
     private boolean isPaused;
@@ -59,30 +69,33 @@ public class MainWindowController implements Initializable {
             @Override
             public void changed(ObservableValue<? extends Number> observable,
                     Number oldValue, Number newValue) {
-                    changeCellSizeAndShow();
-                    canvas.redrawBoard(b);
+                changeCellSizeAndShow();
+                canvas.redrawBoard(b);
             }
         });
-        
+
         changeFPSAndShow();
         fpsSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable,
                     Number oldValue, Number newValue) {
-                    changeFPSAndShow();
+                changeFPSAndShow();
             }
         });
+
         canvas.draw(b);
     }
 
-    @FXML private void reset() {
+    @FXML
+    private void reset() {
         b.resetBoard();
         canvas.redrawBoard(b);
         time.stop();
         isPaused = true;
     }
 
-    @FXML private void play() {
+    @FXML
+    private void play() {
         if (isPaused) {
             isPaused = false;
             time.start();
@@ -91,48 +104,68 @@ public class MainWindowController implements Initializable {
             time.stop();
         }
     }
+
     public void changeCellSizeAndShow() {
-        canvas.setCellSize((int)cellSizeSlider.getValue());
-        showCellSize.setText(Integer.toString((int)cellSizeSlider.getValue()));
+        canvas.setCellSize((int) cellSizeSlider.getValue());
+        showCellSize.setText(Integer.toString((int) cellSizeSlider.getValue()));
     }
-    public void displayCellSize (){
-        showCellSize.setText(Integer.toString((int)cellSizeSlider.getValue()));
+
+    public void displayCellSize() {
+        showCellSize.setText(Integer.toString((int) cellSizeSlider.getValue()));
     }
+
     public void changeFPSAndShow() {
-        long newTimer = (long)((1 / fpsSlider.getValue()) * 1000000000);
+        long newTimer = (long) ((1 / fpsSlider.getValue()) * 1000000000);
         time.setNextGenerationTimer(newTimer);
         showFps.setText(Double.toString(fpsSlider.getValue()));
     }
-    public void displayFps (){
+
+    public void displayFps() {
         showFps.setText(Double.toString(fpsSlider.getValue()));
     }
+
     public void createNextGeneration() {
         b.nextGeneration();
         canvas.draw(b);
     }
-    @FXML private void quit (){
+
+    @FXML
+    private void quit() {
         Platform.exit();
     }
+
     public void showGameRulesWindow() throws Exception {
         Stage settings = new Stage();
         Parent root = FXMLLoader.load(getClass().getResource("/view/GameRulesWindow.fxml"));
         Scene scene = new Scene(root);
 
-        settings.setResizable(true);
+        settings.setResizable(false);
         settings.initModality(Modality.APPLICATION_MODAL);
         settings.setScene(scene);
         settings.setTitle("Settings");
         settings.show();
     }
-    
-    @FXML public void clickedCell(MouseEvent event) {
-        int row = canvas.cellClickedRow(event.getX());
-        int col = canvas.cellClickedCol(event.getY());
-        b.toggleCellState(row, col);
-        canvas.draw(b);
+
+    @FXML
+    public void clickedCell(MouseEvent event) {
+        if (event.getButton().toString().equals("PRIMARY")) {
+            int row = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+            int col = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+            b.toggleCellState(row, col);
+            canvas.draw(b);
+        }
+
     }
 
-    public void defineSliders(Slider s){
-        
+    @FXML
+    public void dragCanvas(MouseEvent event) {
+        if (event.getButton().toString().equals("SECONDARY")) {
+            scrollPane.setPannable(true);
+        }
+    }
+
+    @FXML
+    public void dragCanvasEnded() {
+        scrollPane.setPannable(false);
     }
 }
