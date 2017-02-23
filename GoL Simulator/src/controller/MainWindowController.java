@@ -15,9 +15,11 @@ import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
@@ -43,15 +45,25 @@ public class MainWindowController implements Initializable {
     @FXML
     private Slider fpsSlider;
     @FXML
-    private Text showCellSize;
+    private Text txtShowCellSize;
     @FXML
-    private Text showFps;
+    private Text txtShowFps;
+    @FXML
+    private Text txtShowGen;
+    @FXML
+    private Text txtShowCellCount;
     //@FXML
     //private MenuBar menuBar;
     //@FXML
     //private AnchorPane rootNode;
     @FXML
     private ScrollPane scrollPane;
+    @FXML
+    private ColorPicker livingCellColorPicker;
+    @FXML
+    private ColorPicker deadCellColorPicker;
+    @FXML
+    private ColorPicker backgroundColorPicker;
     private Board b;
     private Timer time;
     private boolean isPaused;
@@ -65,6 +77,14 @@ public class MainWindowController implements Initializable {
         time = new Timer(this);
         isPaused = true;
         changeCellSizeAndShow();
+        changeFPSAndShow();
+        livingCellColorPicker.getStyleClass().add("button");
+        deadCellColorPicker.getStyleClass().add("button");
+        backgroundColorPicker.getStyleClass().add("button");
+        livingCellColorPicker.setPrefWidth(30);
+        deadCellColorPicker.setPrefWidth(30);
+        backgroundColorPicker.setPrefWidth(30);
+        
         cellSizeSlider.valueProperty().addListener(new ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable,
@@ -82,8 +102,9 @@ public class MainWindowController implements Initializable {
                 changeFPSAndShow();
             }
         });
-
         canvas.draw(b);
+        displayGeneration();
+        displayCellCount();
     }
 
     @FXML
@@ -105,13 +126,30 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    @FXML
+    private void changeLivingCellColor() {
+        canvas.setLivingCellColor(livingCellColorPicker.getValue());
+        canvas.redrawBoard(b);
+    }
+
+    @FXML
+    private void changeBackground() {
+        canvas.setBackgroundColor(backgroundColorPicker.getValue());
+        canvas.redrawBoard(b);
+    }
+    @FXML
+    private void changeDeadCellColor(){
+        canvas.setDeadCellColor(deadCellColorPicker.getValue());
+        canvas.redrawBoard(b);
+    }
     public void changeCellSizeAndShow() {
         canvas.setCellSize((int) cellSizeSlider.getValue());
+        canvas.calculateNewDimensions(b);
         displayCellSize();
     }
 
     public void displayCellSize() {
-        showCellSize.setText(Integer.toString((int) cellSizeSlider.getValue()));
+        txtShowCellSize.setText(Integer.toString((int) cellSizeSlider.getValue()));
     }
 
     public void changeFPSAndShow() {
@@ -119,14 +157,21 @@ public class MainWindowController implements Initializable {
         time.setNextGenerationTimer(newTimer);
         displayFps();
     }
-
+    public void displayCellCount() {
+        txtShowCellCount.setText(Integer.toString(b.getCellCount()));
+    }
+    public void displayGeneration() {
+        txtShowGen.setText(Integer.toString(b.getGenerationCount()) + " ");
+    }
     public void displayFps() {
-        showFps.setText(Double.toString(fpsSlider.getValue()));
+        txtShowFps.setText(Double.toString(fpsSlider.getValue()));
     }
 
     public void createNextGeneration() {
         b.nextGeneration();
         canvas.draw(b);
+        displayCellCount();
+        displayGeneration();
     }
 
     @FXML
@@ -139,7 +184,7 @@ public class MainWindowController implements Initializable {
         Parent root = FXMLLoader.load(getClass().getResource("/view/GameRulesWindow.fxml"));
         Scene scene = new Scene(root);
 
-        settings.setResizable(false);
+        settings.setResizable(true);
         settings.initModality(Modality.APPLICATION_MODAL);
         settings.setScene(scene);
         settings.setTitle("Settings");
@@ -148,7 +193,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void toggleClickedCell(MouseEvent event) {
-        if (event.getButton().toString().equals("PRIMARY")) {
+        if (event.getButton() == MouseButton.PRIMARY) {
             int row = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
             int col = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
             b.toggleCellState(row, col);
@@ -159,7 +204,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void dragCanvas(MouseEvent event) {
-        if (event.getButton().toString().equals("SECONDARY")) {
+        if (event.getButton() == MouseButton.SECONDARY) {
             scrollPane.setPannable(true);
         }
     }

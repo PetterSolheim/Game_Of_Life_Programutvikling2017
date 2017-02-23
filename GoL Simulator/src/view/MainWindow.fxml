@@ -11,6 +11,8 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.Label?>
 
 <AnchorPane fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="/css/main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
     <children>
@@ -41,19 +43,36 @@
                 <Button fx:id="btnPlay" onAction="#play" />
                 <Button fx:id="btnRules" onAction="#showGameRulesWindow" text="Rules" />
             </items>
+            <items>
+                <HBox HBox.hgrow="ALWAYS"> <!---  Pushes remaining content in parent node right-->
+                </HBox> 
+            </items>
+            <items>
+                <Label>Living Cells</Label>
+                <ColorPicker fx:id="livingCellColorPicker" onAction="#changeLivingCellColor" />
+                <Label>Dead Cells</Label>
+                <ColorPicker fx:id="deadCellColorPicker" onAction="#changeDeadCellColor" />
+                <Label>Background</Label>
+                <ColorPicker fx:id="backgroundColorPicker" onAction="#changeBackground" />
+            </items>
         </ToolBar>
         <ScrollPane fx:id = "scrollPane" layoutY="67.0" prefHeight="305.0" prefWidth="600.0" AnchorPane.bottomAnchor="28.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0">
             <content>
-                    <ResizableCanvas fx:id="canvas" onMouseClicked="#toggleClickedCell" onMouseDragged="#dragCanvas" onMouseReleased="#dragCanvasEnded"/>
+                <ResizableCanvas fx:id="canvas" onMouseClicked="#toggleClickedCell" onMouseDragged="#dragCanvas" onMouseReleased="#dragCanvasEnded"/>
             </content>
         </ScrollPane>
-        <HBox layoutY="374.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+        <HBox fx:id="bottomBar" layoutY="374.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <Slider fx:id="cellSizeSlider" min = "5.0" max = "30.0" value = "10"/>
-            <Text fx:id="showCellSize" text="placeholder" />
+            <Text fx:id="txtShowCellSize" text="placeholder" />
             <Slider fx:id="fpsSlider" min = "0.1" max = "30" value = "2" />                 
-            <Text fx:id="showFps" text="placeholder" />
+            <Text fx:id="txtShowFps" text="placeholder" />
+            <HBox HBox.hgrow="ALWAYS"></HBox>
+            <HBox>
+                <Text> Current Generation: </Text>
+                <Text fx:id="txtShowGen"></Text>
+                <Text>Living cells: </Text>
+                <Text fx:id="txtShowCellCount"></Text>
+            </HBox>
         </HBox>
-      
-
     </children>
 </AnchorPane>

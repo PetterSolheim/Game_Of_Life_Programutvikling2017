@@ -21,18 +21,15 @@ public class ResizableCanvas extends Canvas {
     private GraphicsContext gc;
     private int spaceBetweenCells;
 
-    /**
-     * Default constructor. Needed by FXML loader to initialize canvas properly.
-     * Don't use this.
-     */
     public ResizableCanvas() {
-        super(800d, 800d);
+        super(500d, 500d);
         gc = this.getGraphicsContext2D();
-        backGroundColor = Color.GREY;
+        backGroundColor = Color.LIGHTGOLDENRODYELLOW;
         deadCellColor = Color.WHITE;
         livingCellColor = Color.BLACK;
         cellSize = 25;
         spaceBetweenCells = 2;
+        drawBackground();
     }
 
     /**
@@ -41,9 +38,6 @@ public class ResizableCanvas extends Canvas {
      * @param b Board class containing a two dimensional byte array.
      */
     public void draw(Board b) {
-        this.heightProperty().setValue((b.getHeight() + 2) * (cellSize + spaceBetweenCells));
-        this.widthProperty().setValue((b.getWidth() + 2) * (cellSize + spaceBetweenCells));
-
         for (int row = 0; row < b.getBoard().length; row++) {
             for (int col = 0; col < b.getBoard()[0].length; col++) {
                 if (b.getBoard()[row][col] == 1) {
@@ -54,18 +48,29 @@ public class ResizableCanvas extends Canvas {
                 gc.fillRect((col * (cellSize + spaceBetweenCells)), (row * (cellSize + spaceBetweenCells)), cellSize, cellSize);
             }
         }
+    }
 
+    public void calculateNewDimensions(Board b) {
+        this.heightProperty().setValue((b.getHeight()) * (cellSize + spaceBetweenCells));
+        this.widthProperty().setValue((b.getWidth()) * (cellSize + spaceBetweenCells));
+    }
+
+    public void drawBackground() {
+        gc.setFill(backGroundColor);
+        gc.fillRect(0, 0, this.getWidth(), this.getHeight());
     }
 
     /**
      *
      * @param b
      */
-    public void redrawBoard (Board b){
-        gc.clearRect(0, 0, this.getWidth(), this.getHeight());
+    public void redrawBoard(Board b) {
+        gc.setFill(Color.WHITE);
+        gc.clearRect(0, 0, this.getWidth() * 2, this.getHeight() * 2);
+        drawBackground();
         draw(b);
     }
-    
+
     /**
      *
      * @param newCellSize set the width and height of all cells.
@@ -74,11 +79,11 @@ public class ResizableCanvas extends Canvas {
         this.cellSize = newCellSize;
         this.spaceBetweenCells = newCellSize / 2;
     }
-    
+
     public int getCellSize() {
         return cellSize;
     }
-    
+
     public int getSpaceBetweenCells() {
         return spaceBetweenCells;
     }
@@ -96,7 +101,18 @@ public class ResizableCanvas extends Canvas {
      * @param newCellColor set/change the color of all living cells.
      */
     public void setLivingCellColor(Color newCellColor) {
-        this.setLivingCellColor(newCellColor);
+        this.livingCellColor = newCellColor;
+    }
+    public Color getLivingCellColor() {
+        return this.livingCellColor;
+    }
+
+    public Color getDeadCellColor() {
+        return this.deadCellColor;
+    }
+
+    public Color getBackgroundColor() {
+        return this.backGroundColor;
     }
 
     /**
