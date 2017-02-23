@@ -79,6 +79,7 @@ public class MainWindowController implements Initializable {
         b.resetBoard();
         canvas.redrawBoard(b);
         time.stop();
+        isPaused = true;
     }
 
     @FXML private void play() {
