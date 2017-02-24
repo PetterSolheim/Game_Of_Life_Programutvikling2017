@@ -15,21 +15,18 @@ import model.Board;
 public class ResizableCanvas extends Canvas {
 
     private int cellSize;
+    private int spaceBetweenCells = 2;
     private Color backGroundColor;
     private Color livingCellColor;
     private Color deadCellColor;
     private GraphicsContext gc;
-    private int spaceBetweenCells;
+
 
     public ResizableCanvas() {
-        super(500d, 500d);
         gc = this.getGraphicsContext2D();
         backGroundColor = Color.LIGHTGOLDENRODYELLOW;
         deadCellColor = Color.WHITE;
         livingCellColor = Color.BLACK;
-        cellSize = 25;
-        spaceBetweenCells = 2;
-        drawBackground();
     }
 
     /**
@@ -55,7 +52,7 @@ public class ResizableCanvas extends Canvas {
         this.widthProperty().setValue((b.getWidth()) * (cellSize + spaceBetweenCells));
     }
 
-    public void drawBackground() {
+    public void clearCanvas() {
         gc.setFill(backGroundColor);
         gc.fillRect(0, 0, this.getWidth(), this.getHeight());
     }
@@ -65,9 +62,7 @@ public class ResizableCanvas extends Canvas {
      * @param b
      */
     public void redrawBoard(Board b) {
-        gc.setFill(Color.WHITE);
-        gc.clearRect(0, 0, this.getWidth() * 2, this.getHeight() * 2);
-        drawBackground();
+        clearCanvas();
         draw(b);
     }
 
@@ -77,7 +72,7 @@ public class ResizableCanvas extends Canvas {
      */
     public void setCellSize(int newCellSize) {
         this.cellSize = newCellSize;
-        this.spaceBetweenCells = newCellSize / 2;
+        //this.spaceBetweenCells = newCellSize / 2;
     }
 
     public int getCellSize() {

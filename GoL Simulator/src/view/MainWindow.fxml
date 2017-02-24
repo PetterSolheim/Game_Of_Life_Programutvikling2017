@@ -13,6 +13,10 @@
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.control.ColorPicker?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.paint.Color?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.geometry.Insets?>
 
 <AnchorPane fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="/css/main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
     <children>
@@ -39,21 +43,53 @@
         </MenuBar>
         <ToolBar layoutY="27.0" prefHeight="40.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="27.0">
             <items>
-                <Button fx:id="btnReset" onAction="#reset" text="Reset" />
-                <Button fx:id="btnPlay" onAction="#play" />
-                <Button fx:id="btnRules" onAction="#showGameRulesWindow" text="Rules" />
+                <Button fx:id="btnReset" onAction="#reset" text="Reset">
+                    <graphic>
+                        <ImageView fitHeight = "19.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../img/reset.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnPlay" onAction="#play" text="Play">
+                    <graphic>
+                        <ImageView fx:id="imgPlayPause" fitHeight = "19.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../img/play.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnNext" onAction="#createNextGeneration" text="Next Generation">
+                    <graphic>
+                        <ImageView fitHeight = "19.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../img/next.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnRules" onAction="#showGameRulesWindow" text="Settings">
+                    <graphic>
+                        <ImageView fitHeight = "19.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../img/settings.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
             </items>
             <items>
-                <HBox HBox.hgrow="ALWAYS"> <!---  Pushes remaining content in parent node right-->
-                </HBox> 
+                <HBox HBox.hgrow="ALWAYS"/> <!---  Pushes remaining content in parent node right-->
             </items>
             <items>
                 <Label>Living Cells</Label>
-                <ColorPicker fx:id="livingCellColorPicker" onAction="#changeLivingCellColor" />
+                <ColorPicker fx:id="livingCellColorPicker" prefWidth = "30.0" onAction="#changeLivingCellColor" /> 
                 <Label>Dead Cells</Label>
-                <ColorPicker fx:id="deadCellColorPicker" onAction="#changeDeadCellColor" />
+                <ColorPicker fx:id="deadCellColorPicker" prefWidth = "30.0" onAction="#changeDeadCellColor" />
                 <Label>Background</Label>
-                <ColorPicker fx:id="backgroundColorPicker" onAction="#changeBackground" />
+                <ColorPicker fx:id="backgroundColorPicker" prefWidth = "30.0" onAction="#changeBackgroundColor" />
             </items>
         </ToolBar>
         <ScrollPane fx:id = "scrollPane" layoutY="67.0" prefHeight="305.0" prefWidth="600.0" AnchorPane.bottomAnchor="28.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0">
@@ -61,17 +97,28 @@
                 <ResizableCanvas fx:id="canvas" onMouseClicked="#toggleClickedCell" onMouseDragged="#dragCanvas" onMouseReleased="#dragCanvasEnded"/>
             </content>
         </ScrollPane>
-        <HBox fx:id="bottomBar" layoutY="374.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
-            <Slider fx:id="cellSizeSlider" min = "5.0" max = "30.0" value = "10"/>
-            <Text fx:id="txtShowCellSize" text="placeholder" />
-            <Slider fx:id="fpsSlider" min = "0.1" max = "30" value = "2" />                 
-            <Text fx:id="txtShowFps" text="placeholder" />
-            <HBox HBox.hgrow="ALWAYS"></HBox>
-            <HBox>
-                <Text> Current Generation: </Text>
-                <Text fx:id="txtShowGen"></Text>
-                <Text>Living cells: </Text>
-                <Text fx:id="txtShowCellCount"></Text>
+        <HBox layoutY="374.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+            <HBox alignment="CENTER_LEFT" spacing="10">
+                <HBox.margin>
+                    <Insets left="10.0" />
+                </HBox.margin>
+                <children>
+                    <Slider fx:id="cellSizeSlider" min = "5.0" max = "30.0" value = "10"/>
+                    <Text fx:id="txtShowCellSize"/>
+                    <Slider fx:id="fpsSlider" majorTickUnit="1.0" max="60.0" min="1.0" minorTickCount="0" snapToTicks="true" value="4.0" />                 
+                    <Text fx:id="txtShowFps"/>
+                </children>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" spacing ="10" HBox.hgrow="ALWAYS">
+                <HBox.margin>
+                    <Insets right="10.0" />
+                </HBox.margin>
+                <children>
+                    <Text>Current Generation: </Text>
+                    <Text fx:id="txtShowGen" text = "x"/>
+                    <Text>Living cells:</Text>
+                    <Text fx:id="txtShowCellCount" text = "x"/>
+                </children>
             </HBox>
         </HBox>
     </children>

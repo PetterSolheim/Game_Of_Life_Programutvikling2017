@@ -14,6 +14,8 @@ public class GoLSimulator extends Application {
         Parent root = FXMLLoader.load(getClass().getResource("/view/MainWindow.fxml"));
         Scene scene = new Scene(root);
         stage.setScene(scene);
+        stage.setMinHeight(400);
+        stage.setMinWidth(700);
         stage.show();
     }
 

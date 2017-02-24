@@ -11,8 +11,8 @@ public class Board {
     private static Board instance;
     private byte[][] currentBoard;
     private byte[][] originalBoard;
-    private int generationCount = 1;
-    private int cellCount;
+    private int generationCount = 0;
+    private int cellCount = 0;
     private int minToSurvive = 2;
     private int maxToSurvive = 3;
     private int birth = 3;
@@ -22,7 +22,7 @@ public class Board {
      * is a blank board of 50 rows and 50 columns.
      */
     private Board() {
-        currentBoard = new byte[30][30];
+        currentBoard = new byte[100][100];
         originalBoard = duplicateBoard(currentBoard);
     }
 
@@ -95,7 +95,6 @@ public class Board {
         // applied to the actual board.
         byte[][] testPattern = duplicateBoard(currentBoard);
 
-        setCellCount(0); // reset the cell count
 
         // iterates through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
@@ -112,7 +111,7 @@ public class Board {
                 }
             }
         }
-        increaseGenerationCount();
+        generationCount++;
 
     }
 
@@ -204,18 +203,6 @@ public class Board {
     }
 
     /**
-     * Private method used by nextGeneration to keep count of the number of live
-     * cells.
-     *
-     * @param newValue Set the current cell count
-     */
-    private void setCellCount(int newValue) {
-        if (newValue >= 0) {
-            cellCount = newValue;
-        }
-    }
-
-    /**
      *
      * @return The number of live cells on the current board.
      */
@@ -232,19 +219,11 @@ public class Board {
     }
 
     /**
-     * Increases the generation count by 1. Private method used by
-     * nextGeneration() method.
-     */
-    private void increaseGenerationCount() {
-        generationCount++;
-    }
-
-    /**
      * Reverts the current board back to its original state.
      */
     public void resetBoard() {
         currentBoard = duplicateBoard(originalBoard);
-        generationCount = 1;
+        generationCount = 0;
 
     }
     

@@ -8,26 +8,24 @@ package controller;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.text.Text;
-
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Board;
 import view.ResizableCanvas;
+import javafx.scene.image.ImageView;
 
 /**
  * FXML Controller class for the main window. The main window consists of two
@@ -41,6 +39,8 @@ public class MainWindowController implements Initializable {
     @FXML
     private ResizableCanvas canvas;
     @FXML
+    private Button btnPlay;
+    @FXML
     private Slider cellSizeSlider;
     @FXML
     private Slider fpsSlider;
@@ -52,10 +52,6 @@ public class MainWindowController implements Initializable {
     private Text txtShowGen;
     @FXML
     private Text txtShowCellCount;
-    //@FXML
-    //private MenuBar menuBar;
-    //@FXML
-    //private AnchorPane rootNode;
     @FXML
     private ScrollPane scrollPane;
     @FXML
@@ -64,6 +60,8 @@ public class MainWindowController implements Initializable {
     private ColorPicker deadCellColorPicker;
     @FXML
     private ColorPicker backgroundColorPicker;
+    @FXML
+    private ImageView imgPlayPause;
     private Board b;
     private Timer time;
     private boolean isPaused;
@@ -76,52 +74,47 @@ public class MainWindowController implements Initializable {
         b = Board.getInstance();
         time = new Timer(this);
         isPaused = true;
+        livingCellColorPicker.setValue(canvas.getLivingCellColor());
+        deadCellColorPicker.setValue(canvas.getDeadCellColor());
+        backgroundColorPicker.setValue(canvas.getBackgroundColor());
         changeCellSizeAndShow();
         changeFPSAndShow();
-        livingCellColorPicker.getStyleClass().add("button");
-        deadCellColorPicker.getStyleClass().add("button");
-        backgroundColorPicker.getStyleClass().add("button");
-        livingCellColorPicker.setPrefWidth(30);
-        deadCellColorPicker.setPrefWidth(30);
-        backgroundColorPicker.setPrefWidth(30);
-        
-        cellSizeSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable,
-                    Number oldValue, Number newValue) {
-                changeCellSizeAndShow();
-                canvas.redrawBoard(b);
-            }
+
+        cellSizeSlider.valueProperty().addListener((observable) -> {
+            changeCellSizeAndShow();
+            canvas.redrawBoard(b);
         });
 
-        changeFPSAndShow();
-        fpsSlider.valueProperty().addListener(new ChangeListener<Number>() {
-            @Override
-            public void changed(ObservableValue<? extends Number> observable,
-                    Number oldValue, Number newValue) {
-                changeFPSAndShow();
-            }
+        fpsSlider.valueProperty().addListener((observable) -> {
+            changeFPSAndShow();
         });
-        canvas.draw(b);
-        displayGeneration();
-        displayCellCount();
+
+        canvas.redrawBoard(b);
     }
 
     @FXML
     private void reset() {
-        b.resetBoard();
-        canvas.redrawBoard(b);
         time.stop();
         isPaused = true;
+        b.resetBoard();
+        canvas.redrawBoard(b);
+        displayCellCount();
+        displayGeneration();
     }
 
     @FXML
     private void play() {
+        Image imgPlay = new Image("/img/play.png");
+        Image imgPause = new Image("/img/pause.png");
         if (isPaused) {
             isPaused = false;
+            imgPlayPause.setImage(imgPause);
+            btnPlay.setText("Pause");
             time.start();
         } else {
             isPaused = true;
+            imgPlayPause.setImage(imgPlay);
+            btnPlay.setText("Play");
             time.stop();
         }
     }
@@ -133,15 +126,17 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    private void changeBackground() {
+    private void changeBackgroundColor() {
         canvas.setBackgroundColor(backgroundColorPicker.getValue());
         canvas.redrawBoard(b);
     }
+
     @FXML
-    private void changeDeadCellColor(){
+    private void changeDeadCellColor() {
         canvas.setDeadCellColor(deadCellColorPicker.getValue());
         canvas.redrawBoard(b);
     }
+
     public void changeCellSizeAndShow() {
         canvas.setCellSize((int) cellSizeSlider.getValue());
         canvas.calculateNewDimensions(b);
@@ -157,16 +152,20 @@ public class MainWindowController implements Initializable {
         time.setNextGenerationTimer(newTimer);
         displayFps();
     }
+
     public void displayCellCount() {
-        txtShowCellCount.setText(Integer.toString(b.getCellCount()));
+        txtShowCellCount.setText(Integer.toString(b.getCellCount()) + " .");
     }
+
     public void displayGeneration() {
         txtShowGen.setText(Integer.toString(b.getGenerationCount()) + " ");
     }
+
     public void displayFps() {
-        txtShowFps.setText(Double.toString(fpsSlider.getValue()));
+        txtShowFps.setText(Integer.toString((int)fpsSlider.getValue()));
     }
 
+    @FXML
     public void createNextGeneration() {
         b.nextGeneration();
         canvas.draw(b);
