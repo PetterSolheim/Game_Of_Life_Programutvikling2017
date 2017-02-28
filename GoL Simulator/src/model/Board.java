@@ -22,7 +22,7 @@ public class Board {
      * is a blank board of 50 rows and 50 columns.
      */
     private Board() {
-        currentBoard = new byte[100][100];
+        currentBoard = new byte[200][200];
         originalBoard = duplicateBoard(currentBoard);
     }
 

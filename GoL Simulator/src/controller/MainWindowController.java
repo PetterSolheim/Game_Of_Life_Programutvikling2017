@@ -89,13 +89,14 @@ public class MainWindowController implements Initializable {
             changeFPSAndShow();
         });
 
+        canvas.calculateCanvasSize(b);
         canvas.redrawBoard(b);
     }
 
     @FXML
     private void reset() {
         time.stop();
-        isPaused = true;
+        play();
         b.resetBoard();
         canvas.redrawBoard(b);
         displayCellCount();
@@ -138,8 +139,9 @@ public class MainWindowController implements Initializable {
     }
 
     public void changeCellSizeAndShow() {
-        canvas.setCellSize((int) cellSizeSlider.getValue());
-        canvas.calculateNewDimensions(b);
+        canvas.setScaleX(cellSizeSlider.getValue());
+        canvas.setScaleY(cellSizeSlider.getValue());
+        canvas.draw(b);
         displayCellSize();
     }
 

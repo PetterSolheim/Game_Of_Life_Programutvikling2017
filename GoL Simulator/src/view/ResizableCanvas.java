@@ -14,8 +14,8 @@ import model.Board;
  */
 public class ResizableCanvas extends Canvas {
 
-    private int cellSize;
-    private int spaceBetweenCells = 2;
+    private int cellSize = 4;
+    private int spaceBetweenCells = 1;
     private Color backGroundColor;
     private Color livingCellColor;
     private Color deadCellColor;
@@ -47,7 +47,7 @@ public class ResizableCanvas extends Canvas {
         }
     }
 
-    public void calculateNewDimensions(Board b) {
+    public void calculateCanvasSize(Board b) {
         this.heightProperty().setValue((b.getHeight()) * (cellSize + spaceBetweenCells));
         this.widthProperty().setValue((b.getWidth()) * (cellSize + spaceBetweenCells));
     }
@@ -72,7 +72,6 @@ public class ResizableCanvas extends Canvas {
      */
     public void setCellSize(int newCellSize) {
         this.cellSize = newCellSize;
-        //this.spaceBetweenCells = newCellSize / 2;
     }
 
     public int getCellSize() {
