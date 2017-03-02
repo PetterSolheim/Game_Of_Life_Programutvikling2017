@@ -53,7 +53,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="btnPlay" onAction="#play" text="Play">
+                <Button fx:id="btnPlay" onAction="#togglePlayPause" text="Play">
                     <graphic>
                         <ImageView fx:id="imgPlayPause" fitHeight = "19.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -106,7 +106,7 @@
                     <Insets left="10.0" />
                 </HBox.margin>
                 <children>
-                    <Slider fx:id="cellSizeSlider" min = "1.0" max = "20.0" value = "1"/>
+                    <Slider fx:id="cellSizeSlider" min = "1.0" max = "5.0" value = "1"/>
                     <Text fx:id="txtShowCellSize"/>
                     <Slider fx:id="fpsSlider" majorTickUnit="1.0" max="60.0" min="1.0" minorTickCount="0" snapToTicks="true" value="4.0" />                 
                     <Text fx:id="txtShowFps"/>

@@ -98,16 +98,16 @@ public class Board {
 
         // iterates through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
-        for (int i = 0; i < testPattern.length; i++) {
-            for (int j = 0; j < testPattern[0].length; j++) {
-                int neighbours = countNeighbours(testPattern, i, j);
+        for (int row = 0; row < testPattern.length; row++) {
+            for (int col = 0; col < testPattern[0].length; col++) {
+                int neighbours = countNeighbours(testPattern, row, col);
 
-                if (neighbours < minToSurvive || neighbours > maxToSurvive) {
-                    currentBoard[i][j] = 0;
+                if (testPattern[row][col] == 1 && (neighbours < minToSurvive || neighbours > maxToSurvive)) {
+                    currentBoard[row][col] = 0;
                 }
 
-                if (neighbours == birth) {
-                    currentBoard[i][j] = 1;
+                else if (testPattern[row][col] == 0 && neighbours == birth) {
+                    currentBoard[row][col] = 1;
                 }
             }
         }
@@ -126,14 +126,14 @@ public class Board {
      */
     private int countNeighbours(byte[][] cell, int x, int y) {
         int neighbours = 0;
-        int xLastIndex = cell.length - 1;
-        int yLastIndex = cell[0].length - 1;
+        int rowLastIndex = cell.length - 1;
+        int colLastIndex = cell[0].length - 1;
         
-        if (y+1 <= yLastIndex) {
+        if (y+1 <= colLastIndex) {
             neighbours += cell[x][y+1];
         }
 
-        if (x-1 >= 0 && y+1 <= yLastIndex) {
+        if (x-1 >= 0 && y+1 <= colLastIndex) {
             neighbours += cell[x-1][y+1];
         }
 
@@ -149,32 +149,32 @@ public class Board {
             neighbours += cell[x][y-1];
         }
 
-        if (x+1 <= xLastIndex && y-1 >= 0) {
+        if (x+1 <= rowLastIndex && y-1 >= 0) {
             neighbours += cell[x+1][y-1];
         }
 
-        if (x+1 <= xLastIndex) {
+        if (x+1 <= rowLastIndex) {
             neighbours += cell[x+1][y];
         }
 
-        if (x+1 <= xLastIndex && y+1 <= yLastIndex) {
+        if (x+1 <= rowLastIndex && y+1 <= colLastIndex) {
             neighbours += cell[x+1][y+1];
         }
 
         return neighbours;
     }
     
-    /**
-     * Method which toggles the state of a specified cell (if it is alive, it
-     * becomes dead, if it is dead, it becomes alive).
-     * @param x
-     * @param y 
-     */
-    public void toggleCellState(int x, int y) {
-        if(currentBoard[y][x] == 1)
-            currentBoard[y][x] = 0;
+
+    public void toggleCellState(int row, int col) {
+        if(currentBoard[row][col] == 1)
+            currentBoard[row][col] = 0;
         else
-            currentBoard[y][x] = 1;
+            currentBoard[row][col] = 1;
+    }
+    
+    
+    public void reviveCell(int row, int col) {
+        currentBoard[row][col] = 1;
     }
 
     /**

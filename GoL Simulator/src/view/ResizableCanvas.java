@@ -14,9 +14,9 @@ import model.Board;
  */
 public class ResizableCanvas extends Canvas {
 
-    private int cellSize = 4;
-    private int spaceBetweenCells = 1;
-    private Color backGroundColor;
+    private final int cellSize = 4;
+    private final int spaceBetweenCells = 1;
+    private Color backgroundColor;
     private Color livingCellColor;
     private Color deadCellColor;
     private GraphicsContext gc;
@@ -24,7 +24,7 @@ public class ResizableCanvas extends Canvas {
 
     public ResizableCanvas() {
         gc = this.getGraphicsContext2D();
-        backGroundColor = Color.LIGHTGOLDENRODYELLOW;
+        backgroundColor = Color.LIGHTGOLDENRODYELLOW;
         deadCellColor = Color.WHITE;
         livingCellColor = Color.BLACK;
     }
@@ -37,15 +37,35 @@ public class ResizableCanvas extends Canvas {
     public void draw(Board b) {
         for (int row = 0; row < b.getBoard().length; row++) {
             for (int col = 0; col < b.getBoard()[0].length; col++) {
-                if (b.getBoard()[row][col] == 1) {
-                    gc.setFill(livingCellColor);
-                } else {
-                    gc.setFill(deadCellColor);
-                }
-                gc.fillRect((col * (cellSize + spaceBetweenCells)), (row * (cellSize + spaceBetweenCells)), cellSize, cellSize);
+                drawCell(b, row, col);
             }
         }
     }
+    
+    
+    public void drawCell(Board b, int row, int col) {
+        if (b.getBoard()[row][col] == 1) {
+            gc.setFill(livingCellColor);
+        } else {
+            gc.setFill(deadCellColor);
+        }
+        gc.fillRect((col * (cellSize + spaceBetweenCells)), (row * (cellSize + spaceBetweenCells)), cellSize, cellSize);
+    }
+    
+    /*
+    public void drawCell(Board b, int row, int col) {
+        if (b.getBoard()[row][col] == 1) {
+            gc.setFill(backgroundColor);
+            gc.fillRect((col * (cellSize + spaceBetweenCells)), (row * (cellSize + spaceBetweenCells)), cellSize, cellSize);
+            gc.setFill(livingCellColor);
+            gc.fillRect(((col * (cellSize+spaceBetweenCells))+1), ((row * (cellSize + spaceBetweenCells))+1), cellSize-2, cellSize-2);
+        } else {
+            gc.setFill(backgroundColor);
+            gc.fillRect((col * (cellSize + spaceBetweenCells)), (row * (cellSize + spaceBetweenCells)), cellSize, cellSize);
+            gc.setFill(deadCellColor);
+            gc.fillRect((col * (cellSize+spaceBetweenCells)+1), (row * (cellSize + spaceBetweenCells)+1), cellSize-2, cellSize-2);
+        }
+    }*/
 
     public void calculateCanvasSize(Board b) {
         this.heightProperty().setValue((b.getHeight()) * (cellSize + spaceBetweenCells));
@@ -53,7 +73,7 @@ public class ResizableCanvas extends Canvas {
     }
 
     public void clearCanvas() {
-        gc.setFill(backGroundColor);
+        gc.setFill(backgroundColor);
         gc.fillRect(0, 0, this.getWidth(), this.getHeight());
     }
 
@@ -64,14 +84,6 @@ public class ResizableCanvas extends Canvas {
     public void redrawBoard(Board b) {
         clearCanvas();
         draw(b);
-    }
-
-    /**
-     *
-     * @param newCellSize set the width and height of all cells.
-     */
-    public void setCellSize(int newCellSize) {
-        this.cellSize = newCellSize;
     }
 
     public int getCellSize() {
@@ -87,7 +99,7 @@ public class ResizableCanvas extends Canvas {
      * @param newBackgroundColor set/change background color behind all cells.
      */
     public void setBackgroundColor(Color newBackgroundColor) {
-        this.backGroundColor = newBackgroundColor;
+        this.backgroundColor = newBackgroundColor;
     }
 
     /**
@@ -106,7 +118,7 @@ public class ResizableCanvas extends Canvas {
     }
 
     public Color getBackgroundColor() {
-        return this.backGroundColor;
+        return this.backgroundColor;
     }
 
     /**
