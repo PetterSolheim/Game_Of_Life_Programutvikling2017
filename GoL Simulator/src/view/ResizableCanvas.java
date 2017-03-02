@@ -52,20 +52,6 @@ public class ResizableCanvas extends Canvas {
         gc.fillRect((col * (cellSize + spaceBetweenCells)), (row * (cellSize + spaceBetweenCells)), cellSize, cellSize);
     }
     
-    /*
-    public void drawCell(Board b, int row, int col) {
-        if (b.getBoard()[row][col] == 1) {
-            gc.setFill(backgroundColor);
-            gc.fillRect((col * (cellSize + spaceBetweenCells)), (row * (cellSize + spaceBetweenCells)), cellSize, cellSize);
-            gc.setFill(livingCellColor);
-            gc.fillRect(((col * (cellSize+spaceBetweenCells))+1), ((row * (cellSize + spaceBetweenCells))+1), cellSize-2, cellSize-2);
-        } else {
-            gc.setFill(backgroundColor);
-            gc.fillRect((col * (cellSize + spaceBetweenCells)), (row * (cellSize + spaceBetweenCells)), cellSize, cellSize);
-            gc.setFill(deadCellColor);
-            gc.fillRect((col * (cellSize+spaceBetweenCells)+1), (row * (cellSize + spaceBetweenCells)+1), cellSize-2, cellSize-2);
-        }
-    }*/
 
     public void calculateCanvasSize(Board b) {
         this.heightProperty().setValue((b.getHeight()) * (cellSize + spaceBetweenCells));
