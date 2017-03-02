@@ -82,7 +82,7 @@ public class MainWindowController implements Initializable {
 
         cellSizeSlider.valueProperty().addListener((observable) -> {
             changeCellSizeAndShow();
-            canvas.redrawBoard(b);
+            canvas.draw(b);
         });
 
         fpsSlider.valueProperty().addListener((observable) -> {
@@ -90,14 +90,14 @@ public class MainWindowController implements Initializable {
         });
 
         canvas.calculateCanvasSize(b);
-        canvas.redrawBoard(b);
+        canvas.draw(b);
     }
 
     @FXML
     private void reset() {
         stop();
         b.resetBoard();
-        canvas.redrawBoard(b);
+        canvas.draw(b);
         displayCellCount();
         displayGeneration();
     }
@@ -130,25 +130,25 @@ public class MainWindowController implements Initializable {
     @FXML
     private void changeLivingCellColor() {
         canvas.setLivingCellColor(livingCellColorPicker.getValue());
-        canvas.redrawBoard(b);
+        canvas.draw(b);
     }
 
     @FXML
     private void changeBackgroundColor() {
         canvas.setBackgroundColor(backgroundColorPicker.getValue());
-        canvas.redrawBoard(b);
+        canvas.draw(b);
     }
 
     @FXML
     private void changeDeadCellColor() {
         canvas.setDeadCellColor(deadCellColorPicker.getValue());
-        canvas.redrawBoard(b);
+        canvas.draw(b);
     }
 
     public void changeCellSizeAndShow() {
         canvas.setScaleX(cellSizeSlider.getValue());
         canvas.setScaleY(cellSizeSlider.getValue());
-        canvas.redrawBoard(b);
+        canvas.draw(b);
         displayCellSize();
     }
 
@@ -177,7 +177,7 @@ public class MainWindowController implements Initializable {
     @FXML
     public void createNextGeneration() {
         b.nextGeneration();
-        canvas.draw(b);
+        canvas.drawChanges(b);
         displayCellCount();
         displayGeneration();
     }

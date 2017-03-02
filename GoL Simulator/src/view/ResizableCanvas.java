@@ -21,7 +21,6 @@ public class ResizableCanvas extends Canvas {
     private Color deadCellColor;
     private GraphicsContext gc;
 
-
     public ResizableCanvas() {
         gc = this.getGraphicsContext2D();
         backgroundColor = Color.LIGHTGOLDENRODYELLOW;
@@ -35,14 +34,25 @@ public class ResizableCanvas extends Canvas {
      * @param b Board class containing a two dimensional byte array.
      */
     public void draw(Board b) {
+        gc.setFill(backgroundColor);
+        gc.fillRect(0, 0, this.getWidth(), this.getHeight());
         for (int row = 0; row < b.getBoard().length; row++) {
             for (int col = 0; col < b.getBoard()[0].length; col++) {
                 drawCell(b, row, col);
             }
         }
     }
-    
-    
+
+    public void drawChanges(Board b) {
+        for (int row = 0; row < b.getBoard().length; row++) {
+            for (int col = 0; col < b.getBoard()[0].length; col++) {
+                if (b.getBoardChanges()[row][col] != 0) {
+                    drawCell(b, row, col);
+                }
+            }
+        }
+    }
+
     public void drawCell(Board b, int row, int col) {
         if (b.getBoard()[row][col] == 1) {
             gc.setFill(livingCellColor);
@@ -51,25 +61,10 @@ public class ResizableCanvas extends Canvas {
         }
         gc.fillRect((col * (cellSize + spaceBetweenCells)), (row * (cellSize + spaceBetweenCells)), cellSize, cellSize);
     }
-    
 
     public void calculateCanvasSize(Board b) {
         this.heightProperty().setValue((b.getHeight()) * (cellSize + spaceBetweenCells));
         this.widthProperty().setValue((b.getWidth()) * (cellSize + spaceBetweenCells));
-    }
-
-    public void clearCanvas() {
-        gc.setFill(backgroundColor);
-        gc.fillRect(0, 0, this.getWidth(), this.getHeight());
-    }
-
-    /**
-     *
-     * @param b
-     */
-    public void redrawBoard(Board b) {
-        clearCanvas();
-        draw(b);
     }
 
     public int getCellSize() {
@@ -95,6 +90,7 @@ public class ResizableCanvas extends Canvas {
     public void setLivingCellColor(Color newCellColor) {
         this.livingCellColor = newCellColor;
     }
+
     public Color getLivingCellColor() {
         return this.livingCellColor;
     }

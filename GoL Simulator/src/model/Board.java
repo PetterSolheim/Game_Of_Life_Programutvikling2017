@@ -1,5 +1,7 @@
 package model;
 
+import java.util.Arrays;
+
 /**
  * Class for the game board. Contains the actual board and the methods for
  * iterating to the next generation, along with game rules for the board. The
@@ -10,6 +12,7 @@ public class Board {
 
     private static Board instance;
     private byte[][] currentBoard;
+    private byte[][] changedCells;
     private byte[][] originalBoard;
     private int generationCount = 0;
     private int cellCount = 0;
@@ -22,7 +25,7 @@ public class Board {
      * is a blank board of 50 rows and 50 columns.
      */
     private Board() {
-        currentBoard = new byte[200][200];
+        currentBoard = new byte[800][400];
         originalBoard = duplicateBoard(currentBoard);
     }
 
@@ -45,6 +48,10 @@ public class Board {
      */
     public byte[][] getBoard() {
         return currentBoard;
+    }
+    
+    public byte[][] getBoardChanges() {
+        return changedCells;
     }
     
     public int getHeight() {
@@ -94,6 +101,7 @@ public class Board {
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.
         byte[][] testPattern = duplicateBoard(currentBoard);
+        changedCells = new byte[currentBoard.length][currentBoard[0].length];
 
 
         // iterates through the board cells, count number of neighbours for each
@@ -104,10 +112,12 @@ public class Board {
 
                 if (testPattern[row][col] == 1 && (neighbours < minToSurvive || neighbours > maxToSurvive)) {
                     currentBoard[row][col] = 0;
+                    changedCells[row][col] = 1;
                 }
 
                 else if (testPattern[row][col] == 0 && neighbours == birth) {
                     currentBoard[row][col] = 1;
+                    changedCells[row][col] = 1;
                 }
             }
         }
