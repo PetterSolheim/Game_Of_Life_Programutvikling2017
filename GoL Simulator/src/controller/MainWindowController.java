@@ -89,33 +89,41 @@ public class MainWindowController implements Initializable {
             changeFPSAndShow();
         });
 
+        canvas.calculateCanvasSize(b);
         canvas.redrawBoard(b);
     }
 
     @FXML
     private void reset() {
-        time.stop();
-        isPaused = true;
+        stop();
         b.resetBoard();
         canvas.redrawBoard(b);
         displayCellCount();
         displayGeneration();
     }
 
-    @FXML
     private void play() {
-        Image imgPlay = new Image("/img/play.png");
         Image imgPause = new Image("/img/pause.png");
+        isPaused = false;
+        imgPlayPause.setImage(imgPause);
+        btnPlay.setText("Pause");
+        time.start();
+    }
+
+    private void stop() {
+        Image imgPlay = new Image("/img/play.png");
+        isPaused = true;
+        imgPlayPause.setImage(imgPlay);
+        btnPlay.setText("Play");
+        time.stop();
+    }
+
+    @FXML
+    private void togglePlayPause() {
         if (isPaused) {
-            isPaused = false;
-            imgPlayPause.setImage(imgPause);
-            btnPlay.setText("Pause");
-            time.start();
+            play();
         } else {
-            isPaused = true;
-            imgPlayPause.setImage(imgPlay);
-            btnPlay.setText("Play");
-            time.stop();
+            stop();
         }
     }
 
@@ -138,8 +146,9 @@ public class MainWindowController implements Initializable {
     }
 
     public void changeCellSizeAndShow() {
-        canvas.setCellSize((int) cellSizeSlider.getValue());
-        canvas.calculateNewDimensions(b);
+        canvas.setScaleX(cellSizeSlider.getValue());
+        canvas.setScaleY(cellSizeSlider.getValue());
+        canvas.redrawBoard(b);
         displayCellSize();
     }
 
@@ -162,7 +171,7 @@ public class MainWindowController implements Initializable {
     }
 
     public void displayFps() {
-        txtShowFps.setText(Integer.toString((int)fpsSlider.getValue()));
+        txtShowFps.setText(Integer.toString((int) fpsSlider.getValue()));
     }
 
     @FXML
@@ -193,10 +202,10 @@ public class MainWindowController implements Initializable {
     @FXML
     public void toggleClickedCell(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY) {
-            int row = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-            int col = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+            int row = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+            int col = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
             b.toggleCellState(row, col);
-            canvas.draw(b);
+            canvas.drawCell(b, row, col);
         }
 
     }
@@ -205,6 +214,14 @@ public class MainWindowController implements Initializable {
     public void dragCanvas(MouseEvent event) {
         if (event.getButton() == MouseButton.SECONDARY) {
             scrollPane.setPannable(true);
+        } else {
+            if (!isPaused) {
+                togglePlayPause();
+            }
+            int row = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+            int col = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+            b.reviveCell(row, col);
+            canvas.drawCell(b, row, col);
         }
     }
 

@@ -17,6 +17,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.Group?>
 
 <AnchorPane fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="/css/main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
     <children>
@@ -52,7 +53,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="btnPlay" onAction="#play" text="Play">
+                <Button fx:id="btnPlay" onAction="#togglePlayPause" text="Play">
                     <graphic>
                         <ImageView fx:id="imgPlayPause" fitHeight = "19.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -94,7 +95,9 @@
         </ToolBar>
         <ScrollPane fx:id = "scrollPane" layoutY="67.0" prefHeight="305.0" prefWidth="600.0" AnchorPane.bottomAnchor="28.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0">
             <content>
-                <ResizableCanvas fx:id="canvas" onMouseClicked="#toggleClickedCell" onMouseDragged="#dragCanvas" onMouseReleased="#dragCanvasEnded"/>
+                <Group>
+                    <ResizableCanvas fx:id="canvas" onMouseClicked="#toggleClickedCell" onMouseDragged="#dragCanvas" onMouseReleased="#dragCanvasEnded"/>
+                </Group>
             </content>
         </ScrollPane>
         <HBox layoutY="374.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
@@ -103,7 +106,7 @@
                     <Insets left="10.0" />
                 </HBox.margin>
                 <children>
-                    <Slider fx:id="cellSizeSlider" min = "5.0" max = "30.0" value = "10"/>
+                    <Slider fx:id="cellSizeSlider" min = "1.0" max = "5.0" value = "1"/>
                     <Text fx:id="txtShowCellSize"/>
                     <Slider fx:id="fpsSlider" majorTickUnit="1.0" max="60.0" min="1.0" minorTickCount="0" snapToTicks="true" value="4.0" />                 
                     <Text fx:id="txtShowFps"/>
