@@ -22,19 +22,26 @@ import java.util.regex.Pattern;
  */
 public class FileImporter {
 
-    private byte[][] board;
+    private Board board;
+    private Rules rules;
+    private byte[][] boardArray;
     private int row;
     private int col;
-    int survive = 0;
-    int birth = 0;
+    private int[] survivalRules;
+    private int[] birthRules;
 
-    public byte[][] readGameBoardFromDisk(File f) throws IOException {
+    public FileImporter() {
+        board = new Board();
+        rules = Rules.getInstance();
+    }
+
+    public Board readGameBoardFromDisk(File f) throws IOException {
         String fileExtension = getFileExtension(f); // determine the filetype
         readGameBoard(new FileReader(f), fileExtension); // parse the input file
         return board;
     }
 
-    public byte[][] readGameBoardFromUrl(String url) throws IOException {
+    public Board readGameBoardFromUrl(String url) throws IOException {
         String fileExtension = getFileExtension(url);
         URL destination = new URL(url);
         URLConnection conn = destination.openConnection();
@@ -43,6 +50,7 @@ public class FileImporter {
     }
 
     private void readGameBoard(Reader r, String fileExtension) {
+
         switch (fileExtension) {
             case "rle":
                 rleReader(r);
@@ -59,6 +67,12 @@ public class FileImporter {
             default:
                 System.out.println("Unsuported file format");
         }
+        
+        boardArray = addPadding(boardArray);
+        board.setBoard(boardArray);
+        rules.setBirthRules(birthRules);
+        rules.setSurviveRules(survivalRules);
+
     }
 
     private void rleReader(Reader r) {
@@ -66,12 +80,10 @@ public class FileImporter {
         String line = null;
         String[] boardStringArray = null;
         Matcher m;
-
+        
+        Pattern rulePattern = Pattern.compile("rule{1}\\s*=\\s*(?:b|B)?(\\d+)/(?:s|S)?(\\d+)");
         Pattern colPattern = Pattern.compile("(?:x|X)\\s=\\s*(\\d+)");
-
         Pattern rowPattern = Pattern.compile("(?:y|Y)\\s=\\s*(\\d+)");
-
-        Pattern rulePattern = Pattern.compile("rule{1}\\s*=\\s*B?(\\d+)/S?(\\d+)");
 
         StringBuilder boardStringBuilder = new StringBuilder();
         boolean headerParsed = false;
@@ -99,15 +111,27 @@ public class FileImporter {
                                 System.out.println("Cols: " + col);
                             }
 
-                            board = new byte[row][col];
+                            boardArray = new byte[row][col];
 
                             // determin ruleset for board
                             m = rulePattern.matcher(line);
                             while (m.find()) {
-                                birth = Integer.parseInt(m.group(1));
-                                survive = Integer.parseInt(m.group(2));
-                                System.out.println("Birth: " + birth);
-                                System.out.println("Survive: " + survive);
+
+                                // determin rules for birth
+                                String birth = m.group(1);
+                                String[] birthStringArray = birth.split("");
+                                birthRules = new int[birthStringArray.length];
+                                for (int i = 0; i < birthStringArray.length; i++) {
+                                    birthRules[i] = Integer.parseInt(birthStringArray[i]);
+                                }
+
+                                // determin rules for survival
+                                String survive = m.group(2);
+                                String[] surviveStringArray = survive.split("");
+                                survivalRules = new int[surviveStringArray.length];
+                                for (int i = 0; i < surviveStringArray.length; i++) {
+                                    survivalRules[i] = Integer.parseInt(surviveStringArray[i]);
+                                }
                             }
                             headerParsed = true;
                         }
@@ -125,7 +149,7 @@ public class FileImporter {
                             }
                         }
                     }
-                    
+
                     // split the board definition into an array of Strings,
                     // where each String in the array represents a row on the board.
                     if (headerParsed && endOfFile) {
@@ -153,9 +177,9 @@ public class FileImporter {
 
                     for (int j = cellPosition; j < cellPosition + numberOfCells; j++) {
                         if (m.group(2).equals("o")) {
-                            board[i][j] = 1;
+                            boardArray[i][j] = 1;
                         } else if (m.group(2).equals("b")) {
-                            board[i][j] = 0;
+                            boardArray[i][j] = 0;
                         }
 
                     }
@@ -178,6 +202,16 @@ public class FileImporter {
         int i = s.lastIndexOf(".");
         String fileExtension = s.substring(i + 1);
         return fileExtension;
+    }
+    
+    public byte[][] addPadding(byte[][] input) {
+        byte[][] paddedBoard = new byte[input.length+20][input[0].length+20];
+        for(int i = 0; i < input.length; i++) {
+            for(int j = 0; j < input[i].length; j++) {
+                paddedBoard[i+10][j+10] = input[i][j];
+            }
+        }
+        return paddedBoard;
     }
 
 }

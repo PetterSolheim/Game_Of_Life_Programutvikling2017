@@ -17,9 +17,13 @@ import javafx.fxml.Initializable;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
@@ -30,6 +34,7 @@ import javafx.stage.Stage;
 import model.*;
 import view.ResizableCanvas;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 
 /**
@@ -67,7 +72,7 @@ public class MainWindowController implements Initializable {
     private ColorPicker backgroundColorPicker;
     @FXML
     private ImageView imgPlayPause;
-    private Board b;
+    private Board board;
     private Timer time;
     private boolean isPaused;
     private Stage stage;
@@ -78,8 +83,8 @@ public class MainWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Platform.runLater(this::defineStage); // allows easy referal to the windows stage
-        
-        b = Board.getInstance();
+
+        board = new Board(200, 200);
         time = new Timer(this);
         isPaused = true;
         livingCellColorPicker.setValue(canvas.getLivingCellColor());
@@ -90,22 +95,27 @@ public class MainWindowController implements Initializable {
 
         cellSizeSlider.valueProperty().addListener((observable) -> {
             setCanvasScale();
-            canvas.draw(b);
+            canvas.draw(board);
         });
 
         fpsSlider.valueProperty().addListener((observable) -> {
             setFps();
         });
 
-        canvas.calculateCanvasSize(b);
-        canvas.draw(b);
+        canvas.calculateCanvasSize(board);
+        canvas.draw(board);
+    }
+
+    @FXML
+    private void newBoard() {
+        
     }
 
     @FXML
     private void reset() {
         stop();
-        b.resetBoard();
-        canvas.draw(b);
+        board.resetBoard();
+        canvas.draw(board);
         displayCellCount();
         displayGeneration();
     }
@@ -134,9 +144,9 @@ public class MainWindowController implements Initializable {
 
         if (file != null && file.exists()) {
             try {
-                b.setBoard(fileImporter.readGameBoardFromDisk(file));
-                canvas.calculateCanvasSize(b);
-                canvas.draw(b);
+                board = fileImporter.readGameBoardFromDisk(file);
+                canvas.calculateCanvasSize(board);
+                canvas.draw(board);
             } catch (IOException e) {
                 System.err.println("File not found: " + e);
             }
@@ -153,9 +163,9 @@ public class MainWindowController implements Initializable {
         Optional<String> url = dialog.showAndWait();
         if (url.isPresent()) {
             try {
-                b.setBoard(fileImporter.readGameBoardFromUrl(url.get()));
-                canvas.calculateCanvasSize(b);
-                canvas.draw(b);
+                board = fileImporter.readGameBoardFromUrl(url.get());
+                canvas.calculateCanvasSize(board);
+                canvas.draw(board);
             } catch (IOException e) {
                 System.err.println("File not found: " + e);
             }
@@ -182,25 +192,25 @@ public class MainWindowController implements Initializable {
     @FXML
     private void changeLivingCellColor() {
         canvas.setLivingCellColor(livingCellColorPicker.getValue());
-        canvas.draw(b);
+        canvas.draw(board);
     }
 
     @FXML
     private void changeBackgroundColor() {
         canvas.setBackgroundColor(backgroundColorPicker.getValue());
-        canvas.draw(b);
+        canvas.draw(board);
     }
 
     @FXML
     private void changeDeadCellColor() {
         canvas.setDeadCellColor(deadCellColorPicker.getValue());
-        canvas.draw(b);
+        canvas.draw(board);
     }
 
     public void setCanvasScale() {
         canvas.setScaleX(cellSizeSlider.getValue());
         canvas.setScaleY(cellSizeSlider.getValue());
-        canvas.draw(b);
+        canvas.draw(board);
     }
 
     private void setFps() {
@@ -209,11 +219,11 @@ public class MainWindowController implements Initializable {
     }
 
     private void displayCellCount() {
-        txtShowCellCount.setText(Integer.toString(b.getCellCount()) + " .");
+        txtShowCellCount.setText(Integer.toString(board.getCellCount()) + " .");
     }
 
     private void displayGeneration() {
-        txtShowGen.setText(Integer.toString(b.getGenerationCount()) + " ");
+        txtShowGen.setText(Integer.toString(board.getGenerationCount()) + " ");
     }
 
     private void displayFps() {
@@ -222,8 +232,8 @@ public class MainWindowController implements Initializable {
 
     @FXML
     public void createNextGeneration() {
-        b.nextGeneration();
-        canvas.drawChanges(b);
+        board.nextGeneration();
+        canvas.drawChanges(board);
         displayCellCount();
         displayGeneration();
     }
@@ -250,8 +260,8 @@ public class MainWindowController implements Initializable {
         if (event.getButton() == MouseButton.PRIMARY && !event.isDragDetect()) {
             int row = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
             int col = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-            b.toggleCellState(row, col);
-            canvas.drawCell(b, row, col);
+            board.toggleCellState(row, col);
+            canvas.drawCell(board, row, col);
         }
 
     }
@@ -266,8 +276,8 @@ public class MainWindowController implements Initializable {
             }
             int row = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
             int col = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-            b.reviveCell(row, col);
-            canvas.drawCell(b, row, col);
+            board.settCellStateAlive(row, col);
+            canvas.drawCell(board, row, col);
         }
     }
 

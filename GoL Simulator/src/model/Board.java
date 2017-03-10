@@ -21,10 +21,16 @@ public class Board {
      * As this is a singleton, the constructor is private. Default start board
      * is a blank board of 50 rows and 50 columns.
      */
-    private Board() {
-        currentBoard = new byte[200][200];
+    public Board() {
+        currentBoard = new byte[50][50];
         originalBoard = duplicateBoard(currentBoard);
-        rules = Rules.getInstance();
+        rules = Rules.getInstance(); // rules class is a singleton
+    }
+    
+    public Board(int row, int col) {
+        currentBoard = new byte[row][col];
+        originalBoard = duplicateBoard(currentBoard);
+        rules = Rules.getInstance(); // rules class is a singleton.
     }
 
     /**
@@ -32,12 +38,12 @@ public class Board {
      *
      * @return A reference to the Board object.
      */
-    public static Board getInstance() {
+    /*public static Board getInstance() {
         if (instance == null) {
             instance = new Board();
         }
         return instance;
-    }
+    }*/
 
     /**
      * Gets the current Board.
@@ -55,14 +61,6 @@ public class Board {
      */
     public byte[][] getBoardChanges() {
         return changedCells;
-    }
-
-    public int getRowCount() {
-        return currentBoard.length;
-    }
-
-    public int getColumnCount() {
-        return currentBoard[0].length;
     }
 
     /**
@@ -156,7 +154,7 @@ public class Board {
         }
     }
 
-    public void reviveCell(int row, int col) {
+    public void settCellStateAlive(int row, int col) {
         currentBoard[row][col] = 1;
     }
 

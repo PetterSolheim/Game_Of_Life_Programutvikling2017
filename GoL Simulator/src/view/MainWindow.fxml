@@ -19,13 +19,13 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Group?>
 
-<AnchorPane fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="/css/main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
+<AnchorPane fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
     <children>
         <MenuBar fx:id="menuBar" layoutY="2.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="New" />
+                        <MenuItem mnemonicParsing="false" text="New" onAction="#newBoard" />
                     </items>
                     <items>
                         <Menu mnemonicParsing="false" text="Open">
@@ -117,7 +117,7 @@
                 </HBox.margin>
                 <children>
                     <Text text="Zoom: "/>
-                    <Slider fx:id="cellSizeSlider" min = "0.5" max = "4.0" value = "2"/>
+                    <Slider fx:id="cellSizeSlider" min = "0.1" max = "4.0" value = "2"/>
                     <!--<Text fx:id="txtShowCellSize"/>-->
                     <Text text="Animation speed: "/>
                     <Slider fx:id="fpsSlider" majorTickUnit="1.0" max="60.0" min="1.0" minorTickCount="0" snapToTicks="true" value="4.0" />                 

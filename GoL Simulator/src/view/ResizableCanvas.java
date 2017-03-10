@@ -41,6 +41,11 @@ public class ResizableCanvas extends Canvas {
             }
         }
     }
+    
+    public void redraw(Board b) {
+        calculateCanvasSize(b);
+        draw(b);
+    }
 
     public void drawChanges(Board b) {
         for (int row = 0; row < b.getBoard().length; row++) {
@@ -62,8 +67,8 @@ public class ResizableCanvas extends Canvas {
     }
 
     public void calculateCanvasSize(Board b) {
-        this.heightProperty().setValue((b.getRowCount()) * (cellSize + spaceBetweenCells));
-        this.widthProperty().setValue((b.getColumnCount()) * (cellSize + spaceBetweenCells));
+        this.heightProperty().setValue((b.getBoard().length) * (cellSize + spaceBetweenCells));
+        this.widthProperty().setValue((b.getBoard()[0].length) * (cellSize + spaceBetweenCells));
     }
 
     public int getCellSize() {
