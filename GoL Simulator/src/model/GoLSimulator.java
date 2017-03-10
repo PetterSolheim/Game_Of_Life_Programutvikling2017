@@ -1,4 +1,4 @@
-package gol.simulator;
+package model;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;

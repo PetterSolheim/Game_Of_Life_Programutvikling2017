@@ -7,12 +7,14 @@ package controller;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import model.Board;
+import model.Rules;
 
 /**
  *
@@ -21,52 +23,69 @@ import model.Board;
 public class GameRulesWindowController implements Initializable {
 
     @FXML
-    private javafx.scene.control.Button btnCancel;
+    private Button btnCancel;
     @FXML
-    private javafx.scene.control.Button btnSave;
+    private Button btnSave;
     @FXML
-    private javafx.scene.control.TextField txtMin;
+    private TextField txtB;
     @FXML
-    private javafx.scene.control.TextField txtMax;
+    private TextField txtS;
     @FXML
-    private javafx.scene.control.TextField txtBirth;
-    Board myBoard = Board.getInstance();
+    private VBox vBox;
+
+    Stage stage;
+
+    Rules rules = Rules.getInstance();
 
     @FXML
     public void cancel() {
-        Stage stage = (Stage) btnCancel.getScene().getWindow();
-        stage.close();
 
+        stage.close();
     }
 
     @FXML
     public void save() {
-        try {
-            int min = Integer.parseInt(txtMin.getText());
-            int max = Integer.parseInt(txtMax.getText());
-            int birth = Integer.parseInt(txtBirth.getText());
-
-            myBoard.setRules(min, max, birth);
-            Stage stage = (Stage) btnSave.getScene().getWindow();
-            stage.close();
-        } catch (IllegalArgumentException e) {
-            Alert alert = new Alert(AlertType.INFORMATION);
-            alert.setTitle("Error");
-            alert.setHeaderText("Invalid input");
-            alert.setContentText("Invalid input: " + e.getMessage());
-            alert.showAndWait();
+        // apply new birth rules
+        String[] bStringArray = txtB.getText().split("");
+        int[] bIntArray = new int[bStringArray.length];
+        for (int i = 0; i < bStringArray.length; i++) {
+            bIntArray[i] = Integer.parseInt(bStringArray[i]);
         }
+        rules.setBirthRules(bIntArray);
+
+        // apply new survival rules
+        String[] sStringArray = txtS.getText().split("");
+        int[] sIntArray = new int[sStringArray.length];
+        for (int i = 0; i < sStringArray.length; i++) {
+            sIntArray[i] = Integer.parseInt(sStringArray[i]);
+        }
+        rules.setSurviveRules(sIntArray);
+
+        stage.close();
+    }
+
+    private void defineStage() {
+        stage = (Stage) vBox.getScene().getWindow();
     }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        String min = String.valueOf(myBoard.getMinToSurvive());
-        String max = String.valueOf(myBoard.getMaxToSurvive());
-        String birth = String.valueOf(myBoard.getBirth());
+        // make stage available
+        Platform.runLater(this::defineStage);
 
-        txtMin.setText(min);
-        txtMax.setText(max);
-        txtBirth.setText(birth);
+        // load and display current rules
+        StringBuilder birthString = new StringBuilder();
+        for (int value : rules.getBirthRules()) {
+            birthString.append(value);
+        }
+        txtB.setText(birthString.toString());
+
+        StringBuilder survivalString = new StringBuilder();
+        for (int value : rules.getSurvivalRules()) {
+            survivalString.append(value);
+        }
+        txtS.setText(survivalString.toString());
+
     }
 
 }

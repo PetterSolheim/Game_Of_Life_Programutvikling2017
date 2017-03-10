@@ -25,7 +25,7 @@ public class Timer extends AnimationTimer{
             controller.createNextGeneration();
         }
     }
-    public void setNextGenerationTimer (long timeInNanoSeconds){
+    public void setFps (long timeInNanoSeconds){
         this.timeBetweenGeneration = timeInNanoSeconds;
     }
     public Timer (MainWindowController controller){

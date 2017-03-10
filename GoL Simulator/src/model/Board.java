@@ -1,32 +1,30 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
  * Class for the game board. Contains the actual board and the methods for
- * iterating to the next generation, along with game rules for the board. The
- * class is a Singleton.
- *
+ * iterating to the next generation. Rules are located in the Rules class.
  */
 public class Board {
 
     private static Board instance;
+    private Rules rules;
     private byte[][] currentBoard;
     private byte[][] changedCells;
     private byte[][] originalBoard;
     private int generationCount = 0;
     private int cellCount = 0;
-    private int minToSurvive = 2;
-    private int maxToSurvive = 3;
-    private int birth = 3;
 
     /**
      * As this is a singleton, the constructor is private. Default start board
      * is a blank board of 50 rows and 50 columns.
      */
     private Board() {
-        currentBoard = new byte[800][400];
+        currentBoard = new byte[200][200];
         originalBoard = duplicateBoard(currentBoard);
+        rules = Rules.getInstance();
     }
 
     /**
@@ -44,21 +42,26 @@ public class Board {
     /**
      * Gets the current Board.
      *
-     * @return The game board.
+     * @return byte[][] array.
      */
     public byte[][] getBoard() {
         return currentBoard;
     }
-    
+
+    /**
+     * Gets a byte[][] array representing which cells were changed during the
+     * last generation iteration.
+     * @return byte[][] array.
+     */
     public byte[][] getBoardChanges() {
         return changedCells;
     }
-    
-    public int getHeight() {
+
+    public int getRowCount() {
         return currentBoard.length;
     }
-    
-    public int getWidth() {
+
+    public int getColumnCount() {
         return currentBoard[0].length;
     }
 
@@ -72,62 +75,33 @@ public class Board {
         currentBoard = duplicateBoard(newBoard);
     }
 
-    /**
-     * Allows new rules to be set. Default is 23/3.
-     *
-     * @param min The minimum number of live neighbours for current cell to
-     * survive.
-     * @param max The maximum number of live neighbours for the current cell to
-     * survive.
-     * @param birth The number of live neighbours a dead cell must have for it
-     * to become a live cell.
-     */
-    public void setRules(int min, int max, int birth) {
-        if (min >= 0 && min <= 8 && max >= 0 && max <= 8 && birth >= 0 && birth <= 8) {
-            minToSurvive = min;
-            maxToSurvive = max;
-            this.birth = birth;
-        } else {
-            throw new IllegalArgumentException("Values entered must be no lower"
-                    + " than 0, and no higher than 8!");
-
-        }
-    }
-
-    /**
-     * Iterates the board to the next generation.
-     */
     public void nextGeneration() {
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.
-        byte[][] testPattern = duplicateBoard(currentBoard);
+        byte[][] neighbourCount = duplicateBoard(currentBoard);
         changedCells = new byte[currentBoard.length][currentBoard[0].length];
-
 
         // iterates through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
-        for (int row = 0; row < testPattern.length; row++) {
-            for (int col = 0; col < testPattern[0].length; col++) {
-                int neighbours = countNeighbours(testPattern, row, col);
+        for (int row = 0; row < neighbourCount.length; row++) {
+            for (int col = 0; col < neighbourCount[0].length; col++) {
+                int neighbours = countNeighbours(neighbourCount, row, col);
 
-                if (testPattern[row][col] == 1 && (neighbours < minToSurvive || neighbours > maxToSurvive)) {
+                if (neighbourCount[row][col] == 1 && (!rules.getSurvivalRules().contains(neighbours))) {
                     currentBoard[row][col] = 0;
                     changedCells[row][col] = 1;
-                }
-
-                else if (testPattern[row][col] == 0 && neighbours == birth) {
+                } else if (neighbourCount[row][col] == 0 && rules.getBirthRules().contains(neighbours)) {
                     currentBoard[row][col] = 1;
                     changedCells[row][col] = 1;
                 }
             }
         }
         generationCount++;
-
     }
 
     /**
      * Counts the number of neighbours for a given cell. Method is private, and
-     * used by the nextGeneration() method. 
+     * used by the nextGeneration() method.
      *
      * @param cell The game board.
      * @param x The first index of the cell to have neighbours counted.
@@ -138,78 +112,52 @@ public class Board {
         int neighbours = 0;
         int rowLastIndex = cell.length - 1;
         int colLastIndex = cell[0].length - 1;
-        
-        if (y+1 <= colLastIndex) {
-            neighbours += cell[x][y+1];
+
+        if (y + 1 <= colLastIndex) {
+            neighbours += cell[x][y + 1];
         }
 
-        if (x-1 >= 0 && y+1 <= colLastIndex) {
-            neighbours += cell[x-1][y+1];
+        if (x - 1 >= 0 && y + 1 <= colLastIndex) {
+            neighbours += cell[x - 1][y + 1];
         }
 
-        if (x-1 >= 0) {
-            neighbours += cell[x-1][y];
+        if (x - 1 >= 0) {
+            neighbours += cell[x - 1][y];
         }
 
-        if (x-1 >= 0 && y-1 >= 0) {
-            neighbours += cell[x-1][y-1];
+        if (x - 1 >= 0 && y - 1 >= 0) {
+            neighbours += cell[x - 1][y - 1];
         }
 
-        if (y-1 >= 0) {
-            neighbours += cell[x][y-1];
+        if (y - 1 >= 0) {
+            neighbours += cell[x][y - 1];
         }
 
-        if (x+1 <= rowLastIndex && y-1 >= 0) {
-            neighbours += cell[x+1][y-1];
+        if (x + 1 <= rowLastIndex && y - 1 >= 0) {
+            neighbours += cell[x + 1][y - 1];
         }
 
-        if (x+1 <= rowLastIndex) {
-            neighbours += cell[x+1][y];
+        if (x + 1 <= rowLastIndex) {
+            neighbours += cell[x + 1][y];
         }
 
-        if (x+1 <= rowLastIndex && y+1 <= colLastIndex) {
-            neighbours += cell[x+1][y+1];
+        if (x + 1 <= rowLastIndex && y + 1 <= colLastIndex) {
+            neighbours += cell[x + 1][y + 1];
         }
 
         return neighbours;
     }
-    
 
     public void toggleCellState(int row, int col) {
-        if(currentBoard[row][col] == 1)
+        if (currentBoard[row][col] == 1) {
             currentBoard[row][col] = 0;
-        else
+        } else {
             currentBoard[row][col] = 1;
+        }
     }
-    
-    
+
     public void reviveCell(int row, int col) {
         currentBoard[row][col] = 1;
-    }
-
-    /**
-     *
-     * @return The lowest number of live neighbours needed for a cell to
-     * survive.
-     */
-    public int getMinToSurvive() {
-        return minToSurvive;
-    }
-
-    /**
-     *
-     * @return The highest number of live neighbours before a cell dies.
-     */
-    public int getMaxToSurvive() {
-        return maxToSurvive;
-    }
-
-    /**
-     *
-     * @return The number of live neighbours a dead cell needs to become alive.
-     */
-    public int getBirth() {
-        return birth;
     }
 
     /**
@@ -236,7 +184,7 @@ public class Board {
         generationCount = 0;
 
     }
-    
+
     @Override
     public String toString() {
         StringBuilder tempReturnValue = new StringBuilder();
@@ -245,7 +193,7 @@ public class Board {
                 tempReturnValue.append(currentBoard[row][col]);
             }
         }
-        
+
         String finalReturnValue = tempReturnValue.toString();
         return finalReturnValue;
     }

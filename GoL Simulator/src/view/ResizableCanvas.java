@@ -7,8 +7,7 @@ import model.Board;
 
 /**
  * Provides same functionality as a regular canvas, but allows for fluid
- * resizing. To draw on the canvas use the draw method and initialized
- * GraphicsContext2D.
+ * resizing.
  *
  * @author peven
  */
@@ -63,8 +62,8 @@ public class ResizableCanvas extends Canvas {
     }
 
     public void calculateCanvasSize(Board b) {
-        this.heightProperty().setValue((b.getHeight()) * (cellSize + spaceBetweenCells));
-        this.widthProperty().setValue((b.getWidth()) * (cellSize + spaceBetweenCells));
+        this.heightProperty().setValue((b.getRowCount()) * (cellSize + spaceBetweenCells));
+        this.widthProperty().setValue((b.getColumnCount()) * (cellSize + spaceBetweenCells));
     }
 
     public int getCellSize() {
@@ -111,6 +110,10 @@ public class ResizableCanvas extends Canvas {
         this.deadCellColor = newCellColor;
     }
 
+    /** 
+     * Allows the board to be resizable.
+     * @return 
+     */
     @Override
     public boolean isResizable() {
         return true;
