@@ -21,11 +21,11 @@ public class Board {
      * As this is a singleton, the constructor is private. Default start board
      * is a blank board of 50 rows and 50 columns.
      */
-    public Board() {
-        currentBoard = new byte[50][50];
+    /*public Board() {
+        currentBoard = new byte[10000000][10000000];
         originalBoard = duplicateBoard(currentBoard);
         rules = Rules.getInstance(); // rules class is a singleton
-    }
+    }*/
     
     public Board(int row, int col) {
         currentBoard = new byte[row][col];

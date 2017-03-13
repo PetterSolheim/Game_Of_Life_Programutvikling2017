@@ -67,7 +67,7 @@ public class FileImporter {
             default:
                 System.out.println("Unsuported file format");
         }
-        
+
         boardArray = addPadding(boardArray);
         board.setBoard(boardArray);
         rules.setBirthRules(birthRules);
@@ -80,7 +80,7 @@ public class FileImporter {
         String line = null;
         String[] boardStringArray = null;
         Matcher m;
-        
+
         Pattern rulePattern = Pattern.compile("rule{1}\\s*=\\s*(?:b|B)?(\\d+)/(?:s|S)?(\\d+)");
         Pattern colPattern = Pattern.compile("(?:x|X)\\s=\\s*(\\d+)");
         Pattern rowPattern = Pattern.compile("(?:y|Y)\\s=\\s*(\\d+)");
@@ -160,10 +160,10 @@ public class FileImporter {
                 }
             }
 
+            int rowOffsett = 0;
             for (int i = 0; i < boardStringArray.length; i++) {
                 int cellPosition = 0;
                 Pattern boardRowPattern = Pattern.compile("(\\d*)(b|o){1}");
-                m = rulePattern.matcher(line);
                 m = boardRowPattern.matcher(boardStringArray[i]);
                 m.find();
 
@@ -177,18 +177,32 @@ public class FileImporter {
 
                     for (int j = cellPosition; j < cellPosition + numberOfCells; j++) {
                         if (m.group(2).equals("o")) {
-                            boardArray[i][j] = 1;
+                            boardArray[i + rowOffsett][j] = 1;
                         } else if (m.group(2).equals("b")) {
-                            boardArray[i][j] = 0;
+                            boardArray[i + rowOffsett][j] = 0;
                         }
 
                     }
                     cellPosition += numberOfCells;
                     m.find();
                 }
+                Pattern blancLinesPattern = Pattern.compile("(\\d)*\\s*(?!.)");
+                m = blancLinesPattern.matcher(boardStringArray[i]);
+                m.find();
+                if (!m.group().isEmpty()) {
+                    int blancLines = Integer.parseInt(m.group()) - 1;
+                    int counter = 1;
+
+                    while (counter <= blancLines) {
+                        for (int j = 0; j < boardArray[0].length; j++) {
+                            boardArray[i + rowOffsett + counter][j] = 0;
+                        }
+                        counter++;
+                    }
+                    rowOffsett += blancLines;
+                }
             }
         } catch (Exception e) {
-
         }
     }
 
@@ -203,12 +217,12 @@ public class FileImporter {
         String fileExtension = s.substring(i + 1);
         return fileExtension;
     }
-    
+
     public byte[][] addPadding(byte[][] input) {
-        byte[][] paddedBoard = new byte[input.length+20][input[0].length+20];
-        for(int i = 0; i < input.length; i++) {
-            for(int j = 0; j < input[i].length; j++) {
-                paddedBoard[i+10][j+10] = input[i][j];
+        byte[][] paddedBoard = new byte[input.length + 20][input[0].length + 20];
+        for (int i = 0; i < input.length; i++) {
+            for (int j = 0; j < input[i].length; j++) {
+                paddedBoard[i + 10][j + 10] = input[i][j];
             }
         }
         return paddedBoard;

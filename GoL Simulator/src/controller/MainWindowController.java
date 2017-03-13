@@ -84,7 +84,7 @@ public class MainWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         Platform.runLater(this::defineStage); // allows easy referal to the windows stage
 
-        board = new Board(200, 200);
+        board = new Board(700, 700);
         time = new Timer(this);
         isPaused = true;
         livingCellColorPicker.setValue(canvas.getLivingCellColor());
