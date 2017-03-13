@@ -22,7 +22,7 @@ public class Board {
      * is a blank board of 50 rows and 50 columns.
      */
     public Board() {
-        currentBoard = new byte[2000][2000];
+        currentBoard = new byte[200][200];
         originalBoard = duplicateBoard(currentBoard);
         rules = Rules.getInstance(); // rules class is a singleton
     }

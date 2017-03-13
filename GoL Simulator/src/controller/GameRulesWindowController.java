@@ -39,7 +39,6 @@ public class GameRulesWindowController implements Initializable {
 
     @FXML
     public void cancel() {
-
         stage.close();
     }
 

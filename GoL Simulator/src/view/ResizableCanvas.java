@@ -13,8 +13,8 @@ import model.Board;
  */
 public class ResizableCanvas extends Canvas {
 
-    private final int cellSize = 4;
-    private final int spaceBetweenCells = 1;
+    private final int cellSize = 1;
+    private final int spaceBetweenCells = 0;
     private Color backgroundColor;
     private Color livingCellColor;
     private Color deadCellColor;
@@ -23,7 +23,7 @@ public class ResizableCanvas extends Canvas {
     public ResizableCanvas() {
         gc = this.getGraphicsContext2D();
         backgroundColor = Color.LIGHTGOLDENRODYELLOW;
-        deadCellColor = Color.WHITE;
+        deadCellColor = Color.LIGHTGOLDENRODYELLOW;
         livingCellColor = Color.BLACK;
     }
 

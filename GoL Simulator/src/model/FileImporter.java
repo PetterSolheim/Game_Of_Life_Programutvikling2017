@@ -13,6 +13,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -50,162 +51,196 @@ public class FileImporter {
     }
 
     private void readGameBoard(Reader r, String fileExtension) {
+        try {
+            switch (fileExtension) {
+                case "rle":
+                    newRleReader(r);
+                    break;
+                case "life":
+                    System.out.println("Not yet supported");
+                    break;
+                case "lif":
+                    System.out.println("Not yet supported");
+                    break;
+                case "cells":
+                    System.out.println("Not yet supported");
+                    break;
+                default:
+                    System.out.println("Unsuported file format");
+            }
 
-        switch (fileExtension) {
-            case "rle":
-                rleReader(r);
-                break;
-            case "life":
-                System.out.println("Not yet supported");
-                break;
-            case "lif":
-                System.out.println("Not yet supported");
-                break;
-            case "cells":
-                System.out.println("Not yet supported");
-                break;
-            default:
-                System.out.println("Unsuported file format");
+            boardArray = addPadding(boardArray);
+            board.setBoard(boardArray);
+            rules.setBirthRules(birthRules);
+            rules.setSurviveRules(survivalRules);
+        } catch (IOException e) {
         }
-
-        boardArray = addPadding(boardArray);
-        board.setBoard(boardArray);
-        rules.setBirthRules(birthRules);
-        rules.setSurviveRules(survivalRules);
-
     }
 
-    private void rleReader(Reader r) {
-        BufferedReader bufferedReader = new BufferedReader(r);
+    private void newRleReader(Reader r) throws IOException {
+        BufferedReader br = new BufferedReader(r);
         String line = null;
-        String[] boardStringArray = null;
-        Matcher m;
+        boolean endOfFile = false;
+        ArrayList<String> lineList = new ArrayList<>();
+        while (!endOfFile) {
+            line = br.readLine();
+            if (line != null) {
+                lineList.add(line);
+            } else {
+                endOfFile = true;
+            }
+        }
+        readRleComments(lineList);
+        readRleBoardSize(lineList);
+        readRleRules(lineList);
+        readRleBoard(lineList);
+    }
 
-        Pattern rulePattern = Pattern.compile("rule{1}\\s*=\\s*(?:b|B)?(\\d+)/(?:s|S)?(\\d+)");
+    private void readRleComments(ArrayList<String> lineList) {
+        Matcher m;
+        Pattern commentPattern = Pattern.compile("(#.*)");
+        for (int i = 0; i < lineList.size(); i++) {
+            m = commentPattern.matcher(lineList.get(i));
+            if (m.find()) {
+                if (!m.group(1).isEmpty()) {
+                    System.out.println("Comment: " + m.group(1));
+                }
+            }
+        }
+        for (int i = lineList.size() - 1; i >= 0; i--) {
+            m = commentPattern.matcher(lineList.get(i));
+            if (m.find()) {
+                if (!m.group(1).isEmpty()) {
+                    lineList.remove(i);
+                }
+            }
+        }
+    }
+
+    private void readRleBoardSize(ArrayList<String> lineList) {
+        Matcher m;
         Pattern colPattern = Pattern.compile("(?:x|X)\\s=\\s*(\\d+)");
         Pattern rowPattern = Pattern.compile("(?:y|Y)\\s=\\s*(\\d+)");
+        boolean boardRowsSet = false;
+        boolean boardColumnsSet = false;
 
-        StringBuilder boardStringBuilder = new StringBuilder();
-        boolean headerParsed = false;
-        boolean endOfFile = false;
-
-        try {
-            while (!endOfFile) {
-                while (!headerParsed) {
-                    line = bufferedReader.readLine();
-                    if (!line.startsWith("#")) { // skip any lines that are comments
-
-                        // parse the header
-                        while (!headerParsed) {
-                            // determin number of rows for board
-                            m = rowPattern.matcher(line);
-                            while (m.find()) {
-                                row = Integer.parseInt(m.group(1));
-                                System.out.println("Rows: " + row);
-                            }
-
-                            // determin number of cols for board
-                            m = colPattern.matcher(line);
-                            while (m.find()) {
-                                col = Integer.parseInt(m.group(1));
-                                System.out.println("Cols: " + col);
-                            }
-
-                            boardArray = new byte[row][col];
-
-                            // determin ruleset for board
-                            m = rulePattern.matcher(line);
-                            while (m.find()) {
-
-                                // determin rules for birth
-                                String birth = m.group(1);
-                                String[] birthStringArray = birth.split("");
-                                birthRules = new int[birthStringArray.length];
-                                for (int i = 0; i < birthStringArray.length; i++) {
-                                    birthRules[i] = Integer.parseInt(birthStringArray[i]);
-                                }
-
-                                // determin rules for survival
-                                String survive = m.group(2);
-                                String[] surviveStringArray = survive.split("");
-                                survivalRules = new int[surviveStringArray.length];
-                                for (int i = 0; i < surviveStringArray.length; i++) {
-                                    survivalRules[i] = Integer.parseInt(surviveStringArray[i]);
-                                }
-                            }
-                            headerParsed = true;
-                        }
-                    }
-
-                    // prepare the board for parsing
-                    if (headerParsed && !endOfFile) {
-                        while (!endOfFile) {
-                            line = bufferedReader.readLine();
-
-                            boardStringBuilder.append(line);
-
-                            if (line.indexOf('!') != -1) {
-                                endOfFile = true;
-                            }
-                        }
-                    }
-
-                    // split the board definition into an array of Strings,
-                    // where each String in the array represents a row on the board.
-                    if (headerParsed && endOfFile) {
-                        String boardString = boardStringBuilder.toString();
-                        boardStringArray = boardString.split("\\$");
-                    }
-
+        // determin board size
+        for (int i = 0; i < lineList.size(); i++) {
+            m = colPattern.matcher(lineList.get(i));
+            if (m.find()) {
+                if (!m.group(1).isEmpty()) {
+                    col = Integer.parseInt(m.group(1));
+                    boardColumnsSet = true;
                 }
             }
 
-            int rowOffsett = 0;
-            for (int i = 0; i < boardStringArray.length; i++) {
-                int cellPosition = 0;
-                Pattern boardRowPattern = Pattern.compile("(\\d*)(b|o){1}");
-                m = boardRowPattern.matcher(boardStringArray[i]);
-                m.find();
+            m = rowPattern.matcher(lineList.get(i));
+            if (m.find()) {
+                if (!m.group(1).isEmpty()) {
+                    row = Integer.parseInt(m.group(1));
+                    boardRowsSet = true;
+                }
+            }
+        }
+        boardArray = new byte[row][col];
+        System.out.println("Rows: " + boardArray.length + " Columns: " + boardArray[0].length);
+    }
 
-                while (!m.hitEnd()) {
-                    int numberOfCells;
-                    if (!m.group(1).isEmpty()) {
-                        numberOfCells = Integer.parseInt(m.group(1));
+    private void readRleRules(ArrayList<String> lineList) {
+        Matcher m;
+        Pattern rulePattern = Pattern.compile("rule{1}\\s*=\\s*(b|B|s|S)?(\\d+)/(b|B|s|S)?(\\d+)");
+        boolean boardRulesSet = false;
+        String survive;
+        String birth;
+
+        for (int i = 0; i < lineList.size(); i++) {
+            m = rulePattern.matcher(lineList.get(i));
+            if (m.find()) {
+                // determin rules for survival
+                if (!m.group(1).isEmpty() && !m.group(2).isEmpty() && !m.group(3).isEmpty() && !m.group(4).isEmpty()) {
+                    if (m.group(1).equals("s") || m.group(1).equals("S")) {
+                        survive = m.group(2);
                     } else {
-                        numberOfCells = 1;
+                        survive = m.group(4);
                     }
 
-                    for (int j = cellPosition; j < cellPosition + numberOfCells; j++) {
-                        if (m.group(2).equals("o")) {
-                            boardArray[i + rowOffsett][j] = 1;
-                        } else if (m.group(2).equals("b")) {
-                            boardArray[i + rowOffsett][j] = 0;
-                        }
-
+                    if (m.group(1).equals("b") || m.group(1).equals("B")) {
+                        birth = m.group(2);
+                    } else {
+                        birth = m.group(4);
                     }
-                    cellPosition += numberOfCells;
-                    m.find();
+
+                    System.out.println(survive + " " + birth);
+
+                    String[] surviveStringArray = survive.split("");
+                    survivalRules = new int[surviveStringArray.length];
+                    for (int j = 0; j < surviveStringArray.length; j++) {
+                        survivalRules[j] = Integer.parseInt(surviveStringArray[j]);
+                    }
+
+                    String[] birthStringArray = birth.split("");
+                    birthRules = new int[birthStringArray.length];
+                    for (int j = 0; j < birthStringArray.length; j++) {
+                        birthRules[j] = Integer.parseInt(birthStringArray[j]);
+                    }
                 }
-                Pattern blancLinesPattern = Pattern.compile("(\\d)*\\s*(?!.)");
-                m = blancLinesPattern.matcher(boardStringArray[i]);
-                m.find();
-                if (!m.group().isEmpty()) {
-                    int blancLines = Integer.parseInt(m.group()) - 1;
-                    int counter = 1;
-
-                    while (counter <= blancLines) {
-                        for (int j = 0; j < boardArray[0].length; j++) {
-                            boardArray[i + rowOffsett + counter][j] = 0;
-                        }
-                        counter++;
-                    }
-                    rowOffsett += blancLines;
-                }
+                lineList.remove(i);
             }
-        } catch (Exception e) {
         }
     }
 
+    private void readRleBoard(ArrayList<String> lineList) throws IOException {
+        Matcher m;
+        StringBuilder boardString = new StringBuilder();
+        for (int i = 0; i < lineList.size(); i++) {
+            boardString.append(lineList.get(i));
+        }
+        String[] boardStringArray = boardString.toString().split("\\$");
+
+        int rowOffsett = 0;
+        for (int i = 0; i < boardStringArray.length; i++) {
+            int cellPosition = 0;
+            Pattern boardRowPattern = Pattern.compile("(\\d*)(b|o){1}");
+            m = boardRowPattern.matcher(boardStringArray[i]);
+            m.find();
+
+            while (!m.hitEnd()) {
+                int numberOfCells;
+                if (!m.group(1).isEmpty()) {
+                    numberOfCells = Integer.parseInt(m.group(1));
+                } else {
+                    numberOfCells = 1;
+                }
+
+                for (int j = cellPosition; j < cellPosition + numberOfCells; j++) {
+                    if (m.group(2).equals("o")) {
+                        boardArray[i + rowOffsett][j] = 1;
+                    } else if (m.group(2).equals("b")) {
+                        boardArray[i + rowOffsett][j] = 0;
+                    }
+
+                }
+                cellPosition += numberOfCells;
+                m.find();
+            }
+            Pattern blankLinesPattern = Pattern.compile("(\\d)*\\s*(?!.)");
+            m = blankLinesPattern.matcher(boardStringArray[i]);
+            m.find();
+            if (!m.group().isEmpty()) {
+                int blancLines = Integer.parseInt(m.group()) - 1;
+                int counter = 1;
+
+                while (counter <= blancLines) {
+                    for (int j = 0; j < boardArray[0].length; j++) {
+                        boardArray[i + rowOffsett + counter][j] = 0;
+                    }
+                    counter++;
+                }
+                rowOffsett += blancLines;
+            }
+        }
+    }
+    
     private String getFileExtension(File f) {
         int i = f.getName().lastIndexOf(".");
         String fileExtension = f.getName().substring(i + 1);
@@ -219,10 +254,10 @@ public class FileImporter {
     }
 
     public byte[][] addPadding(byte[][] input) {
-        byte[][] paddedBoard = new byte[input.length + 20][input[0].length + 20];
+        byte[][] paddedBoard = new byte[input.length + 100][input[0].length + 100];
         for (int i = 0; i < input.length; i++) {
             for (int j = 0; j < input[i].length; j++) {
-                paddedBoard[i + 10][j + 10] = input[i][j];
+                paddedBoard[i + 50][j + 50] = input[i][j];
             }
         }
         return paddedBoard;

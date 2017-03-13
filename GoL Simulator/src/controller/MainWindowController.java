@@ -90,14 +90,8 @@ public class MainWindowController implements Initializable {
         livingCellColorPicker.setValue(canvas.getLivingCellColor());
         deadCellColorPicker.setValue(canvas.getDeadCellColor());
         backgroundColorPicker.setValue(canvas.getBackgroundColor());
-        setCanvasScale();
         setFps();
-
-        cellSizeSlider.valueProperty().addListener((observable) -> {
-            setCanvasScale();
-            canvas.draw(board);
-        });
-
+        
         fpsSlider.valueProperty().addListener((observable) -> {
             setFps();
         });
@@ -164,7 +158,7 @@ public class MainWindowController implements Initializable {
         if (url.isPresent()) {
             try {
                 board = fileImporter.readGameBoardFromUrl(url.get());
-                //canvas.calculateCanvasSize(board);
+                canvas.calculateCanvasSize(board);
                 canvas.draw(board);
             } catch (IOException e) {
                 System.err.println("File not found: " + e);
@@ -206,11 +200,15 @@ public class MainWindowController implements Initializable {
         canvas.setDeadCellColor(deadCellColorPicker.getValue());
         canvas.draw(board);
     }
-
-    public void setCanvasScale() {
-        canvas.setScaleX(cellSizeSlider.getValue());
-        canvas.setScaleY(cellSizeSlider.getValue());
-        canvas.draw(board);
+    
+    public void lowerScale() {
+        canvas.setScaleX(canvas.getScaleX()-0.15);
+        canvas.setScaleY(canvas.getScaleY()-0.15);
+    }
+    
+    public void higherScale() {
+        canvas.setScaleX(canvas.getScaleX()+0.15);
+        canvas.setScaleY(canvas.getScaleY()+0.15);
     }
 
     private void setFps() {
@@ -224,10 +222,6 @@ public class MainWindowController implements Initializable {
 
     private void displayGeneration() {
         txtShowGen.setText(Integer.toString(board.getGenerationCount()) + " ");
-    }
-
-    private void displayFps() {
-        txtShowFps.setText(Integer.toString((int) fpsSlider.getValue()));
     }
 
     @FXML
