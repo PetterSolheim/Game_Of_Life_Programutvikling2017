@@ -164,7 +164,7 @@ public class MainWindowController implements Initializable {
         if (url.isPresent()) {
             try {
                 board = fileImporter.readGameBoardFromUrl(url.get());
-                canvas.calculateCanvasSize(board);
+                //canvas.calculateCanvasSize(board);
                 canvas.draw(board);
             } catch (IOException e) {
                 System.err.println("File not found: " + e);
