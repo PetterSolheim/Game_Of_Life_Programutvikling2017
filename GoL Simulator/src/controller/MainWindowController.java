@@ -123,32 +123,35 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void openFromDisk() {
-        FileChooser fileChooser = new FileChooser();
+        
         FileImporter fileImporter = new FileImporter();
-
-        fileChooser.setTitle("Choose file");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Supported Formats", "*.rle", "*.lif", "*.life", "*.cells"),
-                new FileChooser.ExtensionFilter("RLE", "*.rle"),
-                new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
-                new FileChooser.ExtensionFilter("Plaintext", "*.cells"));
-
+        FileChooser fileChooser = createFileChooser();
         File file = fileChooser.showOpenDialog(stage);
 
         Board tmpBoard = new Board();
         if (file != null && file.exists()) {
             try {
                 tmpBoard = fileImporter.readGameBoardFromDisk(file);
-            } catch (IOException e) {
-                ioExceptionDialog(e.getMessage());
-            } catch (PatternFormatException e) {
-                patternFormatExceptionDialog(e.getMessage());
-            } finally {
                 board = tmpBoard;
                 canvas.resizeCanvas(board);
                 canvas.draw(board);
+            } catch (IOException e) {
+                ioExceptionDialog(e.getMessage());
+            } catch (PatternFormatException e) {
+                patternFormatExceptionDialog(e.getMessage());                
             }
         }
+    }
+    
+    private FileChooser createFileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose file");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Supported Formats", "*.rle", "*.lif", "*.life", "*.cells"),
+                new FileChooser.ExtensionFilter("RLE", "*.rle"),
+                new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
+                new FileChooser.ExtensionFilter("Plaintext", "*.cells"));
+        return fileChooser;
     }
 
     private void ioExceptionDialog(String message) {

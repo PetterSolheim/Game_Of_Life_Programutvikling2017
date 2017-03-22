@@ -103,17 +103,9 @@ public class FileImporter {
                 }
             }
         }
-        for (int i = lineList.size() - 1; i >= 0; i--) {
-            m = commentPattern.matcher(lineList.get(i));
-            if (m.find()) {
-                if (!m.group(1).isEmpty()) {
-                    lineList.remove(i);
-                }
-            }
-        }
     }
 
-    private void readRleBoardSize(ArrayList<String> lineList) {
+    private void readRleBoardSize(ArrayList<String> lineList) throws PatternFormatException {
         Matcher m;
         Pattern colPattern = Pattern.compile("(?:x|X)\\s=\\s*(\\d+)");
         Pattern rowPattern = Pattern.compile("(?:y|Y)\\s=\\s*(\\d+)");
@@ -122,27 +114,37 @@ public class FileImporter {
 
         // determin board size
         for (int i = 0; i < lineList.size(); i++) {
-            m = colPattern.matcher(lineList.get(i));
-            if (m.find()) {
-                if (!m.group(1).isEmpty()) {
-                    col = Integer.parseInt(m.group(1));
-                    boardColumnsSet = true;
+            if (!lineList.get(i).startsWith("#")) {
+                m = colPattern.matcher(lineList.get(i));
+                if (m.find()) {
+                    if (!m.group(1).isEmpty()) {
+                        col = Integer.parseInt(m.group(1));
+                        boardColumnsSet = true;
+                    }
                 }
-            }
 
-            m = rowPattern.matcher(lineList.get(i));
-            if (m.find()) {
-                if (!m.group(1).isEmpty()) {
-                    row = Integer.parseInt(m.group(1));
-                    boardRowsSet = true;
+                m = rowPattern.matcher(lineList.get(i));
+                if (m.find()) {
+                    if (!m.group(1).isEmpty()) {
+                        row = Integer.parseInt(m.group(1));
+                        boardRowsSet = true;
+                    }
                 }
             }
         }
+        if (!boardColumnsSet && !boardRowsSet) {
+            throw new PatternFormatException("No dimensions defined by RLE-file.");
+        } else if (!boardColumnsSet) {
+            throw new PatternFormatException("No width defined by RLE-file.");
+        } else if (!boardRowsSet) {
+            throw new PatternFormatException("No height defined by RLE-file.");
+        }
+
         boardArray = new byte[row][col];
         System.out.println("Rows: " + boardArray.length + " Columns: " + boardArray[0].length);
     }
 
-    private void readRleRules(ArrayList<String> lineList) throws PatternFormatException{
+    private void readRleRules(ArrayList<String> lineList) throws PatternFormatException {
         Matcher m;
         Pattern rulePattern = Pattern.compile("rule{1}\\s*=\\s*(b|B|s|S)?(\\d+)/(b|B|s|S)?(\\d+)");
         boolean boardRulesSet = false;
@@ -150,39 +152,40 @@ public class FileImporter {
         String birth;
 
         for (int i = 0; i < lineList.size(); i++) {
-            m = rulePattern.matcher(lineList.get(i));
-            if (m.find()) {
-                // determin rules for survival
-                if (!m.group(1).isEmpty() && !m.group(2).isEmpty() && !m.group(3).isEmpty() && !m.group(4).isEmpty()) {
-                    if (m.group(1).equals("s") || m.group(1).equals("S")) {
-                        survive = m.group(2);
-                    } else {
-                        survive = m.group(4);
-                    }
+            if (!lineList.get(i).startsWith("#")) {
+                m = rulePattern.matcher(lineList.get(i));
+                if (m.find()) {
+                    // determin rules for survival
+                    if (!m.group(1).isEmpty() && !m.group(2).isEmpty() && !m.group(3).isEmpty() && !m.group(4).isEmpty()) {
+                        if (m.group(1).equals("s") || m.group(1).equals("S")) {
+                            survive = m.group(2);
+                        } else {
+                            survive = m.group(4);
+                        }
 
-                    if (m.group(1).equals("b") || m.group(1).equals("B")) {
-                        birth = m.group(2);
-                    } else {
-                        birth = m.group(4);
-                    }
+                        if (m.group(1).equals("b") || m.group(1).equals("B")) {
+                            birth = m.group(2);
+                        } else {
+                            birth = m.group(4);
+                        }
 
-                    System.out.println(survive + " " + birth);
+                        System.out.println(survive + " " + birth);
 
-                    String[] surviveStringArray = survive.split("");
-                    survivalRules = new int[surviveStringArray.length];
-                    for (int j = 0; j < surviveStringArray.length; j++) {
-                        survivalRules[j] = Integer.parseInt(surviveStringArray[j]);
-                    }
+                        String[] surviveStringArray = survive.split("");
+                        survivalRules = new int[surviveStringArray.length];
+                        for (int j = 0; j < surviveStringArray.length; j++) {
+                            survivalRules[j] = Integer.parseInt(surviveStringArray[j]);
+                        }
 
-                    String[] birthStringArray = birth.split("");
-                    birthRules = new int[birthStringArray.length];
-                    for (int j = 0; j < birthStringArray.length; j++) {
-                        birthRules[j] = Integer.parseInt(birthStringArray[j]);
+                        String[] birthStringArray = birth.split("");
+                        birthRules = new int[birthStringArray.length];
+                        for (int j = 0; j < birthStringArray.length; j++) {
+                            birthRules[j] = Integer.parseInt(birthStringArray[j]);
+                        }
                     }
+                } else {
+                    throw new PatternFormatException();
                 }
-                lineList.remove(i);
-            } else {
-                throw new PatternFormatException();
             }
         }
     }
