@@ -24,7 +24,6 @@ import java.util.regex.Pattern;
 public class FileImporter {
 
     private Board board;
-    private Rules rules;
     private byte[][] boardArray;
     private int row;
     private int col;
@@ -33,16 +32,15 @@ public class FileImporter {
 
     public FileImporter() {
         board = new Board();
-        rules = Rules.getInstance();
     }
 
-    public Board readGameBoardFromDisk(File f) throws IOException {
+    public Board readGameBoardFromDisk(File f) throws IOException, PatternFormatException {
         String fileExtension = getFileExtension(f); // determine the filetype
         readGameBoard(new FileReader(f), fileExtension); // parse the input file
         return board;
     }
 
-    public Board readGameBoardFromUrl(String url) throws IOException {
+    public Board readGameBoardFromUrl(String url) throws IOException, PatternFormatException {
         String fileExtension = getFileExtension(url);
         URL destination = new URL(url);
         URLConnection conn = destination.openConnection();
@@ -50,11 +48,11 @@ public class FileImporter {
         return board;
     }
 
-    private void readGameBoard(Reader r, String fileExtension) {
+    private void readGameBoard(Reader r, String fileExtension) throws PatternFormatException {
         try {
             switch (fileExtension) {
                 case "rle":
-                    newRleReader(r);
+                    rleReader(r);
                     break;
                 case "life":
                     System.out.println("Not yet supported");
@@ -65,19 +63,17 @@ public class FileImporter {
                 case "cells":
                     System.out.println("Not yet supported");
                     break;
-                default:
-                    System.out.println("Unsuported file format");
             }
 
             boardArray = addPadding(boardArray);
             board.setBoard(boardArray);
-            rules.setBirthRules(birthRules);
-            rules.setSurviveRules(survivalRules);
+            board.setBirthRules(birthRules);
+            board.setSurviveRules(survivalRules);
         } catch (IOException e) {
         }
     }
 
-    private void newRleReader(Reader r) throws IOException {
+    private void rleReader(Reader r) throws IOException, PatternFormatException {
         BufferedReader br = new BufferedReader(r);
         String line = null;
         boolean endOfFile = false;
@@ -146,7 +142,7 @@ public class FileImporter {
         System.out.println("Rows: " + boardArray.length + " Columns: " + boardArray[0].length);
     }
 
-    private void readRleRules(ArrayList<String> lineList) {
+    private void readRleRules(ArrayList<String> lineList) throws PatternFormatException{
         Matcher m;
         Pattern rulePattern = Pattern.compile("rule{1}\\s*=\\s*(b|B|s|S)?(\\d+)/(b|B|s|S)?(\\d+)");
         boolean boardRulesSet = false;
@@ -185,11 +181,13 @@ public class FileImporter {
                     }
                 }
                 lineList.remove(i);
+            } else {
+                throw new PatternFormatException();
             }
         }
     }
 
-    private void readRleBoard(ArrayList<String> lineList) throws IOException {
+    private void readRleBoard(ArrayList<String> lineList) throws IOException, PatternFormatException {
         Matcher m;
         StringBuilder boardString = new StringBuilder();
         for (int i = 0; i < lineList.size(); i++) {
@@ -212,13 +210,18 @@ public class FileImporter {
                     numberOfCells = 1;
                 }
 
-                for (int j = cellPosition; j < cellPosition + numberOfCells; j++) {
-                    if (m.group(2).equals("o")) {
-                        boardArray[i + rowOffsett][j] = 1;
-                    } else if (m.group(2).equals("b")) {
-                        boardArray[i + rowOffsett][j] = 0;
-                    }
+                try {
+                    for (int j = cellPosition; j < cellPosition + numberOfCells; j++) {
+                        if (m.group(2).equals("o")) {
+                            boardArray[i + rowOffsett][j] = 1;
+                        } else if (m.group(2).equals("b")) {
+                            boardArray[i + rowOffsett][j] = 0;
+                        }
 
+                    }
+                } catch (ArrayIndexOutOfBoundsException e) {
+                    throw new PatternFormatException("Defined board size does not"
+                            + " match the board definition!");
                 }
                 cellPosition += numberOfCells;
                 m.find();
@@ -240,7 +243,7 @@ public class FileImporter {
             }
         }
     }
-    
+
     private String getFileExtension(File f) {
         int i = f.getName().lastIndexOf(".");
         String fileExtension = f.getName().substring(i + 1);

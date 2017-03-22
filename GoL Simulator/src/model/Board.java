@@ -10,40 +10,99 @@ import java.util.Arrays;
 public class Board {
 
     private static Board instance;
-    private Rules rules;
     private byte[][] currentBoard;
     private byte[][] changedCells;
     private byte[][] originalBoard;
     private int generationCount = 0;
     private int cellCount = 0;
+    private ArrayList<Integer> survivalRules;
+    private ArrayList<Integer> birthRules;
 
-    /**
-     * As this is a singleton, the constructor is private. Default start board
-     * is a blank board of 50 rows and 50 columns.
-     */
     public Board() {
         currentBoard = new byte[200][200];
         originalBoard = duplicateBoard(currentBoard);
-        rules = Rules.getInstance(); // rules class is a singleton
+
+        // apply Conway Rules (23/3) by default
+        survivalRules = new ArrayList<Integer>();
+        survivalRules.add(2);
+        survivalRules.add(3);
+        birthRules = new ArrayList<Integer>();
+        birthRules.add(3);
     }
-    
+
     public Board(int row, int col) {
         currentBoard = new byte[row][col];
         originalBoard = duplicateBoard(currentBoard);
-        rules = Rules.getInstance(); // rules class is a singleton.
+
+        // apply Conway Rules (23/3) by default
+        survivalRules = new ArrayList<Integer>();
+        survivalRules.add(2);
+        survivalRules.add(3);
+        birthRules = new ArrayList<Integer>();
+        birthRules.add(3);
     }
 
     /**
-     * Method for acquiring a reference to the Board object.
+     * Sets the survival values for the game rules. New values can be passed as
+     * either a number of integers, or an array of integers. If duplicate values
+     * are passed, they will be removed, i.e. 2,3,3,4 will be stored as 2,3,4.
      *
-     * @return A reference to the Board object.
+     * @param input
      */
-    /*public static Board getInstance() {
-        if (instance == null) {
-            instance = new Board();
+    public void setSurviveRules(int... input) {
+        Arrays.sort(input);
+        ArrayList<Integer> inputWithoutDuplicates = new ArrayList<Integer>();
+
+        for (int i = 0; i < input.length; i++) {
+            if (i == 0) {
+                inputWithoutDuplicates.add(input[i]);
+            } else if (input[i] != input[i - 1]) {
+                inputWithoutDuplicates.add(input[i]);
+            }
         }
-        return instance;
-    }*/
+        survivalRules = inputWithoutDuplicates;
+    }
+
+    /**
+     * Sets the birth values for the game rules. New values can be passed as
+     * either a number of integers, or an array of integers. If duplicate values
+     * are passed, they will be removed, i.e. 2,3,3,4 will be stored as 2,3,4.
+     *
+     * @param input
+     */
+    public void setBirthRules(int... input) {
+        Arrays.sort(input);
+        ArrayList<Integer> inputWithoutDuplicates = new ArrayList<Integer>();
+
+        for (int i = 0; i < input.length; i++) {
+            if (i == 0) {
+                inputWithoutDuplicates.add(input[i]);
+            } else if (input[i] != input[i - 1]) {
+                inputWithoutDuplicates.add(input[i]);
+            }
+        }
+        birthRules = inputWithoutDuplicates;
+    }
+    
+    /**
+     * Acquires an ArrayList of integer values which define the number of live
+     * neighbours a dead cell must have to be born.
+     *
+     * @return an ArrayList of Integers.
+     */
+    public ArrayList<Integer> getBirthRules() {
+        return birthRules;
+    }
+
+    /**
+     * Acquires an ArrayList of integer values which define the number of live
+     * neighbours a live cell must have to survive.
+     *
+     * @return an ArrayList of Integers.
+     */
+    public ArrayList<Integer> getSurvivalRules() {
+        return survivalRules;
+    }
 
     /**
      * Gets the current Board.
@@ -57,6 +116,7 @@ public class Board {
     /**
      * Gets a byte[][] array representing which cells were changed during the
      * last generation iteration.
+     *
      * @return byte[][] array.
      */
     public byte[][] getBoardChanges() {
@@ -73,6 +133,9 @@ public class Board {
         currentBoard = duplicateBoard(newBoard);
     }
 
+    /**
+     * Iterates the board to the next generation.
+     */
     public void nextGeneration() {
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.
@@ -85,10 +148,10 @@ public class Board {
             for (int col = 0; col < neighbourCount[0].length; col++) {
                 int neighbours = countNeighbours(neighbourCount, row, col);
 
-                if (neighbourCount[row][col] == 1 && (!rules.getSurvivalRules().contains(neighbours))) {
+                if (neighbourCount[row][col] == 1 && (!survivalRules.contains(neighbours))) {
                     currentBoard[row][col] = 0;
                     changedCells[row][col] = 1;
-                } else if (neighbourCount[row][col] == 0 && rules.getBirthRules().contains(neighbours)) {
+                } else if (neighbourCount[row][col] == 0 && birthRules.contains(neighbours)) {
                     currentBoard[row][col] = 1;
                     changedCells[row][col] = 1;
                 }
@@ -146,6 +209,13 @@ public class Board {
         return neighbours;
     }
 
+    /**
+     * Toggles the state of a give cell. Live cell becomes dead, dead cell
+     * becomes alive.
+     *
+     * @param row y position of the cell to toggle.
+     * @param col x position of the cell to toggle.
+     */
     public void toggleCellState(int row, int col) {
         if (currentBoard[row][col] == 1) {
             currentBoard[row][col] = 0;
@@ -154,6 +224,12 @@ public class Board {
         }
     }
 
+    /**
+     * Makes a spesific cell alive.
+     *
+     * @param row y position of the cell to make alive.
+     * @param col x position of the cell to make alive.
+     */
     public void settCellStateAlive(int row, int col) {
         currentBoard[row][col] = 1;
     }
@@ -183,6 +259,11 @@ public class Board {
 
     }
 
+    /**
+     * A string representation of the board. Exists soley for use with JUnit.
+     *
+     * @return
+     */
     @Override
     public String toString() {
         StringBuilder tempReturnValue = new StringBuilder();
@@ -197,7 +278,7 @@ public class Board {
     }
 
     /**
-     * Creates a copy of a 2 dimensional byte array.
+     * A simple method for copying a 2D array.
      *
      * @param original The board that you want to copy.
      * @return A reference to the new copy of the array.

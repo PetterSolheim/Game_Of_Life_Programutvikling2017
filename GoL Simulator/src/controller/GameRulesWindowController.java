@@ -6,6 +6,7 @@
 package controller;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -14,7 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import model.Rules;
+import model.Board;
 
 /**
  *
@@ -34,8 +35,7 @@ public class GameRulesWindowController implements Initializable {
     private VBox vBox;
 
     Stage stage;
-
-    Rules rules = Rules.getInstance();
+    Board board;
 
     @FXML
     public void cancel() {
@@ -45,24 +45,30 @@ public class GameRulesWindowController implements Initializable {
     @FXML
     public void save() {
         // apply new birth rules
-        String[] bStringArray = txtB.getText().split("");
-        int[] bIntArray = new int[bStringArray.length];
-        for (int i = 0; i < bStringArray.length; i++) {
-            bIntArray[i] = Integer.parseInt(bStringArray[i]);
-        }
-        rules.setBirthRules(bIntArray);
+        try {
+            String[] bStringArray = txtB.getText().split("");
+            int[] bIntArray = new int[bStringArray.length];
+            for (int i = 0; i < bStringArray.length; i++) {
+                bIntArray[i] = Integer.parseInt(bStringArray[i]);
+            }
+            board.setBirthRules(bIntArray);
 
-        // apply new survival rules
-        String[] sStringArray = txtS.getText().split("");
-        int[] sIntArray = new int[sStringArray.length];
-        for (int i = 0; i < sStringArray.length; i++) {
-            sIntArray[i] = Integer.parseInt(sStringArray[i]);
+            // apply new survival rules
+            String[] sStringArray = txtS.getText().split("");
+            int[] sIntArray = new int[sStringArray.length];
+            for (int i = 0; i < sStringArray.length; i++) {
+                sIntArray[i] = Integer.parseInt(sStringArray[i]);
+            }
+            board.setSurviveRules(sIntArray);
+            stage.close();
+        } catch (NumberFormatException e) {
+            System.err.println("not a number!");
         }
-        rules.setSurviveRules(sIntArray);
-
-        stage.close();
     }
 
+    /**
+     * Stores a reference to the windows stage for easy access.
+     */
     private void defineStage() {
         stage = (Stage) vBox.getScene().getWindow();
     }
@@ -71,20 +77,28 @@ public class GameRulesWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         // make stage available
         Platform.runLater(this::defineStage);
+    }
 
+    /**
+     * Method for passing the Board object to the settings window so that the
+     * settings window can populate its fields.
+     *
+     * @param board
+     */
+    public void initData(Board board) {
+        this.board = board;
         // load and display current rules
         StringBuilder birthString = new StringBuilder();
-        for (int value : rules.getBirthRules()) {
+        for (int value : board.getBirthRules()) {
             birthString.append(value);
         }
         txtB.setText(birthString.toString());
 
         StringBuilder survivalString = new StringBuilder();
-        for (int value : rules.getSurvivalRules()) {
+        for (int value : board.getSurvivalRules()) {
             survivalString.append(value);
         }
         txtS.setText(survivalString.toString());
-
     }
 
 }

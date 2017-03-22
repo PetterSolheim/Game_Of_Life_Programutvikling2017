@@ -7,6 +7,7 @@ package controller;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -14,16 +15,15 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
@@ -34,7 +34,6 @@ import javafx.stage.Stage;
 import model.*;
 import view.ResizableCanvas;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 
 /**
@@ -82,27 +81,27 @@ public class MainWindowController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        Platform.runLater(this::defineStage); // allows easy referal to the windows stage
+        Platform.runLater(this::defineStage); // allows easy referal to the stage
 
-        board = new Board(700, 700);
+        board = new Board(200, 200);
         time = new Timer(this);
         isPaused = true;
         livingCellColorPicker.setValue(canvas.getLivingCellColor());
         deadCellColorPicker.setValue(canvas.getDeadCellColor());
         backgroundColorPicker.setValue(canvas.getBackgroundColor());
         setFps();
-        
+
         fpsSlider.valueProperty().addListener((observable) -> {
             setFps();
         });
 
-        canvas.calculateCanvasSize(board);
+        canvas.resizeCanvas(board);
         canvas.draw(board);
     }
 
     @FXML
     private void newBoard() {
-        
+
     }
 
     @FXML
@@ -136,15 +135,34 @@ public class MainWindowController implements Initializable {
 
         File file = fileChooser.showOpenDialog(stage);
 
+        Board tmpBoard = new Board();
         if (file != null && file.exists()) {
             try {
-                board = fileImporter.readGameBoardFromDisk(file);
-                canvas.calculateCanvasSize(board);
-                canvas.draw(board);
+                tmpBoard = fileImporter.readGameBoardFromDisk(file);
             } catch (IOException e) {
-                System.err.println("File not found: " + e);
+                ioExceptionDialog(e.getMessage());
+            } catch (PatternFormatException e) {
+                patternFormatExceptionDialog(e.getMessage());
+            } finally {
+                board = tmpBoard;
+                canvas.resizeCanvas(board);
+                canvas.draw(board);
             }
         }
+    }
+
+    private void ioExceptionDialog(String message) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("File not found.");
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    private void patternFormatExceptionDialog(String message) {
+        Alert alert = new Alert(AlertType.ERROR);
+        alert.setTitle("Error reading file");
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
     @FXML
@@ -158,10 +176,19 @@ public class MainWindowController implements Initializable {
         if (url.isPresent()) {
             try {
                 board = fileImporter.readGameBoardFromUrl(url.get());
-                canvas.calculateCanvasSize(board);
+                canvas.resizeCanvas(board);
                 canvas.draw(board);
+            } catch (MalformedURLException e) {
+                System.err.println("URL not valid: " + e);
             } catch (IOException e) {
                 System.err.println("File not found: " + e);
+            } catch (PatternFormatException e) {
+                Alert alert = new Alert(AlertType.ERROR);
+                alert.setTitle("There was an error reading the file");
+                alert.setContentText(e.toString());
+
+                alert.showAndWait();
+                System.err.println(e);
             }
         }
     }
@@ -200,15 +227,29 @@ public class MainWindowController implements Initializable {
         canvas.setDeadCellColor(deadCellColorPicker.getValue());
         canvas.draw(board);
     }
-    
-    public void lowerScale() {
-        canvas.setScaleX(canvas.getScaleX()-0.15);
-        canvas.setScaleY(canvas.getScaleY()-0.15);
+
+    @FXML
+    private void lowerScale() {
+        if (canvas.getScaleX() >= 0.35) {
+            if (canvas.getScaleX() < 0.4) {
+                canvas.adjustScale(-0.08, -0.08);
+            } else if (canvas.getScaleX() < 0.5) {
+                canvas.adjustScale(-0.13, -0.13);
+            } else {
+                canvas.adjustScale(-0.2, -0.2);
+            }
+        }
     }
-    
-    public void higherScale() {
-        canvas.setScaleX(canvas.getScaleX()+0.15);
-        canvas.setScaleY(canvas.getScaleY()+0.15);
+
+    @FXML
+    private void higherScale() {
+        if (canvas.getScaleX() < 0.4) {
+            canvas.adjustScale(0.05, 0.05);
+        } else if (canvas.getScaleX() < 0.5) {
+            canvas.adjustScale(0.09, 0.09);
+        } else {
+            canvas.adjustScale(0.12, 0.12);
+        }
     }
 
     private void setFps() {
@@ -239,16 +280,25 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void showGameRulesWindow() throws Exception {
-        Stage settings = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("/view/GameRulesWindow.fxml"));
-        Scene scene = new Scene(root);
-        settings.setResizable(true);
-        settings.initModality(Modality.APPLICATION_MODAL);
-        settings.setScene(scene);
-        settings.setTitle("Settings");
-        settings.show();
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/view/GameRulesWindow.fxml"));
+        loader.load();
+        Parent parent = loader.getRoot();
+        Scene Scene = new Scene(parent);
+        Stage Stage = new Stage();
+        Stage.setScene(Scene);
+
+        GameRulesWindowController controller = loader.getController();
+        controller.initData(board);
+        Stage.show();
     }
 
+    /**
+     * Toggles the state of a clicked cell. A live cell becomes dead, and a dead
+     * cell becomes alive.
+     *
+     * @param event
+     */
     @FXML
     private void toggleClickedCell(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY && !event.isDragDetect()) {
@@ -257,9 +307,13 @@ public class MainWindowController implements Initializable {
             board.toggleCellState(row, col);
             canvas.drawCell(board, row, col);
         }
-
     }
 
+    /**
+     * Determines which mouse button is dragging, and calls the relevant method.
+     *
+     * @param event
+     */
     @FXML
     private void dragCanvas(MouseEvent event) {
         if (event.getButton() == MouseButton.SECONDARY) {
