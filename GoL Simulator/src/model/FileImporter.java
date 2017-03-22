@@ -161,40 +161,50 @@ public class FileImporter {
         String birth;
 
         for (int i = 0; i < lineList.size(); i++) {
-            if (!lineList.get(i).startsWith("#")) {
-                m = rulePattern.matcher(lineList.get(i));
-                if (m.find()) {
-                    // determin rules for survival
-                    if (!m.group(1).isEmpty() && !m.group(2).isEmpty() && !m.group(3).isEmpty() && !m.group(4).isEmpty()) {
-                        if (m.group(1).equals("s") || m.group(1).equals("S")) {
-                            survive = m.group(2);
-                        } else {
-                            survive = m.group(4);
-                        }
 
-                        if (m.group(1).equals("b") || m.group(1).equals("B")) {
-                            birth = m.group(2);
-                        } else {
-                            birth = m.group(4);
-                        }
-                        System.out.println(survive + " " + birth);
-                        lineList.remove(i);
-
-                        String[] surviveStringArray = survive.split("");
-                        survivalRules = new int[surviveStringArray.length];
-                        for (int j = 0; j < surviveStringArray.length; j++) {
-                            survivalRules[j] = Integer.parseInt(surviveStringArray[j]);
-                        }
-
-                        String[] birthStringArray = birth.split("");
-                        birthRules = new int[birthStringArray.length];
-                        for (int j = 0; j < birthStringArray.length; j++) {
-                            birthRules[j] = Integer.parseInt(birthStringArray[j]);
-                        }
+            m = rulePattern.matcher(lineList.get(i));
+            if (m.find()) {
+                // determin rules for survival
+                if (m.group(1) != null && m.group(3) != null) {
+                    if (m.group(1).equals("s") || m.group(1).equals("S")) {
+                        survive = m.group(2);
+                    } else {
+                        survive = m.group(4);
                     }
+
+                    if (m.group(1).equals("b") || m.group(1).equals("B")) {
+                        birth = m.group(2);
+                    } else {
+                        birth = m.group(4);
+                    }
+                    System.out.println(survive + " " + birth);
+                    boardRulesSet = true;
+                    lineList.remove(i);
+                } else if (m.group(2) != null && m.group(4) != null) {
+                    survive = m.group(2);
+                    birth = m.group(4);
+                    boardRulesSet = true;
+                    lineList.remove(i);
+                } else {
+                    throw new PatternFormatException("No rulesett defined!");
                 }
-                
+
+                String[] surviveStringArray = survive.split("");
+                survivalRules = new int[surviveStringArray.length];
+                for (int j = 0; j < surviveStringArray.length; j++) {
+                    survivalRules[j] = Integer.parseInt(surviveStringArray[j]);
+                }
+
+                String[] birthStringArray = birth.split("");
+                birthRules = new int[birthStringArray.length];
+                for (int j = 0; j < birthStringArray.length; j++) {
+                    birthRules[j] = Integer.parseInt(birthStringArray[j]);
+                }
             }
+        }
+
+        if (!boardRulesSet) {
+            throw new PatternFormatException("No rules defined by RLE file");
         }
     }
 
