@@ -204,22 +204,29 @@ public class FileImporter {
         }
 
         if (!boardRulesSet) {
-            throw new PatternFormatException("No rules defined by RLE file");
+            throw new PatternFormatException("Rule definition in RLE file is not valid!");
         }
     }
 
     private void readRleBoard(ArrayList<String> lineList) throws IOException, PatternFormatException {
         Matcher m;
-        StringBuilder boardString = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < lineList.size(); i++) {
-            boardString.append(lineList.get(i));
+            if (lineList.get(i).matches("^(?:\\d*[bo\\$\\!]{1})*$")) {
+                stringBuilder.append(lineList.get(i));
+            } else {
+                throw new PatternFormatException("Unrecognized cell state used in RLE file.");
+            }
         }
-        String[] boardStringArray = boardString.toString().split("\\$");
+        String readString = stringBuilder.toString().trim();
+        String[] boardStringArray = readString.split("\\$");
 
         int rowOffsett = 0;
+        boolean endOfFile = false;
+
         for (int i = 0; i < boardStringArray.length; i++) {
             int cellPosition = 0;
-            Pattern boardRowPattern = Pattern.compile("(\\d*)(b|o){1}");
+            Pattern boardRowPattern = Pattern.compile("(\\d*)(b|o|\\!){1}");
             m = boardRowPattern.matcher(boardStringArray[i]);
             m.find();
 
@@ -235,7 +242,7 @@ public class FileImporter {
                     for (int j = cellPosition; j < cellPosition + numberOfCells; j++) {
                         if (m.group(2).equals("o")) {
                             boardArray[i + rowOffsett][j] = 1;
-                        } else if (m.group(2).equals("b")) {
+                        } else {
                             boardArray[i + rowOffsett][j] = 0;
                         }
 
@@ -247,6 +254,7 @@ public class FileImporter {
                 cellPosition += numberOfCells;
                 m.find();
             }
+
             Pattern blankLinesPattern = Pattern.compile("(\\d)*\\s*(?!.)");
             m = blankLinesPattern.matcher(boardStringArray[i]);
             m.find();
@@ -261,6 +269,7 @@ public class FileImporter {
                     counter++;
                 }
                 rowOffsett += blancLines;
+
             }
         }
     }
