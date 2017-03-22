@@ -103,10 +103,13 @@ public class FileImporter {
                 }
             }
         }
-        
-        for (int i = 0; i < lineList.size(); i++) {
-            if(lineList.get(i).startsWith("#")) {
-                lineList.remove(i);
+
+        for (int i = lineList.size() - 1; i >= 0; i--) {
+            m = commentPattern.matcher(lineList.get(i));
+            if (m.find()) {
+                if (!m.group(1).isEmpty()) {
+                    lineList.remove(i);
+                }
             }
         }
     }
@@ -174,8 +177,8 @@ public class FileImporter {
                         } else {
                             birth = m.group(4);
                         }
-
                         System.out.println(survive + " " + birth);
+                        lineList.remove(i);
 
                         String[] surviveStringArray = survive.split("");
                         survivalRules = new int[surviveStringArray.length];
@@ -189,8 +192,8 @@ public class FileImporter {
                             birthRules[j] = Integer.parseInt(birthStringArray[j]);
                         }
                     }
-                    lineList.remove(i);
                 }
+                
             }
         }
     }
