@@ -103,6 +103,12 @@ public class FileImporter {
                 }
             }
         }
+        
+        for (int i = 0; i < lineList.size(); i++) {
+            if(lineList.get(i).startsWith("#")) {
+                lineList.remove(i);
+            }
+        }
     }
 
     private void readRleBoardSize(ArrayList<String> lineList) throws PatternFormatException {
@@ -183,8 +189,7 @@ public class FileImporter {
                             birthRules[j] = Integer.parseInt(birthStringArray[j]);
                         }
                     }
-                } else {
-                    throw new PatternFormatException();
+                    lineList.remove(i);
                 }
             }
         }

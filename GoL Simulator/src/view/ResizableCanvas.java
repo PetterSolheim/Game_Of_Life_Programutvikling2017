@@ -13,8 +13,8 @@ import model.Board;
  */
 public class ResizableCanvas extends Canvas {
 
-    private int cellSize = 4;
-    private int spaceBetweenCells = 1;
+    private int cellSize = 1;
+    private int spaceBetweenCells = 0;
     private Color backgroundColor;
     private Color livingCellColor;
     private Color deadCellColor;
@@ -39,16 +39,6 @@ public class ResizableCanvas extends Canvas {
             for (int col = 0; col < b.getBoard()[0].length; col++) {
                 drawCell(b, row, col);
             }
-        }
-    }
-
-    public void toggleBorder() {
-        if (spaceBetweenCells == 1) {
-            cellSize = 1;
-            spaceBetweenCells = 0;
-        } else {
-            cellSize = 4;
-            spaceBetweenCells = 1;
         }
     }
 
