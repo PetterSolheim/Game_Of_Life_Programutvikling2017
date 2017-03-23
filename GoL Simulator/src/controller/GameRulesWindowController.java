@@ -6,7 +6,6 @@
 package controller;
 
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -38,12 +37,12 @@ public class GameRulesWindowController implements Initializable {
     Board board;
 
     @FXML
-    public void cancel() {
+    private void cancel() {
         stage.close();
     }
 
     @FXML
-    public void save() {
+    private void save() {
         // apply new birth rules
         try {
             String[] bStringArray = txtB.getText().split("");

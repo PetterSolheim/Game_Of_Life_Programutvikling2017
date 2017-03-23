@@ -124,7 +124,6 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void openFromDisk() {
-        
         FileImporter fileImporter = new FileImporter();
         FileChooser fileChooser = createFileChooser();
         File file = fileChooser.showOpenDialog(stage);
