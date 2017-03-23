@@ -214,11 +214,15 @@ public class FileImporter {
         for (int i = 0; i < lineList.size(); i++) {
             if (lineList.get(i).matches("^(?:\\d*[bo\\$\\!]{1})*$")) {
                 stringBuilder.append(lineList.get(i));
-            } else {
-                throw new PatternFormatException("Unrecognized cell state used in RLE file.");
             }
         }
         String readString = stringBuilder.toString().trim();
+        
+        //ensure file contains end of file indicator.
+        if(!readString.contains("!")) {
+            throw new PatternFormatException("No end of file character (!) found.");
+        }
+            
         String[] boardStringArray = readString.split("\\$");
 
         int rowOffsett = 0;
