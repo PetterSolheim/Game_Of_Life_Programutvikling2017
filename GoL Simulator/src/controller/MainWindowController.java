@@ -35,6 +35,7 @@ import model.*;
 import view.ResizableCanvas;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
+import view.DialogBoxes;
 
 /**
  * FXML Controller class for the main window. The main window consists of two
@@ -136,9 +137,9 @@ public class MainWindowController implements Initializable {
                 canvas.resizeCanvas(board);
                 canvas.draw(board);
             } catch (IOException e) {
-                ioExceptionDialog(e.getMessage());
+                DialogBoxes.ioException(e.getMessage());
             } catch (PatternFormatException e) {
-                patternFormatExceptionDialog(e.getMessage());                
+                DialogBoxes.patternFormatException(e.getMessage());                
             }
         }
     }
@@ -147,35 +148,21 @@ public class MainWindowController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose file");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Supported Formats", "*.rle", "*.lif", "*.life", "*.cells"),
-                new FileChooser.ExtensionFilter("RLE", "*.rle"),
-                new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
-                new FileChooser.ExtensionFilter("Plaintext", "*.cells"));
+                new FileChooser.ExtensionFilter("Supported Formats", "*.rle"/*, "*.lif", "*.life", "*.cells"*/),
+                new FileChooser.ExtensionFilter("RLE", "*.rle"));
+                //new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
+                //new FileChooser.ExtensionFilter("Plaintext", "*.cells")),
         return fileChooser;
-    }
-
-    private void ioExceptionDialog(String message) {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("File not found.");
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
-    private void patternFormatExceptionDialog(String message) {
-        Alert alert = new Alert(AlertType.ERROR);
-        alert.setTitle("Error reading file");
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     @FXML
     private void openFromUrl() {
         FileImporter fileImporter = new FileImporter();
-        TextInputDialog dialog = new TextInputDialog();
-        dialog.setTitle("Open URL");
-        dialog.setContentText("Please enter URL for the file you wish to open");
+        TextInputDialog inputDialog = new TextInputDialog();
+        inputDialog.setTitle("Open URL");
+        inputDialog.setContentText("Please enter URL for the file you wish to open");
 
-        Optional<String> url = dialog.showAndWait();
+        Optional<String> url = inputDialog.showAndWait();
         if (url.isPresent()) {
             try {
                 board = fileImporter.readGameBoardFromUrl(url.get());
@@ -184,14 +171,9 @@ public class MainWindowController implements Initializable {
             } catch (MalformedURLException e) {
                 System.err.println("URL not valid: " + e);
             } catch (IOException e) {
-                System.err.println("File not found: " + e);
+                DialogBoxes.ioException(e.getMessage());
             } catch (PatternFormatException e) {
-                Alert alert = new Alert(AlertType.ERROR);
-                alert.setTitle("There was an error reading the file");
-                alert.setContentText(e.toString());
-
-                alert.showAndWait();
-                System.err.println(e);
+                DialogBoxes.patternFormatException(e.getMessage());
             }
         }
     }
