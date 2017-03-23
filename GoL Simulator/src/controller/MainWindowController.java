@@ -138,19 +138,19 @@ public class MainWindowController implements Initializable {
             } catch (IOException e) {
                 DialogBoxes.ioException(e.getMessage());
             } catch (PatternFormatException e) {
-                DialogBoxes.patternFormatException(e.getMessage());                
+                DialogBoxes.patternFormatException(e.getMessage());
             }
         }
     }
-    
+
     private FileChooser createFileChooser() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose file");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Supported Formats", "*.rle"/*, "*.lif", "*.life", "*.cells"*/),
                 new FileChooser.ExtensionFilter("RLE", "*.rle"));
-                //new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
-                //new FileChooser.ExtensionFilter("Plaintext", "*.cells")),
+        //new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
+        //new FileChooser.ExtensionFilter("Plaintext", "*.cells")),
         return fileChooser;
     }
 
@@ -308,8 +308,12 @@ public class MainWindowController implements Initializable {
             }
             int row = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
             int col = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-            board.settCellStateAlive(row, col);
-            canvas.drawCell(board, row, col);
+
+            // ensure that the drag event was within the canvas.
+            if (row < board.getBoard().length && col < board.getBoard()[0].length) {
+                board.settCellStateAlive(row, col);
+                canvas.drawCell(board, row, col);
+            }
         }
     }
 

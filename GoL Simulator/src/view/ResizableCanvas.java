@@ -14,7 +14,7 @@ import model.Board;
 public class ResizableCanvas extends Canvas {
 
     private int cellSize = 1;
-    private int spaceBetweenCells = 0;
+    private int spaceBetweenCells = 1;
     private Color backgroundColor;
     private Color livingCellColor;
     private Color deadCellColor;
