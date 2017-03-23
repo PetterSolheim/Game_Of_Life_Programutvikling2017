@@ -214,6 +214,8 @@ public class FileImporter {
         for (int i = 0; i < lineList.size(); i++) {
             if (lineList.get(i).matches("^(?:\\d*[bo\\$\\!]{1})*$")) {
                 stringBuilder.append(lineList.get(i));
+            } else {
+                throw new PatternFormatException("Invalid character found in board definition.");
             }
         }
         String readString = stringBuilder.toString().trim();
