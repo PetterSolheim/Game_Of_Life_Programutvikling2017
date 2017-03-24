@@ -6,6 +6,7 @@
 package controller;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -15,11 +16,8 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ScrollPane;
@@ -29,7 +27,6 @@ import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.*;
 import view.ResizableCanvas;
@@ -135,10 +132,12 @@ public class MainWindowController implements Initializable {
                 board = tmpBoard;
                 canvas.resizeCanvas(board);
                 canvas.draw(board);
+            } catch (FileNotFoundException e) {
+                DialogBoxes.ioException("No file found at: "+e.getMessage());
             } catch (IOException e) {
-                DialogBoxes.ioException(e.getMessage());
+                DialogBoxes.ioException("There was a problem reading the file: "+e.getMessage());
             } catch (PatternFormatException e) {
-                DialogBoxes.patternFormatException(e.getMessage());
+                DialogBoxes.patternFormatException("There was an error parsing the file: "+e.getMessage());
             }
         }
     }
@@ -168,11 +167,13 @@ public class MainWindowController implements Initializable {
                 canvas.resizeCanvas(board);
                 canvas.draw(board);
             } catch (MalformedURLException e) {
-                System.err.println("URL not valid: " + e);
+                DialogBoxes.ioException("Given String is not a valid URL: "+e.getMessage());
+            } catch (FileNotFoundException e) {
+                DialogBoxes.ioException("File not found at: "+e.getMessage());
             } catch (IOException e) {
-                DialogBoxes.ioException(e.getMessage());
+                DialogBoxes.ioException("File not found at: "+e.getMessage());
             } catch (PatternFormatException e) {
-                DialogBoxes.patternFormatException(e.getMessage());
+                DialogBoxes.patternFormatException("There was an error parsing the file: "+e.getMessage());
             }
         }
     }

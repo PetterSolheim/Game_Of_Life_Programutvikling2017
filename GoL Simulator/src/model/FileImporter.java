@@ -69,31 +69,26 @@ public class FileImporter {
      * @param fileExtension
      * @throws PatternFormatException 
      */
-    private void readGameBoard(Reader r, String fileExtension) throws PatternFormatException {
-        try {
+    private void readGameBoard(Reader r, String fileExtension) throws PatternFormatException, IOException {
             switch (fileExtension) {
                 case "rle":
                     rleReader(r);
                     break;
                 case "life":
-                    System.out.println("Not yet supported");
-                    break;
+                    throw new PatternFormatException("Unsuported file type");
                 case "lif":
-                    System.out.println("Not yet supported");
-                    break;
+                    throw new PatternFormatException("Unsuported file type");
                 case "cells":
-                    System.out.println("Not yet supported");
-                    break;
-            }
+                    throw new PatternFormatException("Unsuported file type");
+                default:
+                    throw new PatternFormatException("Unsuported file type");
+        }
 
             // build the board.
             boardArray = addPadding(boardArray);
             board.setBoard(boardArray);
             board.setBirthRules(birthRules);
             board.setSurviveRules(survivalRules);
-        } catch (IOException e) {
-            DialogBoxes.ioException("File not found.");
-        }
     }
 
     /**
