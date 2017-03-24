@@ -13,6 +13,10 @@ import javafx.scene.control.Alert;
  */
 public class DialogBoxes {
 
+    /**
+     * A simple dialog box for displaying IOException messages.
+     * @param message The message to display in the dialog box. 
+     */
     public static void ioException(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("File not found.");
@@ -20,6 +24,10 @@ public class DialogBoxes {
         alert.showAndWait();
     }
 
+    /**
+     * A simple dialog box for displaying PatternFormatException messages.
+     * @param message The message to display in the dialog box.
+     */
     public static void patternFormatException(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
         alert.setTitle("Error reading file");

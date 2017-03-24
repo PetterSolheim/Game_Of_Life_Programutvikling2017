@@ -91,7 +91,9 @@ public class ResizableCanvas extends Canvas {
 
     /**
      * Resizes the canvas object. New size is based on the required size to
-     * accomadate the current board.
+     * accomadate the current board. Pixel size of each cell is reduced
+     * if the number of cells on the board exceed a certain value. This is
+     * to prevent the Canvas from exceeding the size of the heap.
      *
      * @param b
      */

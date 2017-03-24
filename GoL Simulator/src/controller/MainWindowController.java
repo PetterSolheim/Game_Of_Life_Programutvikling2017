@@ -215,10 +215,10 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void lowerScale() {
-        if (canvas.getScaleX() >= 0.35) {
-            if (canvas.getScaleX() < 0.4) {
+        if (canvas.getScaleX() >= 0.45) {
+            if (canvas.getScaleX() < 0.5) {
                 canvas.adjustScale(-0.08, -0.08);
-            } else if (canvas.getScaleX() < 0.5) {
+            } else if (canvas.getScaleX() < 0.6) {
                 canvas.adjustScale(-0.13, -0.13);
             } else {
                 canvas.adjustScale(-0.2, -0.2);
