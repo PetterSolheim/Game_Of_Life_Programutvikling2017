@@ -41,6 +41,14 @@ public class Board {
         birthRules = new ArrayList<Integer>();
         birthRules.add(3);
     }
+    
+    /**
+     * Returns the number of cells on the board.
+     * @return int
+     */
+    public long numberOfCells() {
+        return currentBoard.length * currentBoard[0].length;
+    }
 
     /**
      * Sets the survival values for the game rules. New values can be passed as
