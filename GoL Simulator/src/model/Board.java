@@ -52,14 +52,13 @@ public class Board {
     }
     public Board deepCopy (){ // not a deep copy?
         Board b = new Board();
-        b.currentBoard = this.currentBoard;
-        b.originalBoard = this.originalBoard;
+        b.currentBoard = duplicateBoard(this.currentBoard);
+        b.originalBoard = duplicateBoard(this.originalBoard);
         b.survivalRules = this.survivalRules;
         b.birthRules = this.birthRules;
         b.generationCount = this.generationCount;
-        b.cellCount = 0;
         b.countLivingCells();
-        System.out.println("Cell Count" + b.cellCount);
+        System.out.println("Living Cell Count" + b.livingCells);
         return b;
     }
     private void countLivingCells (){
@@ -67,7 +66,7 @@ public class Board {
         for(int col = 0; col < currentBoard.length; col++){
             for(int row = 0 ; row < currentBoard.length; row++){
                 if(currentBoard[row][col]==1){
-                    cellCount++;
+                    livingCells++;
                 }
             }
         }
@@ -189,6 +188,7 @@ public class Board {
                 }
             }
         }
+        System.out.println(livingCells);
         generationCount++;
     }
 
@@ -250,9 +250,11 @@ public class Board {
      */
     public void toggleCellState(int row, int col) {
         if (currentBoard[row][col] == 1) {
+            livingCells--;
             currentBoard[row][col] = 0;
         } else {
             currentBoard[row][col] = 1;
+            livingCells++;
         }
     }
 
@@ -263,7 +265,10 @@ public class Board {
      * @param col x position of the cell to make alive.
      */
     public void setCellStateAlive(int row, int col) {
-        currentBoard[row][col] = 1;
+        if(currentBoard[row][col] != 1){
+            currentBoard[row][col] = 1;
+            livingCells++;
+        }
     }
 
     /**
