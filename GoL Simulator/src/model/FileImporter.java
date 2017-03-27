@@ -24,7 +24,7 @@ public class FileImporter {
     private byte[][] boardArray;
     private int row;
     private int col;
-    private int padding = 0;
+    private int padding = 20;
     private int[] survivalRules;
     private int[] birthRules;
 
@@ -278,7 +278,7 @@ public class FileImporter {
 
         for (int i = 0; i < boardStringArray.length; i++) {
             int cellPosition = 0;
-            Pattern boardRowPattern = Pattern.compile("(\\d*)(b|o|\\!){1}");
+            Pattern boardRowPattern = Pattern.compile("(\\d*)(b|o){1}");
             m = boardRowPattern.matcher(boardStringArray[i]);
             m.find();
 

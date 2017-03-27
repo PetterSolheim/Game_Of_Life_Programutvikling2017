@@ -35,8 +35,7 @@ public class FileImporterTest {
             {1, 0, 0, 0, 0, 0, 0, 1},
             {0, 1, 0, 0, 0, 0, 1, 0},
             {0, 0, 1, 0, 0, 1, 0, 0},
-            {0, 0, 0, 1, 1, 0, 0, 0},
-        };
+            {0, 0, 0, 1, 1, 0, 0, 0},};
         expResult.setBoard(board);
         expResult.setBirthRules(3);
         expResult.setSurviveRules(2, 3);
@@ -68,6 +67,19 @@ public class FileImporterTest {
         assertArrayEquals(expResult.getBoard(), result.getBoard());
         assertEquals(expResult.getSurviveRules(), result.getSurviveRules());
         assertEquals(expResult.getBirthRules(), result.getBirthRules());
+
+        String url2 = "http://www.conwaylife.com/patterns/blinker.rle";
+        Board expResult2 = new Board();
+        byte[][] board2 = {
+            {1, 1, 1}
+        };
+        expResult2.setBoard(board2);
+        expResult2.setBirthRules(3);
+        expResult2.setSurviveRules(2, 3);
+        Board result2 = instance.readGameBoardFromUrl(url2);
+        assertArrayEquals(expResult2.getBoard(), result2.getBoard());
+        assertEquals(expResult2.getSurviveRules(), result2.getSurviveRules());
+        assertEquals(expResult2.getBirthRules(), result2.getBirthRules());
     }
 
 }
