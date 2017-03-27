@@ -6,7 +6,12 @@
 package controller;
 
 import java.io.IOException;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
@@ -18,16 +23,18 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import model.Board;
+import model.*;
 import view.ResizableCanvas;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
+import javafx.stage.FileChooser;
+import view.DialogBoxes;
 
 /**
  * FXML Controller class for the main window. The main window consists of two
@@ -64,42 +71,44 @@ public class MainWindowController implements Initializable {
     private ColorPicker backgroundColorPicker;
     @FXML
     private ImageView imgPlayPause;
-    private Board b;
+    private Board board;
     private Timer time;
     private boolean isPaused;
+    private Stage stage;
 
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        b = Board.getInstance();
+        Platform.runLater(this::defineStage); // allows easy referal to the stage
+
+        board = new Board(200, 200);
         time = new Timer(this);
         isPaused = true;
         livingCellColorPicker.setValue(canvas.getLivingCellColor());
         deadCellColorPicker.setValue(canvas.getDeadCellColor());
         backgroundColorPicker.setValue(canvas.getBackgroundColor());
-        changeCellSizeAndShow();
-        changeFPSAndShow();
-
-        cellSizeSlider.valueProperty().addListener((observable) -> {
-            changeCellSizeAndShow();
-            canvas.redrawBoard(b);
-        });
+        setFps();
 
         fpsSlider.valueProperty().addListener((observable) -> {
-            changeFPSAndShow();
+            setFps();
         });
 
-        canvas.calculateCanvasSize(b);
-        canvas.redrawBoard(b);
+        canvas.resizeCanvas(board);
+        canvas.draw(board);
+    }
+
+    @FXML
+    private void newBoard() {
+
     }
 
     @FXML
     private void reset() {
         stop();
-        b.resetBoard();
-        canvas.redrawBoard(b);
+        board.resetBoard();
+        canvas.draw(board);
         displayCellCount();
         displayGeneration();
     }
@@ -110,6 +119,80 @@ public class MainWindowController implements Initializable {
         imgPlayPause.setImage(imgPause);
         btnPlay.setText("Pause");
         time.start();
+    }
+
+    @FXML
+    private void openFromDisk() {
+        FileImporter fileImporter = new FileImporter();
+        FileChooser fileChooser = createFileChooser();
+        File file = fileChooser.showOpenDialog(stage);
+
+        Board tmpBoard = new Board();
+        if (file != null && file.exists()) {
+            try {
+                tmpBoard = fileImporter.readGameBoardFromDisk(file);
+                board = tmpBoard;
+                canvas.resizeCanvas(board);
+                canvas.draw(board);
+            } catch (FileNotFoundException e) {
+                DialogBoxes.ioException("No file found at: "+e.getMessage());
+            } catch (IOException e) {
+                DialogBoxes.ioException("There was a problem reading the file: "+e.getMessage());
+            } catch (PatternFormatException e) {
+                DialogBoxes.patternFormatException("There was an error parsing the file: "+e.getMessage());
+            }
+        }
+    }
+    
+    @FXML
+    private void addFromDisk() {
+        
+    }
+    
+    @FXML
+    private void addFromUrl() {
+        
+    }
+    
+    @FXML
+    private void showAboutWindow() {
+        
+    }
+
+    private FileChooser createFileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose file");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Supported Formats", "*.rle"/*, "*.lif", "*.life", "*.cells"*/),
+                new FileChooser.ExtensionFilter("RLE", "*.rle"));
+        //new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
+        //new FileChooser.ExtensionFilter("Plaintext", "*.cells")),
+        return fileChooser;
+    }
+
+    @FXML
+    private void openFromUrl() {
+        FileImporter fileImporter = new FileImporter();
+        TextInputDialog inputDialog = new TextInputDialog();
+        inputDialog.setTitle("Open URL");
+        inputDialog.setContentText("Please enter URL for the file you wish to open");
+
+        Optional<String> url = inputDialog.showAndWait();
+        if (url.isPresent()) {
+            try {
+                board = fileImporter.readGameBoardFromUrl(url.get());
+                canvas.resizeCanvas(board);
+                canvas.draw(board);
+            } catch (MalformedURLException e) {
+                DialogBoxes.ioException("Given String is not a valid URL: "+e.getMessage());
+            } catch (FileNotFoundException e) {
+                DialogBoxes.ioException("File not found at: "+e.getMessage());
+            } catch (IOException e) {
+                DialogBoxes.ioException("File not found at: "+e.getMessage());
+            } catch (PatternFormatException e) {
+                DialogBoxes.patternFormatException("There was an error parsing the file: "+e.getMessage());
+            }
+        }
     }
 
     private void stop() {
@@ -132,54 +215,62 @@ public class MainWindowController implements Initializable {
     @FXML
     private void changeLivingCellColor() {
         canvas.setLivingCellColor(livingCellColorPicker.getValue());
-        canvas.redrawBoard(b);
+        canvas.draw(board);
     }
 
     @FXML
     private void changeBackgroundColor() {
         canvas.setBackgroundColor(backgroundColorPicker.getValue());
-        canvas.redrawBoard(b);
+        canvas.draw(board);
     }
 
     @FXML
     private void changeDeadCellColor() {
         canvas.setDeadCellColor(deadCellColorPicker.getValue());
-        canvas.redrawBoard(b);
+        canvas.draw(board);
     }
 
-    public void changeCellSizeAndShow() {
-        canvas.setScaleX(cellSizeSlider.getValue());
-        canvas.setScaleY(cellSizeSlider.getValue());
-        canvas.redrawBoard(b);
-        displayCellSize();
+    @FXML
+    private void lowerScale() {
+        if (canvas.getScaleX() >= 0.45) {
+            if (canvas.getScaleX() < 0.5) {
+                canvas.adjustScale(-0.08, -0.08);
+            } else if (canvas.getScaleX() < 0.6) {
+                canvas.adjustScale(-0.13, -0.13);
+            } else {
+                canvas.adjustScale(-0.2, -0.2);
+            }
+        }
     }
 
-    public void displayCellSize() {
-        txtShowCellSize.setText(Integer.toString((int) cellSizeSlider.getValue()));
+    @FXML
+    private void higherScale() {
+        if (canvas.getScaleX() < 0.4) {
+            canvas.adjustScale(0.05, 0.05);
+        } else if (canvas.getScaleX() < 0.5) {
+            canvas.adjustScale(0.09, 0.09);
+        } else {
+            canvas.adjustScale(0.12, 0.12);
+        }
     }
 
-    public void changeFPSAndShow() {
+    private void setFps() {
         long newTimer = (long) ((1 / fpsSlider.getValue()) * 1000000000);
-        time.setNextGenerationTimer(newTimer);
-        displayFps();
+        time.setFps(newTimer);
     }
 
-    public void displayCellCount() {
-        txtShowCellCount.setText(Integer.toString(b.getCellCount()) + " .");
+    private void displayCellCount() {
+        txtShowCellCount.setText(Integer.toString(board.getCellCount()) + " .");
     }
 
-    public void displayGeneration() {
-        txtShowGen.setText(Integer.toString(b.getGenerationCount()) + " ");
-    }
-
-    public void displayFps() {
-        txtShowFps.setText(Integer.toString((int) fpsSlider.getValue()));
+    private void displayGeneration() {
+        txtShowGen.setText(Integer.toString(board.getGenerationCount()) + " ");
     }
 
     @FXML
     public void createNextGeneration() {
-        b.nextGeneration();
-        canvas.draw(b);
+        board.nextGeneration();
+        canvas.drawChanges(board);
         displayCellCount();
         displayGeneration();
     }
@@ -189,16 +280,19 @@ public class MainWindowController implements Initializable {
         Platform.exit();
     }
 
-    public void showGameRulesWindow() throws Exception {
-        Stage settings = new Stage();
-        Parent root = FXMLLoader.load(getClass().getResource("/view/GameRulesWindow.fxml"));
-        Scene scene = new Scene(root);
+    @FXML
+    private void showGameRulesWindow() throws Exception {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/view/GameRulesWindow.fxml"));
+        loader.load();
+        Parent parent = loader.getRoot();
+        Scene Scene = new Scene(parent);
+        Stage Stage = new Stage();
+        Stage.setScene(Scene);
 
-        settings.setResizable(true);
-        settings.initModality(Modality.APPLICATION_MODAL);
-        settings.setScene(scene);
-        settings.setTitle("Settings");
-        settings.show();
+        GameRulesWindowController controller = loader.getController();
+        controller.initData(board);
+        Stage.show();
     }
     public void showStatistics () throws IOException {
         Stage statistics = new Stage ();
@@ -210,19 +304,30 @@ public class MainWindowController implements Initializable {
         statistics.setTitle("Statistics");
         statistics.show();
     }
+
+    /**
+     * Toggles the state of a clicked cell. A live cell becomes dead, and a dead
+     * cell becomes alive.
+     *
+     * @param event
+     */
     @FXML
-    public void toggleClickedCell(MouseEvent event) {
-        if (event.getButton() == MouseButton.PRIMARY) {
+    private void toggleClickedCell(MouseEvent event) {
+        if (event.getButton() == MouseButton.PRIMARY && !event.isDragDetect()) {
             int row = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
             int col = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-            b.toggleCellState(row, col);
-            canvas.drawCell(b, row, col);
+            board.toggleCellState(row, col);
+            canvas.drawCell(board, row, col);
         }
-
     }
 
+    /**
+     * Determines which mouse button is dragging, and calls the relevant method.
+     *
+     * @param event
+     */
     @FXML
-    public void dragCanvas(MouseEvent event) {
+    private void dragCanvas(MouseEvent event) {
         if (event.getButton() == MouseButton.SECONDARY) {
             scrollPane.setPannable(true);
         } else {
@@ -231,13 +336,21 @@ public class MainWindowController implements Initializable {
             }
             int row = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
             int col = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-            b.reviveCell(row, col);
-            canvas.drawCell(b, row, col);
+
+            // ensure that the drag event was within the canvas.
+            if (row < board.getBoard().length && col < board.getBoard()[0].length) {
+                board.setCellStateAlive(row, col);
+                canvas.drawCell(board, row, col);
+            }
         }
     }
 
     @FXML
-    public void dragCanvasEnded() {
+    private void dragCanvasEnded() {
         scrollPane.setPannable(false);
+    }
+
+    private void defineStage() {
+        stage = (Stage) scrollPane.getScene().getWindow();
     }
 }

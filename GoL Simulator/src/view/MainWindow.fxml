@@ -19,19 +19,37 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.Group?>
 
-<AnchorPane fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" stylesheets="/css/main.css" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
+<AnchorPane fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
     <children>
         <MenuBar fx:id="menuBar" layoutY="2.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0">
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="New" />
+                        <MenuItem mnemonicParsing="false" text="New" onAction="#newBoard" />
                     </items>
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Open" />
+                        <Menu mnemonicParsing="false" text="Open">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="from disk" onAction="#openFromDisk" />
+                                <MenuItem mnemonicParsing="false" text="from URL" onAction="#openFromUrl"/>
+                            </items>
+                        </Menu>
                     </items>
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Save" />
+                        <Menu mnemonicParsing="false" text="Add">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="from disk" onAction="#addFromDisk"/>
+                                <MenuItem mnemonicParsing="false" text="from url" onAction="#addFromUrl"/>
+                            </items>
+                        </Menu>
+                    </items>
+                    <items>
+                        <Menu mnemonicParsing="false" text="Save" >
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="as RLE"/>
+                                <MenuItem mnemonicParsing="false" text="as GIF"/>
+                            </items>
+                        </Menu>
                     </items>
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Settings" />
@@ -41,6 +59,16 @@
                     </items>
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#quit" text="Exit" />
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Edit board"/>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About" onAction="#showAboutWindow"/>
                     </items>
                 </Menu>
             </menus>
@@ -99,7 +127,7 @@
         <ScrollPane fx:id = "scrollPane" layoutY="67.0" prefHeight="305.0" prefWidth="600.0" AnchorPane.bottomAnchor="28.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0">
             <content>
                 <Group>
-                    <ResizableCanvas fx:id="canvas" onMouseClicked="#toggleClickedCell" onMouseDragged="#dragCanvas" onMouseReleased="#dragCanvasEnded"/>
+                    <ResizableCanvas fx:id="canvas" onMousePressed="#toggleClickedCell" onMouseDragged="#dragCanvas" onMouseReleased="#dragCanvasEnded"/>
                 </Group>
             </content>
         </ScrollPane>
@@ -109,10 +137,11 @@
                     <Insets left="10.0" />
                 </HBox.margin>
                 <children>
-                    <Slider fx:id="cellSizeSlider" min = "1.0" max = "5.0" value = "1"/>
-                    <Text fx:id="txtShowCellSize"/>
+                    <Text text="Zoom: "/>
+                    <Button fx:id="btnSmaller" onAction="#lowerScale" text="-"/>
+                    <Button fx:id="btnBigger" onAction="#higherScale" text="+"/>
+                    <Text text="Animation speed: "/>
                     <Slider fx:id="fpsSlider" majorTickUnit="1.0" max="60.0" min="1.0" minorTickCount="0" snapToTicks="true" value="4.0" />                 
-                    <Text fx:id="txtShowFps"/>
                 </children>
             </HBox>
             <HBox alignment="CENTER_RIGHT" spacing ="10" HBox.hgrow="ALWAYS">
