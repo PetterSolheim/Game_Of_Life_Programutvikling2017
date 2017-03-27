@@ -25,7 +25,29 @@ public class Board {
         currentBoard = new byte[200][200];
         originalBoard = duplicateBoard(currentBoard);
     }
-
+    public Board deepCopy (){ // not a deep copy?
+        Board b = new Board();
+        b.currentBoard = this.currentBoard;
+        b.originalBoard = this.originalBoard;
+        b.birth = this.birth;
+        b.maxToSurvive = this.maxToSurvive;
+        b.minToSurvive = this.minToSurvive;
+        b.generationCount = this.generationCount;
+        b.cellCount = 0;
+        b.countLivingCells();
+        System.out.println("Cell Count" + b.cellCount);
+        return b;
+    }
+    private void countLivingCells (){
+        cellCount = 0;
+        for(int col = 0; col < currentBoard.length; col++){
+            for(int row = 0 ; row < currentBoard.length; row++){
+                if(currentBoard[row][col]==1){
+                    cellCount++;
+                }
+            }
+        }
+    }
     /**
      * Method for acquiring a reference to the Board object.
      *
@@ -104,10 +126,12 @@ public class Board {
 
                 if (testPattern[row][col] == 1 && (neighbours < minToSurvive || neighbours > maxToSurvive)) {
                     currentBoard[row][col] = 0;
+                    cellCount--;
                 }
 
                 else if (testPattern[row][col] == 0 && neighbours == birth) {
                     currentBoard[row][col] = 1;
+                    cellCount ++;
                 }
             }
         }
@@ -166,15 +190,19 @@ public class Board {
     
 
     public void toggleCellState(int row, int col) {
-        if(currentBoard[row][col] == 1)
+        if(currentBoard[row][col] == 1){
             currentBoard[row][col] = 0;
-        else
+
+        }
+        else{
             currentBoard[row][col] = 1;
+        }
     }
     
     
     public void reviveCell(int row, int col) {
         currentBoard[row][col] = 1;
+        cellCount ++;
     }
 
     /**

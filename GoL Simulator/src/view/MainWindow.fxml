@@ -37,6 +37,9 @@
                         <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Settings" />
                     </items>
                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="Statistics" />
+                    </items>
+                    <items>
                         <MenuItem mnemonicParsing="false" onAction="#quit" text="Exit" />
                     </items>
                 </Menu>

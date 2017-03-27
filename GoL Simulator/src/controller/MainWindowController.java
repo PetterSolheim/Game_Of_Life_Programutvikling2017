@@ -5,6 +5,7 @@
  */
 package controller;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -26,6 +27,7 @@ import javafx.stage.Stage;
 import model.Board;
 import view.ResizableCanvas;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 
 /**
  * FXML Controller class for the main window. The main window consists of two
@@ -198,7 +200,16 @@ public class MainWindowController implements Initializable {
         settings.setTitle("Settings");
         settings.show();
     }
-
+    public void showStatistics () throws IOException {
+        Stage statistics = new Stage ();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/StatisticsWindow.fxml"));
+        FlowPane root = loader.load();
+        
+        Scene scene = new Scene (root);
+        statistics.setScene(scene);
+        statistics.setTitle("Statistics");
+        statistics.show();
+    }
     @FXML
     public void toggleClickedCell(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY) {
