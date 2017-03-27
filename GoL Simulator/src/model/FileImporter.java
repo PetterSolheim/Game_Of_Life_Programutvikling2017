@@ -24,6 +24,7 @@ public class FileImporter {
     private byte[][] boardArray;
     private int row;
     private int col;
+    private int padding = 0;
     private int[] survivalRules;
     private int[] birthRules;
 
@@ -355,13 +356,17 @@ public class FileImporter {
      * @return 
      */
     private byte[][] addPadding(byte[][] input) {
-        byte[][] paddedBoard = new byte[input.length + 100][input[0].length + 100];
+        byte[][] paddedBoard = new byte[input.length + padding*2][input[0].length + padding*2];
         for (int i = 0; i < input.length; i++) {
             for (int j = 0; j < input[i].length; j++) {
-                paddedBoard[i + 50][j + 50] = input[i][j];
+                paddedBoard[i + (padding)][j + (padding)] = input[i][j];
             }
         }
         return paddedBoard;
+    }
+    
+    public void setPadding(int padding) {
+        this.padding = padding;
     }
 
 }
