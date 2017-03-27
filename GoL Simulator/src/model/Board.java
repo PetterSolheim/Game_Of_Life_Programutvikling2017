@@ -108,7 +108,7 @@ public class Board {
      *
      * @return an ArrayList of Integers.
      */
-    public ArrayList<Integer> getSurvivalRules() {
+    public ArrayList<Integer> getSurviveRules() {
         return survivalRules;
     }
 
@@ -238,7 +238,7 @@ public class Board {
      * @param row y position of the cell to make alive.
      * @param col x position of the cell to make alive.
      */
-    public void settCellStateAlive(int row, int col) {
+    public void setCellStateAlive(int row, int col) {
         currentBoard[row][col] = 1;
     }
 

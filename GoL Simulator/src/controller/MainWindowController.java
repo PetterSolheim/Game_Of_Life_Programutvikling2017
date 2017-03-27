@@ -312,7 +312,7 @@ public class MainWindowController implements Initializable {
 
             // ensure that the drag event was within the canvas.
             if (row < board.getBoard().length && col < board.getBoard()[0].length) {
-                board.settCellStateAlive(row, col);
+                board.setCellStateAlive(row, col);
                 canvas.drawCell(board, row, col);
             }
         }

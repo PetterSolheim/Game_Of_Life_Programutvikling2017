@@ -94,7 +94,7 @@ public class GameRulesWindowController implements Initializable {
         txtB.setText(birthString.toString());
 
         StringBuilder survivalString = new StringBuilder();
-        for (int value : board.getSurvivalRules()) {
+        for (int value : board.getSurviveRules()) {
             survivalString.append(value);
         }
         txtS.setText(survivalString.toString());
