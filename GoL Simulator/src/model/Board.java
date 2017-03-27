@@ -15,6 +15,7 @@ public class Board {
     private byte[][] originalBoard;
     private int generationCount = 0;
     private int cellCount = 0;
+    private int livingCells = 0;    
     private ArrayList<Integer> survivalRules;
     private ArrayList<Integer> birthRules;
 
@@ -53,9 +54,8 @@ public class Board {
         Board b = new Board();
         b.currentBoard = this.currentBoard;
         b.originalBoard = this.originalBoard;
-        b.birth = this.birth;
-        b.maxToSurvive = this.maxToSurvive;
-        b.minToSurvive = this.minToSurvive;
+        b.survivalRules = this.survivalRules;
+        b.birthRules = this.birthRules;
         b.generationCount = this.generationCount;
         b.cellCount = 0;
         b.countLivingCells();
@@ -169,21 +169,23 @@ public class Board {
     public void nextGeneration() {
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.
-        byte[][] neighbourCount = duplicateBoard(currentBoard);
+        byte[][] testPattern = duplicateBoard(currentBoard);
         changedCells = new byte[currentBoard.length][currentBoard[0].length];
 
         // iterates through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
-        for (int row = 0; row < neighbourCount.length; row++) {
-            for (int col = 0; col < neighbourCount[0].length; col++) {
-                int neighbours = countNeighbours(neighbourCount, row, col);
+        for (int row = 0; row < testPattern.length; row++) {
+            for (int col = 0; col < testPattern[0].length; col++) {
+                int neighbours = countNeighbours(testPattern, row, col);
 
-                if (neighbourCount[row][col] == 1 && (!survivalRules.contains(neighbours))) {
+                if (testPattern[row][col] == 1 && (!survivalRules.contains(neighbours))) {
                     currentBoard[row][col] = 0;
                     changedCells[row][col] = 1;
-                } else if (neighbourCount[row][col] == 0 && birthRules.contains(neighbours)) {
+                    livingCells--;
+                } else if (testPattern[row][col] == 0 && birthRules.contains(neighbours)) {
                     currentBoard[row][col] = 1;
                     changedCells[row][col] = 1;
+                    livingCells++;
                 }
             }
         }
@@ -279,7 +281,9 @@ public class Board {
     public int getGenerationCount() {
         return generationCount;
     }
-
+    public int getLivingCells (){
+        return livingCells;
+    }
     /**
      * Reverts the current board back to its original state.
      */

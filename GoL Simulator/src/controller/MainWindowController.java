@@ -299,6 +299,8 @@ public class MainWindowController implements Initializable {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/StatisticsWindow.fxml"));
         FlowPane root = loader.load();
         
+        StatisticsWindowController controller = loader.getController();
+        controller.setBoard(board.deepCopy());
         Scene scene = new Scene (root);
         statistics.setScene(scene);
         statistics.setTitle("Statistics");
