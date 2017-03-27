@@ -5,80 +5,195 @@
  */
 package model;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
+import java.util.ArrayList;
+import java.util.Arrays;
+import org.junit.Assert;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
  * @author aleks
  */
 public class BoardTest {
-    
-    public BoardTest() {
-    }
 
     @Test
     public void testNextGeneration() {
-        Board b = Board.getInstance();
-        
-        // test pattern 1
-        byte[][] testBoard = {
-            {0,0,0,0},
-            {0,1,1,0},
-            {0,1,1,0},
-            {0,0,0,0}
+        System.out.println("nextGeneration");
+        Board instance = new Board();
+
+        byte[][] board = {
+            {0, 1, 0},
+            {0, 1, 0},
+            {0, 1, 0}
         };
-        b.setBoard(testBoard);
-        b.nextGeneration();
-        org.junit.Assert.assertEquals(b.toString(),"0000011001100000");
-        
-        // test pattern 2
-        byte[][] testBoard2 = {
-            {0,0,0},
-            {1,1,1},
-            {1,1,1},
-            {0,0,0}
+        instance.setBoard(board);
+        instance.nextGeneration();
+        org.junit.Assert.assertEquals(instance.toString(), "000111000");
+
+        byte[][] board2 = {
+            {0, 0, 0, 0},
+            {0, 1, 1, 0},
+            {0, 1, 1, 0},
+            {0, 0, 0, 0}
         };
-        b.setBoard(testBoard2);
-        b.nextGeneration();
-        org.junit.Assert.assertEquals(b.toString(),"010101101010");
-        
-        // test pattern 3
-        byte[][] testBoard3 = {
-            {0,0,0,0,0,0},
-            {0,1,1,1,1,0},
-            {0,1,1,1,1,0},
-            {0,1,1,1,1,0},
-            {0,1,1,1,1,0},
-            {0,0,0,0,0,0}
+        instance.setBoard(board2);
+        instance.nextGeneration();
+        assertEquals(instance.toString(), "0000011001100000");
+
+        byte[][] board3 = {
+            {0, 0, 0, 1, 0, 0, 0},
+            {0, 0, 0, 1, 0, 0, 0},
+            {0, 0, 0, 1, 0, 0, 0},
+            {0, 0, 0, 1, 0, 0, 0}
         };
-        b.setBoard(testBoard3);
-        b.nextGeneration();
-        org.junit.Assert.assertEquals(b.toString(),"001100010010100001100001010010001100");
-        
-        // test pattern 4: test an empty board
-        byte[][] testBoard4 = {
-            {0,0,0,0},
-            {0,0,0,0},
-            {0,0,0,0},
-            {0,0,0,0}
+        instance.setBoard(board3);
+        instance.nextGeneration();
+        assertEquals(instance.toString(), "0000000001110000111000000000");
+
+        byte[][] board4 = {
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 0, 1, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 0, 1, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0}
         };
-        b.setBoard(testBoard4);
-        b.nextGeneration();
-        org.junit.Assert.assertEquals(b.toString(),"0000000000000000");
-        
-        // test pattern 5: test a full board. This test will only work using
-        // a static board of 4x4. Dynamic boards will behave differently.
-        byte[][] testBoard5 = {
-            {1,1,1,1},
-            {1,1,1,1},
-            {1,1,1,1},
-            {1,1,1,1}
-        };
-        b.setBoard(testBoard5);
-        b.nextGeneration();
-        org.junit.Assert.assertEquals(b.toString(), "1001000000001001");
+        instance.setBoard(board4);
+        instance.nextGeneration();
+        assertEquals(instance.toString(), "00000000000000000000000000000000000");
+
+    }
+
+    @Test
+    public void testSetSurviveRules() {
+        System.out.println("setSurviveRules");
+        int[] input = {2, 2, 1, 3};
+        Board instance = new Board();
+        instance.setSurviveRules(input);
+        ArrayList<Integer> expResult = new ArrayList<Integer>(Arrays.asList(1, 2, 3));
+        assertEquals(expResult, instance.getSurviveRules());
+    }
+
+    @Test
+    public void testSetBirthRules() {
+        System.out.println("setBirthRules");
+        int[] input = {3, 2, 2};
+        Board instance = new Board();
+        instance.setBirthRules(input);
+        ArrayList<Integer> expResult = new ArrayList<Integer>(Arrays.asList(2, 3));
+        assertEquals(expResult, instance.getBirthRules());
+    }
+
+    @Test
+    public void testGetBirthRules() {
+        System.out.println("getBirthRules");
+        Board instance = new Board();
+        ArrayList<Integer> expResult = new ArrayList<Integer>(Arrays.asList(3));
+        ArrayList<Integer> result = instance.getBirthRules();
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testGetSurviveRules() {
+        System.out.println("getSurvivalRules");
+        Board instance = new Board();
+        ArrayList<Integer> expResult = new ArrayList<Integer>(Arrays.asList(2, 3));
+        ArrayList<Integer> result = instance.getSurviveRules();
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testGetBoard() {
+        System.out.println("getBoard");
+        Board instance = new Board();
+        byte[][] expResult = {{0, 1, 0}, {0, 0, 0}, {0, 1, 0}};
+        instance.setBoard(expResult);
+        byte[][] result = instance.getBoard();
+        assertArrayEquals(expResult, result);
+    }
+
+    @Test
+    public void testGetBoardChanges() {
+        System.out.println("getBoardChanges");
+        Board instance = new Board();
+        byte[][] testBoard = {{0, 1, 0}, {0, 1, 0}, {0, 1, 0}};
+        instance.setBoard(testBoard);
+        instance.nextGeneration();
+        byte[][] expResult = {{0, 1, 0}, {1, 0, 1}, {0, 1, 0}};
+        byte[][] result = instance.getBoardChanges();
+        assertArrayEquals(expResult, result);
+    }
+
+    @Test
+    public void testSetBoard() {
+        System.out.println("setBoard");
+        Board instance = new Board();
+        byte[][] expResult = {{0, 1, 0}, {0, 0, 0}, {0, 1, 0}};
+        instance.setBoard(expResult);
+        byte[][] result = instance.getBoard();
+        assertArrayEquals(expResult, result);
+    }
+
+    @Test
+    public void testToggleCellState() {
+        System.out.println("toggleCellState");
+        int row = 0;
+        int col = 0;
+        Board instance = new Board();
+        byte[][] testBoard = {{1, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        instance.setBoard(testBoard);
+        instance.toggleCellState(row, col);
+        assertEquals(instance.toString(), "000000000");
+
+    }
+
+    @Test
+    public void testSetCellStateAlive() {
+        System.out.println("settCellStateAlive");
+        Board instance = new Board();
+        byte[][] testBoard = {{1, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        instance.setBoard(testBoard);
+        instance.setCellStateAlive(0, 0);
+        assertEquals(instance.toString(), "100000000");
+
+        byte[][] testBoard2 = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        instance.setBoard(testBoard2);
+        instance.setCellStateAlive(0, 0);
+        assertEquals(instance.toString(), "100000000");
+    }
+
+    @Test
+    public void testGetGenerationCount() {
+        System.out.println("getGenerationCount");
+        Board instance = new Board();
+        int expResult = 2;
+        instance.nextGeneration();
+        instance.nextGeneration();
+        int result = instance.getGenerationCount();
+        assertEquals(expResult, result);
+    }
+
+    @Test
+    public void testResetBoard() {
+        System.out.println("resetBoard");
+        Board instance = new Board();
+        byte[][] testBoard = {{0, 1, 0}, {0, 1, 0}, {0, 1, 0}};
+        instance.setBoard(testBoard);
+        instance.nextGeneration();
+        instance.resetBoard();
+        assertArrayEquals(testBoard, instance.getBoard());
+    }
+
+    @Test
+    public void testToString() {
+        System.out.println("toString");
+        Board instance = new Board();
+        String expResult = "010010010";
+        byte[][] testBoard = {{0, 1, 0}, {0, 1, 0}, {0, 1, 0}};
+        instance.setBoard(testBoard);
+        String result = instance.toString();
+        assertEquals(expResult, result);
     }
 }
