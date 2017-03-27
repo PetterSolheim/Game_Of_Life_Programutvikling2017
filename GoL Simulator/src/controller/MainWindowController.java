@@ -141,6 +141,21 @@ public class MainWindowController implements Initializable {
             }
         }
     }
+    
+    @FXML
+    private void addFromDisk() {
+        
+    }
+    
+    @FXML
+    private void addFromUrl() {
+        
+    }
+    
+    @FXML
+    private void showAboutWindow() {
+        
+    }
 
     private FileChooser createFileChooser() {
         FileChooser fileChooser = new FileChooser();
