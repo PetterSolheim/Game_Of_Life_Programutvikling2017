@@ -5,6 +5,7 @@
  */
 package controller;
 
+import java.io.IOException;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -31,6 +32,7 @@ import javafx.stage.Stage;
 import model.*;
 import view.ResizableCanvas;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
 import view.DialogBoxes;
 
@@ -291,6 +293,16 @@ public class MainWindowController implements Initializable {
         GameRulesWindowController controller = loader.getController();
         controller.initData(board);
         Stage.show();
+    }
+    public void showStatistics () throws IOException {
+        Stage statistics = new Stage ();
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/StatisticsWindow.fxml"));
+        FlowPane root = loader.load();
+        
+        Scene scene = new Scene (root);
+        statistics.setScene(scene);
+        statistics.setTitle("Statistics");
+        statistics.show();
     }
 
     /**

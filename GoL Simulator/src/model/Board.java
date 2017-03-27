@@ -49,7 +49,29 @@ public class Board {
     public long numberOfCells() {
         return currentBoard.length * currentBoard[0].length;
     }
-
+    public Board deepCopy (){ // not a deep copy?
+        Board b = new Board();
+        b.currentBoard = this.currentBoard;
+        b.originalBoard = this.originalBoard;
+        b.birth = this.birth;
+        b.maxToSurvive = this.maxToSurvive;
+        b.minToSurvive = this.minToSurvive;
+        b.generationCount = this.generationCount;
+        b.cellCount = 0;
+        b.countLivingCells();
+        System.out.println("Cell Count" + b.cellCount);
+        return b;
+    }
+    private void countLivingCells (){
+        cellCount = 0;
+        for(int col = 0; col < currentBoard.length; col++){
+            for(int row = 0 ; row < currentBoard.length; row++){
+                if(currentBoard[row][col]==1){
+                    cellCount++;
+                }
+            }
+        }
+    }
     /**
      * Sets the survival values for the game rules. New values can be passed as
      * either a number of integers, or an array of integers. If duplicate values
