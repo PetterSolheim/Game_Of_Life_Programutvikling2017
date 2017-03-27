@@ -24,7 +24,7 @@ public class FileImporter {
     private byte[][] boardArray;
     private int row;
     private int col;
-    private int padding = 20;
+    private int padding = 100;
     private int[] survivalRules;
     private int[] birthRules;
 
