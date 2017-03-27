@@ -93,15 +93,15 @@ public class ResizableCanvas extends Canvas {
      * Resizes the canvas object. New size is based on the required size to
      * accomadate the current board. Pixel size of each cell is reduced
      * if the number of cells on the board exceed a certain value. This is
-     * to prevent the Canvas from exceeding the size of the heap.
+     * to reduce the risk of the canvas exceeding the heap size.
      *
      * @param b
      */
     public void resizeCanvas(Board b) {
         
-        if (b.numberOfCells() > 400000) {
+        if (b.numberOfCells() > 500000) {
             setCellSize(1,1);
-        } else if (b.numberOfCells() > 1400000) {
+        } else if (b.numberOfCells() > 100000) {
             setCellSize(1,0);
         } else {
             setCellSize(4,1);
