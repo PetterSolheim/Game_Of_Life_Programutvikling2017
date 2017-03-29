@@ -8,13 +8,11 @@ import java.util.Arrays;
  * iterating to the next generation. Rules are located in the Rules class.
  */
 public class Board {
-
-    private static Board instance;
+    
     private byte[][] currentBoard;
     private byte[][] changedCells;
     private byte[][] originalBoard;
     private int generationCount = 0;
-    private int cellCount = 0;
     private int livingCells = 0;    
     private ArrayList<Integer> survivalRules;
     private ArrayList<Integer> birthRules;
@@ -62,7 +60,6 @@ public class Board {
         return b;
     }
     private void countLivingCells (){
-        cellCount = 0;
         for(int col = 0; col < currentBoard.length; col++){
             for(int row = 0 ; row < currentBoard.length; row++){
                 if(currentBoard[row][col]==1){
@@ -270,15 +267,6 @@ public class Board {
             livingCells++;
         }
     }
-
-    /**
-     *
-     * @return The number of live cells on the current board.
-     */
-    public int getCellCount() {
-        return cellCount;
-    }
-
     /**
      *
      * @return The current generation count.
