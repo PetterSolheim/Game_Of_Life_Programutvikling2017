@@ -14,6 +14,7 @@ public class Board {
     private byte[][] originalBoard;
     private int generationCount = 0;
     private int livingCells = 0;    
+    private int indexSum = 0;
     private ArrayList<Integer> survivalRules;
     private ArrayList<Integer> birthRules;
 
@@ -68,6 +69,12 @@ public class Board {
             }
         }
     }
+    public int getIndexSum (){
+        int sum = indexSum;
+        indexSum = 0;
+        return sum;
+    }
+    
     /**
      * Sets the survival values for the game rules. New values can be passed as
      * either a number of integers, or an array of integers. If duplicate values
@@ -164,7 +171,7 @@ public class Board {
      */
     public void nextGeneration() {
         // a copy of the board is used to test the rules, while changes are
-        // applied to the actual board.
+        // applied to the actual board.GE
         byte[][] testPattern = duplicateBoard(currentBoard);
         changedCells = new byte[currentBoard.length][currentBoard[0].length];
 
@@ -178,14 +185,21 @@ public class Board {
                     currentBoard[row][col] = 0;
                     changedCells[row][col] = 1;
                     livingCells--;
-                } else if (testPattern[row][col] == 0 && birthRules.contains(neighbours)) {
+                    
+                } else if (testPattern[row][col] == 1 && (survivalRules.contains(neighbours))) {
+                    //System.out.println("Sum of indexes " + (col + row));
+                    indexSum += (row + col);
+                    //System.out.println("Current indexSum " + indexSum);
+                }
+                else if (testPattern[row][col] == 0 && birthRules.contains(neighbours)) {
                     currentBoard[row][col] = 1;
                     changedCells[row][col] = 1;
                     livingCells++;
                 }
             }
         }
-        System.out.println(livingCells);
+        int i = getIndexSum();
+        //System.out.println("Final index sum for this generation: " + i + "\n");
         generationCount++;
     }
 
@@ -283,7 +297,7 @@ public class Board {
     public void resetBoard() {
         currentBoard = duplicateBoard(originalBoard);
         generationCount = 0;
-
+        livingCells = 0;
     }
 
     /**
