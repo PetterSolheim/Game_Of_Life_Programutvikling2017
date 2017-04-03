@@ -77,26 +77,6 @@ public class BoardTest {
     }
 
     @Test
-    public void testSetSurviveRules() {
-        System.out.println("setSurviveRules");
-        int[] input = {2, 2, 1, 3};
-        Board instance = new Board();
-        instance.setSurviveRules(input);
-        ArrayList<Integer> expResult = new ArrayList<Integer>(Arrays.asList(1, 2, 3));
-        assertEquals(expResult, instance.getSurviveRules());
-    }
-
-    @Test
-    public void testSetBirthRules() {
-        System.out.println("setBirthRules");
-        int[] input = {3, 2, 2};
-        Board instance = new Board();
-        instance.setBirthRules(input);
-        ArrayList<Integer> expResult = new ArrayList<Integer>(Arrays.asList(2, 3));
-        assertEquals(expResult, instance.getBirthRules());
-    }
-
-    @Test
     public void testGetBirthRules() {
         System.out.println("getBirthRules");
         Board instance = new Board();
@@ -208,16 +188,6 @@ public class BoardTest {
     }
 
     @Test
-    public void testNumberOfCells() {
-        System.out.println("numberOfCells");
-        Board instance = new Board();
-        long expResult = 0L;
-        long result = instance.numberOfCells();
-        assertEquals(expResult, result);
-        fail("The test case is a prototype.");
-    }
-
-    @Test
     public void testDeepCopy() {
         System.out.println("deepCopy");
         Board orig = new Board();
@@ -266,13 +236,4 @@ public class BoardTest {
         assertEquals(deepCopy.getBirthRules(), newBirthRules);
     }
 
-    @Test
-    public void testGetLivingCells() {
-        System.out.println("getLivingCells");
-        Board instance = new Board();
-        int expResult = 0;
-        int result = instance.getLivingCells();
-        assertEquals(expResult, result);
-        fail("The test case is a prototype.");
-    }
 }

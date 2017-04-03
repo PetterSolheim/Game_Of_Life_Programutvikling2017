@@ -37,14 +37,14 @@ public class StatisticsWindowController {
         shuffleSceneGraph();
         defineGraph();
         XYChart.Series livingCells = new XYChart.Series();
-        livingCells.getData().add(new XYChart.Data(b.getGenerationCount(), b.getLivingCells()));
+        livingCells.getData().add(new XYChart.Data(b.getGenerationCount(), b.getLivingCellCount()));
         livingCells.setName("Living Cells");
         XYChart.Series popluationChange = new XYChart.Series();
         popluationChange.getData().add(new XYChart.Data(b.getGenerationCount(), 0));
         popluationChange.setName("Population Change");
         int iterations = Integer.parseInt(txtIterations.getText());
         do{
-            int prevPopulation = b.getLivingCells();
+            int prevPopulation = b.getLivingCellCount();
             b.nextGeneration();
             livingCells.getData().add(getLivingCells());
             popluationChange.getData().add(getPopulationChange(prevPopulation));
@@ -54,7 +54,7 @@ public class StatisticsWindowController {
         chart.getData().add(popluationChange);
     }
     private XYChart.Data getLivingCells (){
-        return new XYChart.Data(b.getGenerationCount(), b.getLivingCells());
+        return new XYChart.Data(b.getGenerationCount(), b.getLivingCellCount());
     }
     private void shuffleSceneGraph (){
         root.getChildren().add(chartWrapper);
@@ -71,7 +71,7 @@ public class StatisticsWindowController {
         **/
     }
     private XYChart.Data getPopulationChange (int prevPopulation){   
-        int diff = b.getLivingCells() - prevPopulation;
+        int diff = b.getLivingCellCount() - prevPopulation;
         XYChart.Data populationChange = new XYChart.Data(b.getGenerationCount(),diff);
         return populationChange;
     }

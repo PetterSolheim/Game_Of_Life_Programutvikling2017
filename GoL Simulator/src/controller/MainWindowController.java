@@ -94,7 +94,10 @@ public class MainWindowController implements Initializable {
         fpsSlider.valueProperty().addListener((observable) -> {
             setFps();
         });
-
+        
+        displayLivingCellCount();
+        displayGenerationCount();
+        
         canvas.resizeCanvas(board);
         canvas.draw(board);
     }
@@ -109,8 +112,8 @@ public class MainWindowController implements Initializable {
         stop();
         board.resetBoard();
         canvas.draw(board);
-        displayCellCount();
-        displayGeneration();
+        displayLivingCellCount();
+        displayGenerationCount();
     }
 
     private void play() {
@@ -134,6 +137,8 @@ public class MainWindowController implements Initializable {
                 board = tmpBoard;
                 canvas.resizeCanvas(board);
                 canvas.draw(board);
+                displayLivingCellCount();
+
             } catch (FileNotFoundException e) {
                 DialogBoxes.ioException("No file found at: " + e.getMessage());
             } catch (IOException e) {
@@ -183,6 +188,7 @@ public class MainWindowController implements Initializable {
                 board = fileImporter.readGameBoardFromUrl(url.get());
                 canvas.resizeCanvas(board);
                 canvas.draw(board);
+                displayLivingCellCount();
             } catch (MalformedURLException e) {
                 DialogBoxes.ioException("Given String is not a valid URL: " + e.getMessage());
             } catch (FileNotFoundException e) {
@@ -259,11 +265,11 @@ public class MainWindowController implements Initializable {
         time.setFps(newTimer);
     }
 
-    private void displayCellCount() {
-        txtShowCellCount.setText(Integer.toString(board.getLivingCells()) + " .");
+    private void displayLivingCellCount() {
+        txtShowCellCount.setText(Integer.toString(board.getLivingCellCount()) + " .");
     }
 
-    private void displayGeneration() {
+    private void displayGenerationCount() {
         txtShowGen.setText(Integer.toString(board.getGenerationCount()) + " ");
     }
 
@@ -271,8 +277,8 @@ public class MainWindowController implements Initializable {
     public void createNextGeneration() {
         board.nextGeneration();
         canvas.drawChanges(board);
-        displayCellCount();
-        displayGeneration();
+        displayLivingCellCount();
+        displayGenerationCount();
     }
 
     @FXML
@@ -354,6 +360,8 @@ public class MainWindowController implements Initializable {
     @FXML
     private void dragCanvasEnded() {
         scrollPane.setPannable(false);
+        board.getLivingCellCount();
+        displayLivingCellCount();
     }
 
     private void defineStage() {

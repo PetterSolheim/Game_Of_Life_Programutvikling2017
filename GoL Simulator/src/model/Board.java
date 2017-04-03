@@ -81,6 +81,7 @@ public class Board {
      * living cells.
      */
     private void countLivingCells() {
+        livingCells = 0;
         for (int col = 0; col < currentBoard.length; col++) {
             for (int row = 0; row < currentBoard.length; row++) {
                 if (currentBoard[row][col] == 1) {
@@ -187,6 +188,7 @@ public class Board {
     public void setBoard(byte[][] newBoard) {
         originalBoard = duplicateBoard(newBoard);
         currentBoard = duplicateBoard(newBoard);
+        countLivingCells();
     }
 
     /**
@@ -300,18 +302,17 @@ public class Board {
 
     /**
      *
-     * @return The number of live cells on the current board.
-     */
-
-    /**
-     *
      * @return The current generation count.
      */
     public int getGenerationCount() {
         return generationCount;
     }
 
-    public int getLivingCells() {
+    /**
+     * Return the number of living cells on the current board.
+     * @return 
+     */
+    public int getLivingCellCount() {
         return livingCells;
     }
 
@@ -321,7 +322,7 @@ public class Board {
     public void resetBoard() {
         currentBoard = duplicateBoard(originalBoard);
         generationCount = 0;
-
+        countLivingCells();
     }
 
     /**
@@ -343,7 +344,7 @@ public class Board {
     }
 
     /**
-     * A simple method for copying a 2D array.
+     * A simple method for copying a 2D byte array.
      *
      * @param original The board that you want to copy.
      * @return A reference to the new copy of the array.
