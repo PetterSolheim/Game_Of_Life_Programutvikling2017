@@ -260,7 +260,7 @@ public class MainWindowController implements Initializable {
     }
 
     private void displayCellCount() {
-        txtShowCellCount.setText(Integer.toString(board.getCellCount()) + " .");
+        txtShowCellCount.setText(Integer.toString(board.getLivingCells()) + " .");
     }
 
     private void displayGeneration() {
