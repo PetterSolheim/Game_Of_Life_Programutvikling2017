@@ -59,15 +59,15 @@ public class Board {
         b.currentBoard = duplicateBoard(this.currentBoard);
         b.originalBoard = duplicateBoard(this.originalBoard);
         
-        int[] survivalRulesCopy = new int[survivalRules.size()];
+        ArrayList<Integer> survivalRulesCopy = new ArrayList<Integer>();
         for(int i = 0; i < survivalRules.size(); i++) {
-            survivalRulesCopy[i] = survivalRules.get(i);
+            survivalRulesCopy.add(survivalRules.get(i));
         }
         b.setSurviveRules(survivalRulesCopy);
         
-        int[] birthRulesCopy = new int[birthRules.size()];
+        ArrayList<Integer> birthRulesCopy = new ArrayList<Integer>();
         for(int i = 0; i < birthRules.size(); i++) {
-            birthRulesCopy[i] = birthRules.get(i);
+            birthRulesCopy.add(birthRules.get(i));
         }
         b.setBirthRules(birthRulesCopy);
         
