@@ -1,15 +1,10 @@
-    /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controller;
 
 import javafx.animation.AnimationTimer;
 
 /**
  * This class determines when draw in ResizableCanvas and nextGeneration in Board is called from MainWindowController
- * @author peven
+ * 
  */
 public class Timer extends AnimationTimer{
     

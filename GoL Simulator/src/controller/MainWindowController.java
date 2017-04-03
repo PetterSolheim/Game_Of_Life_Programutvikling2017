@@ -296,6 +296,8 @@ public class MainWindowController implements Initializable {
     }
     public void showStatistics () throws IOException {
         Stage statistics = new Stage ();
+        statistics.setWidth(800);
+        statistics.setHeight(800);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/StatisticsWindow.fxml"));
         FlowPane root = loader.load();
         
