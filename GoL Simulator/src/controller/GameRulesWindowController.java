@@ -6,13 +6,13 @@
 package controller;
 
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.VBox;
+import javafx.scene.control.CheckBox;
 import javafx.stage.Stage;
 import model.Board;
 
@@ -27,11 +27,9 @@ public class GameRulesWindowController implements Initializable {
     @FXML
     private Button btnSave;
     @FXML
-    private TextField txtB;
+    private CheckBox s1, s2, s3, s4, s5, s6, s7, s8;
     @FXML
-    private TextField txtS;
-    @FXML
-    private VBox vBox;
+    private CheckBox b1, b2, b3, b4, b5, b6, b7, b8;
 
     Stage stage;
     Board board;
@@ -43,33 +41,33 @@ public class GameRulesWindowController implements Initializable {
 
     @FXML
     private void save() {
-        // apply new birth rules
-        try {
-            String[] bStringArray = txtB.getText().split("");
-            int[] bIntArray = new int[bStringArray.length];
-            for (int i = 0; i < bStringArray.length; i++) {
-                bIntArray[i] = Integer.parseInt(bStringArray[i]);
-            }
-            board.setBirthRules(bIntArray);
+        CheckBox[] survivalCheckBoxes = {s1, s2, s3, s4, s5, s6, s7, s8};
+        CheckBox[] birthCheckBoxes = {b1, b2, b3, b4, b5, b6, b7, b8};
+        ArrayList<Integer> survivalRules = new ArrayList<Integer>();
+        ArrayList<Integer> birthRules = new ArrayList<Integer>();
 
-            // apply new survival rules
-            String[] sStringArray = txtS.getText().split("");
-            int[] sIntArray = new int[sStringArray.length];
-            for (int i = 0; i < sStringArray.length; i++) {
-                sIntArray[i] = Integer.parseInt(sStringArray[i]);
+        for (int i = 0; i < 8; i++) {
+            if (survivalCheckBoxes[i].isSelected()) {
+                System.out.println("Found: s"+(i+1));
+                survivalRules.add(i+1);
             }
-            board.setSurviveRules(sIntArray);
-            stage.close();
-        } catch (NumberFormatException e) {
-            System.err.println("not a number!");
+            
+            if (birthCheckBoxes[i].isSelected()) {
+                System.out.println("Found: b"+(i+1));
+                birthRules.add(i+1);
+            }
         }
+
+        board.setSurviveRules(survivalRules);
+        board.setBirthRules(birthRules);
+        stage.close();
     }
 
     /**
      * Stores a reference to the windows stage for easy access.
      */
     private void defineStage() {
-        stage = (Stage) vBox.getScene().getWindow();
+        stage = (Stage) btnSave.getScene().getWindow();
     }
 
     @Override
@@ -84,20 +82,30 @@ public class GameRulesWindowController implements Initializable {
      *
      * @param board
      */
-    public void initData(Board board) {
-        this.board = board;
-        // load and display current rules
-        StringBuilder birthString = new StringBuilder();
-        for (int value : board.getBirthRules()) {
-            birthString.append(value);
+    public void initData(Board inputBoard) {
+        board = inputBoard;
+        // create an array of the checkboxes to allow easy iteration of their
+        // values.
+        CheckBox[] survivalCheckBoxes = {s1, s2, s3, s4, s5, s6, s7, s8};
+        CheckBox[] birthCheckBoxes = {b1, b2, b3, b4, b5, b6, b7, b8};
+        
+        // load and display current survival rules
+        for (int i = 0; i < board.getSurviveRules().size(); i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board.getSurviveRules().get(i) == j + 1) {
+                    survivalCheckBoxes[j].setSelected(true);
+                }
+            }
         }
-        txtB.setText(birthString.toString());
 
-        StringBuilder survivalString = new StringBuilder();
-        for (int value : board.getSurviveRules()) {
-            survivalString.append(value);
+        // load and display current birth rules
+        for (int i = 0; i < board.getBirthRules().size(); i++) {
+            for (int j = 0; j < 8; j++) {
+                if (board.getBirthRules().get(i) == j + 1) {
+                    birthCheckBoxes[j].setSelected(true);
+                }
+            }
         }
-        txtS.setText(survivalString.toString());
     }
 
 }
