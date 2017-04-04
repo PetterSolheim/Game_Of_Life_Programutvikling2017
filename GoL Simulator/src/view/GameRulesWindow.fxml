@@ -28,6 +28,7 @@
                   <Label text="The number of living neighbours a cell must have to survive." />
                   <HBox prefHeight="18.0" prefWidth="380.0" spacing="15.0">
                      <children>
+                        <CheckBox fx:id="s0" mnemonicParsing="false" text="0" />
                         <CheckBox fx:id="s1" mnemonicParsing="false" text="1" />
                         <CheckBox fx:id="s2" mnemonicParsing="false" text="2" />
                         <CheckBox fx:id="s3" mnemonicParsing="false" text="3" />
@@ -52,6 +53,7 @@
                   <Label text="The number of living neighbours a dead cell must have to be born." />
                   <HBox prefHeight="18.0" prefWidth="380.0" spacing="15.0">
                      <children>
+                        <CheckBox fx:id="b0" mnemonicParsing="false" text="0" />
                         <CheckBox fx:id="b1" mnemonicParsing="false" text="1" />
                         <CheckBox fx:id="b2" mnemonicParsing="false" text="2" />
                         <CheckBox fx:id="b3" mnemonicParsing="false" text="3" />

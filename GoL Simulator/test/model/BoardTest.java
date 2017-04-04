@@ -213,11 +213,12 @@ public class BoardTest {
         newSurviveRules.add(6);
         newSurviveRules.add(7);
         deepCopy.setSurviveRules(newSurviveRules);
+
         ArrayList<Integer> newBirthRules = new ArrayList<Integer>();
         newBirthRules.add(1);
         newBirthRules.add(5);
         deepCopy.setBirthRules(newBirthRules);
-        
+
         byte[][] newBoardArray = {
             {1, 0, 1},
             {1, 0, 1},
@@ -225,15 +226,15 @@ public class BoardTest {
         };
         deepCopy.setBoard(newBoardArray);
         
-        // check that the original Board object has not changed.
-        assertArrayEquals(orig.getBoard(), origBoardArray);
-        assertEquals(orig.getSurviveRules(), origSurviveRules);
-        assertEquals(orig.getBirthRules(), origBirthRules);
-        
         // check that the new board has changed compared to the old one.
         assertEquals(deepCopy.getBoard(), newBoardArray);
         assertEquals(deepCopy.getSurviveRules(), newSurviveRules);
         assertEquals(deepCopy.getBirthRules(), newBirthRules);
+        
+        // check that the original Board object has not changed.
+        assertArrayEquals(orig.getBoard(), origBoardArray);
+        assertEquals(orig.getSurviveRules(), origSurviveRules);
+        assertEquals(orig.getBirthRules(), origBirthRules);
     }
 
 }

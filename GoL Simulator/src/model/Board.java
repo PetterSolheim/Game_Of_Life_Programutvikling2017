@@ -326,7 +326,7 @@ public class Board {
     }
 
     /**
-     * A string representation of the board. Exists soley for use with JUnit.
+     * A string representation of the board. Exists solely for use with JUnit.
      *
      * @return
      */
