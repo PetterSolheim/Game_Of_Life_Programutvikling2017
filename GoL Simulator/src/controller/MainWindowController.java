@@ -20,7 +20,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
@@ -31,6 +30,7 @@ import javafx.stage.Stage;
 import model.*;
 import view.ResizableCanvas;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
@@ -62,7 +62,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private Text txtShowCellCount;
     @FXML
-    private ScrollPane scrollPane;
+    private AnchorPane canvasAnchor;
     @FXML
     private ColorPicker livingCellColorPicker;
     @FXML
@@ -82,6 +82,7 @@ public class MainWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Platform.runLater(this::defineStage); // allows easy referal to the stage
+        Platform.runLater(this::prepareCanvas);
 
         board = new Board(200, 200);
         time = new Timer(this);
@@ -89,16 +90,36 @@ public class MainWindowController implements Initializable {
         livingCellColorPicker.setValue(canvas.getLivingCellColor());
         deadCellColorPicker.setValue(canvas.getDeadCellColor());
         backgroundColorPicker.setValue(canvas.getBackgroundColor());
-        setFps();
+        fpsSlider.setValue(4.0);
 
         fpsSlider.valueProperty().addListener((observable) -> {
             setFps();
         });
-        
+
+        cellSizeSlider.valueProperty().addListener((observable) -> {
+            canvas.setCellSize((int) cellSizeSlider.getValue());
+            canvas.redraw(board);
+        });
+
+        canvasAnchor.heightProperty().addListener((observable) -> {
+            prepareCanvas();
+
+        });
+
+        canvasAnchor.widthProperty().addListener((observable) -> {
+            prepareCanvas();
+        });
+
+        canvas.setCellSize((int) cellSizeSlider.getValue());
+        System.out.println(fpsSlider.getValue());
+        setFps();
         displayLivingCellCount();
         displayGenerationCount();
-        
-        canvas.resizeCanvas(board);
+
+    }
+
+    private void prepareCanvas() {
+        canvas.resizeCanvas(canvasAnchor.getHeight(), canvasAnchor.getWidth());
         canvas.draw(board);
     }
 
@@ -135,7 +156,6 @@ public class MainWindowController implements Initializable {
             try {
                 tmpBoard = fileImporter.readGameBoardFromDisk(file);
                 board = tmpBoard;
-                canvas.resizeCanvas(board);
                 canvas.draw(board);
                 displayLivingCellCount();
 
@@ -186,7 +206,6 @@ public class MainWindowController implements Initializable {
         if (url.isPresent()) {
             try {
                 board = fileImporter.readGameBoardFromUrl(url.get());
-                canvas.resizeCanvas(board);
                 canvas.draw(board);
                 displayLivingCellCount();
             } catch (MalformedURLException e) {
@@ -236,32 +255,8 @@ public class MainWindowController implements Initializable {
         canvas.draw(board);
     }
 
-    @FXML
-    private void lowerScale() {
-        if (canvas.getScaleX() >= 0.45) {
-            if (canvas.getScaleX() < 0.5) {
-                canvas.adjustScale(-0.08, -0.08);
-            } else if (canvas.getScaleX() < 0.6) {
-                canvas.adjustScale(-0.13, -0.13);
-            } else {
-                canvas.adjustScale(-0.2, -0.2);
-            }
-        }
-    }
-
-    @FXML
-    private void higherScale() {
-        if (canvas.getScaleX() < 0.4) {
-            canvas.adjustScale(0.05, 0.05);
-        } else if (canvas.getScaleX() < 0.5) {
-            canvas.adjustScale(0.09, 0.09);
-        } else {
-            canvas.adjustScale(0.12, 0.12);
-        }
-    }
-
     private void setFps() {
-        long newTimer = (long) ((1 / fpsSlider.getValue()) * 1000000000);
+        long newTimer = (long) (1000000000/fpsSlider.getValue());
         time.setFps(newTimer);
     }
 
@@ -341,7 +336,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private void dragCanvas(MouseEvent event) {
         if (event.getButton() == MouseButton.SECONDARY) {
-            scrollPane.setPannable(true);
+            //anchorPane.setPannable(true);
         } else {
             if (!isPaused) {
                 togglePlayPause();
@@ -359,12 +354,12 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void dragCanvasEnded() {
-        scrollPane.setPannable(false);
+        //anchorPane.setPannable(false);
         board.getLivingCellCount();
         displayLivingCellCount();
     }
 
     private void defineStage() {
-        stage = (Stage) scrollPane.getScene().getWindow();
+        stage = (Stage) canvasAnchor.getScene().getWindow();
     }
 }

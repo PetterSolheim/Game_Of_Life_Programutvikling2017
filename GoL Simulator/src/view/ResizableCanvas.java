@@ -2,6 +2,7 @@ package view;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import model.Board;
 
@@ -26,10 +27,9 @@ public class ResizableCanvas extends Canvas {
         deadCellColor = Color.WHITE;
         livingCellColor = Color.BLACK;
     }
-    
-    public void setCellSize(int cellSize, int spaceBetweenCells) {
+
+    public void setCellSize(int cellSize) {
         this.cellSize = cellSize;
-        this.spaceBetweenCells = spaceBetweenCells;
     }
 
     /**
@@ -48,13 +48,33 @@ public class ResizableCanvas extends Canvas {
     }
 
     /**
+     * Draws a single cell.
+     *
+     * @param b the board object.
+     * @param row the y position of the cell to be drawn.
+     * @param col the x position of the cell to be drawn.
+     */
+    public void drawCell(Board b, int row, int col) {
+        int xPosition = (col * (cellSize + spaceBetweenCells));
+        int yPosition = (row * (cellSize + spaceBetweenCells));
+
+        if (b.getBoard()[row][col] == 1) {
+            gc.setFill(livingCellColor);
+        } else {
+            gc.setFill(deadCellColor);
+        }
+        if (xPosition < this.getWidth() && yPosition < this.getHeight()) {
+            gc.fillRect(xPosition, yPosition, cellSize, cellSize);
+        }
+    }
+
+    /**
      * Resizes the canvas based on the size of the board, and draws the board on
      * the new canvas.
      *
      * @param b a board object.
      */
     public void redraw(Board b) {
-        resizeCanvas(b);
         draw(b);
     }
 
@@ -74,41 +94,16 @@ public class ResizableCanvas extends Canvas {
     }
 
     /**
-     * Draws a single cell.
-     *
-     * @param b the board object.
-     * @param row the y position of the cell to be drawn.
-     * @param col the x position of the cell to be drawn.
-     */
-    public void drawCell(Board b, int row, int col) {
-        if (b.getBoard()[row][col] == 1) {
-            gc.setFill(livingCellColor);
-        } else {
-            gc.setFill(deadCellColor);
-        }
-        gc.fillRect((col * (cellSize + spaceBetweenCells)), (row * (cellSize + spaceBetweenCells)), cellSize, cellSize);
-    }
-
-    /**
      * Resizes the canvas object. New size is based on the required size to
-     * accomadate the current board. Pixel size of each cell is reduced
-     * if the number of cells on the board exceed a certain value. This is
-     * to reduce the risk of the canvas exceeding the heap size.
+     * accomadate the current board. Pixel size of each cell is reduced if the
+     * number of cells on the board exceed a certain value. This is to reduce
+     * the risk of the canvas exceeding the heap size.
      *
      * @param b
      */
-    public void resizeCanvas(Board b) {
-        
-        if (b.numberOfCells() > 500000) {
-            setCellSize(1,1);
-        } else if (b.numberOfCells() > 100000) {
-            setCellSize(1,0);
-        } else {
-            setCellSize(4,1);
-        }
-        
-        this.heightProperty().setValue((b.getBoard().length) * (cellSize + spaceBetweenCells));
-        this.widthProperty().setValue((b.getBoard()[0].length) * (cellSize + spaceBetweenCells));
+    public void resizeCanvas(double height, double width) {
+        this.heightProperty().setValue(height);
+        this.widthProperty().setValue(width);
     }
 
     /**
@@ -184,9 +179,8 @@ public class ResizableCanvas extends Canvas {
         this.backgroundColor = newBackgroundColor;
     }
 
-    public void adjustScale(double x, double y) {
-        setScaleX(getScaleX() + x);
-        setScaleY(getScaleY() + y);
+    public void chanceCellSize(int newCellSize) {
+        cellSize = newCellSize;
     }
 
     /**
