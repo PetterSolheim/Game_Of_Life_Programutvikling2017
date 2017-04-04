@@ -16,6 +16,8 @@ public class ResizableCanvas extends Canvas {
 
     private int cellSize = 4;
     private int spaceBetweenCells = 1;
+    private int xOffsett = -1000;
+    private int yOffsett = -1000;
     private Color backgroundColor;
     private Color livingCellColor;
     private Color deadCellColor;
@@ -28,6 +30,11 @@ public class ResizableCanvas extends Canvas {
         livingCellColor = Color.BLACK;
     }
 
+    public void setOffsett(int newXOffsett, int newYOffsett) {
+        xOffsett = newXOffsett;
+        yOffsett = newYOffsett;
+    }
+    
     public void setCellSize(int cellSize) {
         this.cellSize = cellSize;
     }
@@ -40,6 +47,7 @@ public class ResizableCanvas extends Canvas {
     public void draw(Board b) {
         gc.setFill(backgroundColor);
         gc.fillRect(0, 0, this.getWidth(), this.getHeight());
+
         for (int row = 0; row < b.getBoard().length; row++) {
             for (int col = 0; col < b.getBoard()[0].length; col++) {
                 drawCell(b, row, col);
@@ -55,18 +63,26 @@ public class ResizableCanvas extends Canvas {
      * @param col the x position of the cell to be drawn.
      */
     public void drawCell(Board b, int row, int col) {
-        int xPosition = (col * (cellSize + spaceBetweenCells));
-        int yPosition = (row * (cellSize + spaceBetweenCells));
-
-        if (b.getBoard()[row][col] == 1) {
-            gc.setFill(livingCellColor);
-        } else {
-            gc.setFill(deadCellColor);
-        }
+        int xPosition = xOffsett + (col * (cellSize + spaceBetweenCells));
+        int yPosition = yOffsett + (row * (cellSize + spaceBetweenCells));
         if (xPosition < this.getWidth() && yPosition < this.getHeight()) {
+            if (b.getBoard()[row][col] == 1) {
+                gc.setFill(livingCellColor);
+            } else {
+                gc.setFill(deadCellColor);
+            }
             gc.fillRect(xPosition, yPosition, cellSize, cellSize);
         }
     }
+    
+    public int getXOffsett() {
+        return xOffsett;
+    }
+    
+    public int getYOffsett() {
+        return yOffsett;
+    }
+
 
     /**
      * Resizes the canvas based on the size of the board, and draws the board on

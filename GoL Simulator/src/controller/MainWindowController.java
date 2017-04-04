@@ -111,7 +111,6 @@ public class MainWindowController implements Initializable {
         });
 
         canvas.setCellSize((int) cellSizeSlider.getValue());
-        System.out.println(fpsSlider.getValue());
         setFps();
         displayLivingCellCount();
         displayGenerationCount();
@@ -256,7 +255,7 @@ public class MainWindowController implements Initializable {
     }
 
     private void setFps() {
-        long newTimer = (long) (1000000000/fpsSlider.getValue());
+        long newTimer = (long) (1000000000 / fpsSlider.getValue());
         time.setFps(newTimer);
     }
 
@@ -321,10 +320,13 @@ public class MainWindowController implements Initializable {
     @FXML
     private void toggleClickedCell(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY && !event.isDragDetect()) {
-            int row = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-            int col = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-            board.toggleCellState(row, col);
-            canvas.drawCell(board, row, col);
+            int row = (int) ((event.getY() - canvas.getYOffsett()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+            int col = (int) ((event.getX() - canvas.getXOffsett()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+
+            if (row < board.getBoard().length && col < board.getBoard()[0].length) {
+                board.toggleCellState(row, col);
+                canvas.drawCell(board, row, col);
+            }
         }
     }
 
@@ -334,15 +336,15 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void dragCanvas(MouseEvent event) {
+    private void dragCanvas(MouseEvent event
+    ) {
         if (event.getButton() == MouseButton.SECONDARY) {
-            //anchorPane.setPannable(true);
         } else {
             if (!isPaused) {
                 togglePlayPause();
             }
-            int row = (int) (event.getY() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-            int col = (int) (event.getX() / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+            int row = (int) ((event.getY() - canvas.getYOffsett()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+            int col = (int) ((event.getX() - canvas.getXOffsett()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
 
             // ensure that the drag event was within the canvas.
             if (row < board.getBoard().length && col < board.getBoard()[0].length) {
