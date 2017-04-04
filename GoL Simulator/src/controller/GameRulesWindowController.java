@@ -41,7 +41,7 @@ public class GameRulesWindowController implements Initializable {
 
     @FXML
     private void save() {
-        CheckBox[] survivalCheckBoxes = {s0, s1, s2, s3, s4, s5, s6, s7, s8};
+        CheckBox[] survivalCheckBoxes = { s0, s1, s2, s3, s4, s5, s6, s7, s8};
         CheckBox[] birthCheckBoxes = {b0, b1, b2, b3, b4, b5, b6, b7, b8};
         ArrayList<Integer> survivalRules = new ArrayList<Integer>();
         ArrayList<Integer> birthRules = new ArrayList<Integer>();
