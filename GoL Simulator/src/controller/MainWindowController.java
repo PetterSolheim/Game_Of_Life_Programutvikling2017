@@ -98,7 +98,7 @@ public class MainWindowController implements Initializable {
 
         cellSizeSlider.valueProperty().addListener((observable) -> {
             canvas.setCellSize((int) cellSizeSlider.getValue());
-            canvas.redraw(board);
+            canvas.draw(board);
         });
 
         canvasAnchor.heightProperty().addListener((observable) -> {

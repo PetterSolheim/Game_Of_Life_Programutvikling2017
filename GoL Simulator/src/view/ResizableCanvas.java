@@ -2,13 +2,12 @@ package view;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import model.Board;
 
 /**
- * Provides same functionality as a regular canvas, but allows for fluid
- * resizing.
+ * Resizable canvas object with the necessary methods for drawing, and changing
+ * the apperance of the game board.
  *
  * @author peven
  */
@@ -30,13 +29,48 @@ public class ResizableCanvas extends Canvas {
         livingCellColor = Color.BLACK;
     }
 
+    /**
+     * Set the offset for the canvas drawing methods. Allows for moving around
+     * on the canvas.
+     *
+     * @param newXOffsett x-axis offset.
+     * @param newYOffsett y-axis offset.
+     */
     public void setOffsett(int newXOffsett, int newYOffsett) {
         xOffsett = newXOffsett;
         yOffsett = newYOffsett;
     }
-    
+
+    /**
+     *
+     * @return the x-axis offset of the canvas.
+     */
+    public int getXOffsett() {
+        return xOffsett;
+    }
+
+    /**
+     *
+     * @return the y-axis offset of the canvas.
+     */
+    public int getYOffsett() {
+        return yOffsett;
+    }
+
+    /**
+     *
+     * @param cellSize sets the pixels size of a cell.
+     */
     public void setCellSize(int cellSize) {
         this.cellSize = cellSize;
+    }
+
+    /**
+     *
+     * @return the pixel size of the cell.
+     */
+    public int getCellSize() {
+        return cellSize;
     }
 
     /**
@@ -56,15 +90,20 @@ public class ResizableCanvas extends Canvas {
     }
 
     /**
-     * Draws a single cell.
+     * Draws the state of a single cell if, and only if, that cell is within the
+     * visible area of the canvas.
      *
      * @param b the board object.
      * @param row the y position of the cell to be drawn.
      * @param col the x position of the cell to be drawn.
      */
     public void drawCell(Board b, int row, int col) {
+        // calculate the position of the given cell.
         int xPosition = xOffsett + (col * (cellSize + spaceBetweenCells));
         int yPosition = yOffsett + (row * (cellSize + spaceBetweenCells));
+
+        // determin if the given cells position is within the size of the canvas.
+        // If it is, draw that cell. If not, do nothing.
         if (xPosition < this.getWidth() && yPosition < this.getHeight()) {
             if (b.getBoard()[row][col] == 1) {
                 gc.setFill(livingCellColor);
@@ -74,35 +113,18 @@ public class ResizableCanvas extends Canvas {
             gc.fillRect(xPosition, yPosition, cellSize, cellSize);
         }
     }
-    
-    public int getXOffsett() {
-        return xOffsett;
-    }
-    
-    public int getYOffsett() {
-        return yOffsett;
-    }
-
 
     /**
-     * Resizes the canvas based on the size of the board, and draws the board on
-     * the new canvas.
+     * Takes a board object and draws only the cells which have changed during
+     * the last nexGeneration() method call.
      *
-     * @param b a board object.
-     */
-    public void redraw(Board b) {
-        draw(b);
-    }
-
-    /**
-     * Draws only the changes since the last generation to canvas.
-     *
-     * @param b a board object.
+     * @param b the Board object.
      */
     public void drawChanges(Board b) {
-        for (int row = 0; row < b.getBoard().length; row++) {
-            for (int col = 0; col < b.getBoard()[0].length; col++) {
-                if (b.getBoardChanges()[row][col] != 0) {
+        for (int row = 0; row < b.getBoardChanges().length; row++) {
+            for (int col = 0; col < b.getBoardChanges()[0].length; col++) {
+                // cells that have changed are symbolised by the number 1.
+                if (b.getBoardChanges()[row][col] == 1) {
                     drawCell(b, row, col);
                 }
             }
@@ -110,12 +132,10 @@ public class ResizableCanvas extends Canvas {
     }
 
     /**
-     * Resizes the canvas object. New size is based on the required size to
-     * accomadate the current board. Pixel size of each cell is reduced if the
-     * number of cells on the board exceed a certain value. This is to reduce
-     * the risk of the canvas exceeding the heap size.
+     * Resizes the canvas object.
      *
-     * @param b
+     * @param height the new height for the canvas.
+     * @param width the new width for the canvas.
      */
     public void resizeCanvas(double height, double width) {
         this.heightProperty().setValue(height);
@@ -123,84 +143,67 @@ public class ResizableCanvas extends Canvas {
     }
 
     /**
-     * Returns the pixel size of a cell.
      *
-     * @return int value of pixel size.
-     */
-    public int getCellSize() {
-        return cellSize;
-    }
-
-    /**
-     * Return the pixel size of the border between cells.
-     *
-     * @return int value of pixel size.
+     * @return the pixel size of the border.
      */
     public int getSpaceBetweenCells() {
         return spaceBetweenCells;
     }
 
     /**
-     * Returns the color of living cells.
      *
-     * @return color.
+     * @return the color of living cells.
      */
     public Color getLivingCellColor() {
-        return this.livingCellColor;
+        return livingCellColor;
     }
 
     /**
-     * Sets the color of a living cell.
+     * Sets the color of living cells.
      *
-     * @param newCellColor the new color.
+     * @param newLivingCellColor
      */
-    public void setLivingCellColor(Color newCellColor) {
-        this.livingCellColor = newCellColor;
+    public void setLivingCellColor(Color newLivingCellColor) {
+        livingCellColor = newLivingCellColor;
     }
 
     /**
-     * Returns the color of a dead cell.
      *
-     * @return color.
+     * @return the color of dead cells.
      */
     public Color getDeadCellColor() {
-        return this.deadCellColor;
+        return deadCellColor;
     }
 
     /**
-     * Sets the color of a dead cell.
+     * Sets the color of dead cells.
      *
-     * @param newCellColor the new color.
+     * @param newDeadCellColor
      */
-    public void setDeadCellColor(Color newCellColor) {
-        this.deadCellColor = newCellColor;
+    public void setDeadCellColor(Color newDeadCellColor) {
+        deadCellColor = newDeadCellColor;
     }
 
     /**
-     * Returns the color of the background (visible as a border).
      *
-     * @return color.
+     * @return the background color of the board, which is also the color of the
+     * border.
      */
     public Color getBackgroundColor() {
-        return this.backgroundColor;
+        return backgroundColor;
     }
 
     /**
-     * Sets the background color for the canvas. The background color is visible
-     * as the border between cells.
+     * Sets the background color, which is also the color of the border.
      *
-     * @param newBackgroundColor the new color.
+     * @param newBackgroundColor
      */
     public void setBackgroundColor(Color newBackgroundColor) {
-        this.backgroundColor = newBackgroundColor;
-    }
-
-    public void chanceCellSize(int newCellSize) {
-        cellSize = newCellSize;
+        backgroundColor = newBackgroundColor;
     }
 
     /**
-     * Allows the board to be resizable.
+     * Allows the canvas object to be resized.
      *
      * @return
      */
