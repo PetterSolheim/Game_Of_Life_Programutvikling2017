@@ -324,7 +324,7 @@ public class MainWindowController implements Initializable {
     @FXML
     public void createNextGeneration() {
         board.nextGeneration();
-        canvas.drawBoardChanges(board);
+        canvas.drawBoard(board);
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
     }
