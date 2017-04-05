@@ -9,7 +9,6 @@ import model.Board;
  * Resizable canvas object with the necessary methods for drawing, and changing
  * the apperance of the game board.
  *
- * @author peven
  */
 public class ResizableCanvas extends Canvas {
 
