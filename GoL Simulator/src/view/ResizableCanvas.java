@@ -14,10 +14,10 @@ import model.Board;
 public class ResizableCanvas extends Canvas {
 
     private int cellSize = 4;
-    private int spaceBetweenCells = 1;
-    private int xOffsett = -1000;
-    private int yOffsett = -1000;
-    private Color backgroundColor;
+    private int spaceBetweenCells = 1; // the border.
+    private int xOffset = -1000;
+    private int yOffset = -1000;
+    private Color backgroundColor; // also visible as the border.
     private Color livingCellColor;
     private Color deadCellColor;
     private GraphicsContext gc;
@@ -33,12 +33,12 @@ public class ResizableCanvas extends Canvas {
      * Set the offset for the canvas drawing methods. Allows for moving around
      * on the canvas.
      *
-     * @param newXOffsett x-axis offset.
-     * @param newYOffsett y-axis offset.
+     * @param xOffset x-axis offset.
+     * @param yOffset y-axis offset.
      */
-    public void setOffsett(int newXOffsett, int newYOffsett) {
-        xOffsett = newXOffsett;
-        yOffsett = newYOffsett;
+    public void setOffsett(int xOffset, int yOffset) {
+        this.xOffset = xOffset;
+        this.yOffset = yOffset;
     }
 
     /**
@@ -46,7 +46,7 @@ public class ResizableCanvas extends Canvas {
      * @return the x-axis offset of the canvas.
      */
     public int getXOffsett() {
-        return xOffsett;
+        return xOffset;
     }
 
     /**
@@ -54,7 +54,7 @@ public class ResizableCanvas extends Canvas {
      * @return the y-axis offset of the canvas.
      */
     public int getYOffsett() {
-        return yOffsett;
+        return yOffset;
     }
 
     /**
@@ -99,8 +99,8 @@ public class ResizableCanvas extends Canvas {
      */
     public void drawCell(Board b, int row, int col) {
         // calculate the position of the given cell.
-        int xPosition = xOffsett + (col * (cellSize + spaceBetweenCells));
-        int yPosition = yOffsett + (row * (cellSize + spaceBetweenCells));
+        int xPosition = xOffset + (col * (cellSize + spaceBetweenCells));
+        int yPosition = yOffset + (row * (cellSize + spaceBetweenCells));
 
         // determin if the given cells position is within the size of the canvas.
         // If it is, draw that cell. If not, do nothing.
@@ -161,10 +161,10 @@ public class ResizableCanvas extends Canvas {
     /**
      * Sets the color of living cells.
      *
-     * @param newLivingCellColor
+     * @param livingCellColor
      */
-    public void setLivingCellColor(Color newLivingCellColor) {
-        livingCellColor = newLivingCellColor;
+    public void setLivingCellColor(Color livingCellColor) {
+        this.livingCellColor = livingCellColor;
     }
 
     /**
@@ -178,10 +178,10 @@ public class ResizableCanvas extends Canvas {
     /**
      * Sets the color of dead cells.
      *
-     * @param newDeadCellColor
+     * @param deadCellColor
      */
-    public void setDeadCellColor(Color newDeadCellColor) {
-        deadCellColor = newDeadCellColor;
+    public void setDeadCellColor(Color deadCellColor) {
+        this.deadCellColor = deadCellColor;
     }
 
     /**
@@ -196,10 +196,10 @@ public class ResizableCanvas extends Canvas {
     /**
      * Sets the background color, which is also the color of the border.
      *
-     * @param newBackgroundColor
+     * @param backgroundColor
      */
-    public void setBackgroundColor(Color newBackgroundColor) {
-        backgroundColor = newBackgroundColor;
+    public void setBackgroundColor(Color backgroundColor) {
+        this.backgroundColor = backgroundColor;
     }
 
     /**
