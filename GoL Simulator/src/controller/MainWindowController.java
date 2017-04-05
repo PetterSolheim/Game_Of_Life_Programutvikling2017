@@ -75,6 +75,10 @@ public class MainWindowController implements Initializable {
     private Timer time;
     private boolean isPaused = true;
     private Stage stage;
+    private double previousXOffset;
+    private double previousYOffset;
+    private double mouseCurrentXPosition;
+    private double mouseCurrentYPosition;
 
     /**
      * Initializes the controller class.
@@ -100,7 +104,7 @@ public class MainWindowController implements Initializable {
         // prepare the cellSizeSlider.
         cellSizeSlider.valueProperty().addListener((observable) -> {
             canvas.setCellSize((int) cellSizeSlider.getValue());
-            canvas.draw(board);
+            canvas.drawBoard(board);
         });
 
         // prepare the canvas, and add a listener to its parent node so that
@@ -123,7 +127,7 @@ public class MainWindowController implements Initializable {
 
     private void prepareCanvas() {
         canvas.resizeCanvas(canvasAnchor.getHeight(), canvasAnchor.getWidth());
-        canvas.draw(board);
+        canvas.drawBoard(board);
     }
 
     @FXML
@@ -140,7 +144,7 @@ public class MainWindowController implements Initializable {
     private void reset() {
         pause();
         board.resetBoard();
-        canvas.draw(board);
+        canvas.drawBoard(board);
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
     }
@@ -211,7 +215,7 @@ public class MainWindowController implements Initializable {
             try {
                 tmpBoard = fileImporter.readGameBoardFromDisk(file);
                 board = tmpBoard;
-                canvas.draw(board);
+                canvas.drawBoard(board);
                 updateLivingCellCountLabel();
 
             } catch (FileNotFoundException e) {
@@ -240,7 +244,7 @@ public class MainWindowController implements Initializable {
         if (url.isPresent()) {
             try {
                 board = fileImporter.readGameBoardFromUrl(url.get());
-                canvas.draw(board);
+                canvas.drawBoard(board);
                 updateLivingCellCountLabel();
             } catch (MalformedURLException e) {
                 DialogBoxes.ioException("Given String is not a valid URL: " + e.getMessage());
@@ -271,7 +275,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private void changeLivingCellColor() {
         canvas.setLivingCellColor(livingCellColorPicker.getValue());
-        canvas.draw(board);
+        canvas.drawBoard(board);
     }
 
     /**
@@ -281,7 +285,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private void changeBackgroundColor() {
         canvas.setBackgroundColor(backgroundColorPicker.getValue());
-        canvas.draw(board);
+        canvas.drawBoard(board);
     }
 
     /**
@@ -291,7 +295,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private void changeDeadCellColor() {
         canvas.setDeadCellColor(deadCellColorPicker.getValue());
-        canvas.draw(board);
+        canvas.drawBoard(board);
     }
 
     /**
@@ -320,7 +324,7 @@ public class MainWindowController implements Initializable {
     @FXML
     public void createNextGeneration() {
         board.nextGeneration();
-        canvas.drawChanges(board);
+        canvas.drawBoardChanges(board);
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
     }
@@ -368,27 +372,29 @@ public class MainWindowController implements Initializable {
      * @param event
      */
     @FXML
-    private void toggleClickedCell(MouseEvent event) {
+    private void canvasClickEvent(MouseEvent event) {
         if (event.getButton() == MouseButton.PRIMARY && !event.isDragDetect()) {
-            int row = (int) ((event.getY() - canvas.getYOffsett()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-            int col = (int) ((event.getX() - canvas.getXOffsett()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+            int row = (int) ((event.getY() - canvas.getYOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+            int col = (int) ((event.getX() - canvas.getXOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
 
             if (row < board.getBoard().length && col < board.getBoard()[0].length) {
                 board.toggleCellState(row, col);
                 canvas.drawCell(board, row, col);
             }
+        } else {
+            defineDragStart(event);
         }
     }
 
     /**
      * Determines which mouse button is being draged on the canvas, and calls
-     * the appropriate method. Left click drag results in drawing on the canvas 
+     * the appropriate method. Left click drag results in drawing on the canvas
      * while right click drag results in moving the canvas.
      *
      * @param event
      */
     @FXML
-    private void dragCanvas(MouseEvent event) {
+    private void canvasDragEvent(MouseEvent event) {
         // movement of canvas
         if (event.getButton() == MouseButton.SECONDARY) {
             moveCanvas(event);
@@ -396,25 +402,37 @@ public class MainWindowController implements Initializable {
             dragDraw(event);
         }
     }
-    
+
+    private void defineDragStart(MouseEvent event) {
+        previousXOffset = event.getX();
+        previousYOffset = event.getY();
+    }
+
     /**
      * Moves the canvas based on the direction of the mouse pointer.
+     *
      * @param event
      */
     private void moveCanvas(MouseEvent event) {
-        
+        double newXOffset = canvas.getXOffset() + (event.getX()-previousXOffset);
+        double newYOffset = canvas.getYOffset() + (event.getY()-previousYOffset);
+        canvas.setOffset(newXOffset, newYOffset);
+        canvas.drawBoard(board);
+        previousXOffset = event.getX();
+        previousYOffset = event.getY();
     }
 
     /**
      * Allows for draged drawing on the canvas.
-     * @param event 
+     *
+     * @param event
      */
     private void dragDraw(MouseEvent event) {
         if (!isPaused) {
             togglePlayPause();
         }
-        int row = (int) ((event.getY() - canvas.getYOffsett()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-        int col = (int) ((event.getX() - canvas.getXOffsett()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+        int row = (int) ((event.getY() - canvas.getYOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+        int col = (int) ((event.getX() - canvas.getXOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
 
         // ensure that the drag event was within the canvas.
         if (row < board.getBoard().length && col < board.getBoard()[0].length) {
