@@ -123,7 +123,7 @@
         </ToolBar>
       <AnchorPane fx:id="canvasAnchor" layoutY="67.0" prefHeight="302.0" prefWidth="600.0" AnchorPane.bottomAnchor="31.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0">
          <children>
-                 <ResizableCanvas fx:id="canvas" onMouseDragged="#dragCanvas" onMousePressed="#toggleClickedCell" onMouseReleased="#dragCanvasEnded" />
+                 <ResizableCanvas fx:id="canvas" onMouseDragged="#dragCanvas" onMousePressed="#toggleClickedCell" onMouseReleased="#countNumberOfLivingCells" />
          </children>
       </AnchorPane>
         <HBox layoutY="374.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">

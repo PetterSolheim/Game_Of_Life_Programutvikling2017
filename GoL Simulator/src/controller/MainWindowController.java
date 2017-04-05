@@ -73,7 +73,7 @@ public class MainWindowController implements Initializable {
     private ImageView imgPlayPause;
     private Board board;
     private Timer time;
-    private boolean isPaused;
+    private boolean isPaused = true;
     private Stage stage;
 
     /**
@@ -81,39 +81,43 @@ public class MainWindowController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        Platform.runLater(this::defineStage); // allows easy referal to the stage
-        Platform.runLater(this::prepareCanvas);
+        Platform.runLater(this::defineStage); // allows easy referal to the stage.
+        Platform.runLater(this::prepareCanvas); // ensures the parent node is ready before resizing the canvas.
 
         board = new Board(200, 200);
         time = new Timer(this);
-        isPaused = true;
         livingCellColorPicker.setValue(canvas.getLivingCellColor());
         deadCellColorPicker.setValue(canvas.getDeadCellColor());
         backgroundColorPicker.setValue(canvas.getBackgroundColor());
-        fpsSlider.setValue(4.0);
 
+        // prepare the FPS slider and add a listener.
+        fpsSlider.setValue(4.0);
+        setFps();
         fpsSlider.valueProperty().addListener((observable) -> {
             setFps();
         });
 
+        // prepare the cellSizeSlider.
         cellSizeSlider.valueProperty().addListener((observable) -> {
             canvas.setCellSize((int) cellSizeSlider.getValue());
             canvas.draw(board);
         });
 
+        // prepare the canvas, and add a listener to its parent node so that
+        // the canvas will resize to fill the available space.
         canvasAnchor.heightProperty().addListener((observable) -> {
             prepareCanvas();
 
         });
-
         canvasAnchor.widthProperty().addListener((observable) -> {
             prepareCanvas();
         });
 
         canvas.setCellSize((int) cellSizeSlider.getValue());
-        setFps();
-        displayLivingCellCount();
-        displayGenerationCount();
+
+        // update the labels for the living cell count and generation count.
+        updateLivingCellCountLabel();
+        updateGenerationCountLabel();
 
     }
 
@@ -127,15 +131,36 @@ public class MainWindowController implements Initializable {
 
     }
 
+    /**
+     * Sets the board back to the state it was in when current board was
+     * originally set, draws it, and resets the generation counter, and living
+     * cell counter.
+     */
     @FXML
     private void reset() {
-        stop();
+        pause();
         board.resetBoard();
         canvas.draw(board);
-        displayLivingCellCount();
-        displayGenerationCount();
+        updateLivingCellCountLabel();
+        updateGenerationCountLabel();
     }
 
+    /**
+     * Method used to toggle between Play and Pause states for the animation.
+     */
+    @FXML
+    private void togglePlayPause() {
+        if (isPaused) {
+            play();
+        } else {
+            pause();
+        }
+    }
+
+    /**
+     * Starts the animation and changes the label text to "Pause" and icon to a
+     * corresponding pause icon.
+     */
     private void play() {
         Image imgPause = new Image("/img/pause.png");
         isPaused = false;
@@ -144,6 +169,37 @@ public class MainWindowController implements Initializable {
         time.start();
     }
 
+    /**
+     * Pauses the animation and changes the label text to "Play" and icon to a
+     * corresponding play icon.
+     */
+    private void pause() {
+        Image imgPlay = new Image("/img/play.png");
+        isPaused = true;
+        imgPlayPause.setImage(imgPlay);
+        btnPlay.setText("Play");
+        time.stop();
+    }
+
+    /**
+     * Creates a file chooser for use with methods that open files from disk.
+     *
+     * @return a FileChooser object.
+     */
+    private FileChooser createFileChooser() {
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Choose file");
+        fileChooser.getExtensionFilters().addAll(
+                new FileChooser.ExtensionFilter("Supported Formats", "*.rle"/*, "*.lif", "*.life", "*.cells"*/),
+                new FileChooser.ExtensionFilter("RLE", "*.rle"));
+        //new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
+        //new FileChooser.ExtensionFilter("Plaintext", "*.cells")),
+        return fileChooser;
+    }
+
+    /**
+     * Opens a compatible GoL file from disk.
+     */
     @FXML
     private void openFromDisk() {
         FileImporter fileImporter = new FileImporter();
@@ -156,7 +212,7 @@ public class MainWindowController implements Initializable {
                 tmpBoard = fileImporter.readGameBoardFromDisk(file);
                 board = tmpBoard;
                 canvas.draw(board);
-                displayLivingCellCount();
+                updateLivingCellCountLabel();
 
             } catch (FileNotFoundException e) {
                 DialogBoxes.ioException("No file found at: " + e.getMessage());
@@ -174,27 +230,6 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    private void addFromUrl() {
-
-    }
-
-    @FXML
-    private void showAboutWindow() {
-
-    }
-
-    private FileChooser createFileChooser() {
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Choose file");
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Supported Formats", "*.rle"/*, "*.lif", "*.life", "*.cells"*/),
-                new FileChooser.ExtensionFilter("RLE", "*.rle"));
-        //new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
-        //new FileChooser.ExtensionFilter("Plaintext", "*.cells")),
-        return fileChooser;
-    }
-
-    @FXML
     private void openFromUrl() {
         FileImporter fileImporter = new FileImporter();
         TextInputDialog inputDialog = new TextInputDialog();
@@ -206,7 +241,7 @@ public class MainWindowController implements Initializable {
             try {
                 board = fileImporter.readGameBoardFromUrl(url.get());
                 canvas.draw(board);
-                displayLivingCellCount();
+                updateLivingCellCountLabel();
             } catch (MalformedURLException e) {
                 DialogBoxes.ioException("Given String is not a valid URL: " + e.getMessage());
             } catch (FileNotFoundException e) {
@@ -219,51 +254,66 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    private void stop() {
-        Image imgPlay = new Image("/img/play.png");
-        isPaused = true;
-        imgPlayPause.setImage(imgPlay);
-        btnPlay.setText("Play");
-        time.stop();
+    @FXML
+    private void addFromUrl() {
+
     }
 
     @FXML
-    private void togglePlayPause() {
-        if (isPaused) {
-            play();
-        } else {
-            stop();
-        }
+    private void showAboutWindow() {
+
     }
 
+    /**
+     * Changes the color of living cells based on the current value of the
+     * livingCellColorPicker.
+     */
     @FXML
     private void changeLivingCellColor() {
         canvas.setLivingCellColor(livingCellColorPicker.getValue());
         canvas.draw(board);
     }
 
+    /**
+     * Changes the color of the background (and the border as they share color)
+     * based on the current value of the backgroundColorPicker.
+     */
     @FXML
     private void changeBackgroundColor() {
         canvas.setBackgroundColor(backgroundColorPicker.getValue());
         canvas.draw(board);
     }
 
+    /**
+     * Changes the color of dead cells based on the current value of the
+     * deadCellColorPicker.
+     */
     @FXML
     private void changeDeadCellColor() {
         canvas.setDeadCellColor(deadCellColorPicker.getValue());
         canvas.draw(board);
     }
 
+    /**
+     * TODO: change method to accept value, rather than collect value.
+     */
     private void setFps() {
         long newTimer = (long) (1000000000 / fpsSlider.getValue());
         time.setFps(newTimer);
     }
 
-    private void displayLivingCellCount() {
+    /**
+     * Updates the label which displays the number of living cells on the
+     * current board.
+     */
+    private void updateLivingCellCountLabel() {
         txtShowCellCount.setText(Integer.toString(board.getLivingCellCount()) + " .");
     }
 
-    private void displayGenerationCount() {
+    /**
+     * Updates the label which displays the current generation count.
+     */
+    private void updateGenerationCountLabel() {
         txtShowGen.setText(Integer.toString(board.getGenerationCount()) + " ");
     }
 
@@ -271,8 +321,8 @@ public class MainWindowController implements Initializable {
     public void createNextGeneration() {
         board.nextGeneration();
         canvas.drawChanges(board);
-        displayLivingCellCount();
-        displayGenerationCount();
+        updateLivingCellCountLabel();
+        updateGenerationCountLabel();
     }
 
     @FXML
@@ -331,36 +381,62 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Determines which mouse button is dragging, and calls the relevant method.
+     * Determines which mouse button is being draged on the canvas, and calls
+     * the appropriate method. Left click drag results in drawing on the canvas 
+     * while right click drag results in moving the canvas.
      *
      * @param event
      */
     @FXML
-    private void dragCanvas(MouseEvent event
-    ) {
+    private void dragCanvas(MouseEvent event) {
+        // movement of canvas
         if (event.getButton() == MouseButton.SECONDARY) {
+            moveCanvas(event);
         } else {
-            if (!isPaused) {
-                togglePlayPause();
-            }
-            int row = (int) ((event.getY() - canvas.getYOffsett()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-            int col = (int) ((event.getX() - canvas.getXOffsett()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+            dragDraw(event);
+        }
+    }
+    
+    /**
+     * Moves the canvas based on the direction of the mouse pointer.
+     * @param event
+     */
+    private void moveCanvas(MouseEvent event) {
+        
+    }
 
-            // ensure that the drag event was within the canvas.
-            if (row < board.getBoard().length && col < board.getBoard()[0].length) {
-                board.setCellStateAlive(row, col);
-                canvas.drawCell(board, row, col);
-            }
+    /**
+     * Allows for draged drawing on the canvas.
+     * @param event 
+     */
+    private void dragDraw(MouseEvent event) {
+        if (!isPaused) {
+            togglePlayPause();
+        }
+        int row = (int) ((event.getY() - canvas.getYOffsett()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+        int col = (int) ((event.getX() - canvas.getXOffsett()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
+
+        // ensure that the drag event was within the canvas.
+        if (row < board.getBoard().length && col < board.getBoard()[0].length) {
+            board.setCellStateAlive(row, col);
+            canvas.drawCell(board, row, col);
         }
     }
 
+    /**
+     * After a drag event on the board has finished, recount the number of
+     * living cells on the board, and update the corresponding label.
+     */
     @FXML
-    private void dragCanvasEnded() {
-        //anchorPane.setPannable(false);
+    private void countNumberOfLivingCells() {
         board.getLivingCellCount();
-        displayLivingCellCount();
+        updateLivingCellCountLabel();
     }
 
+    /**
+     * Creates a stage variable which allows for easy referral to the Stage of
+     * this controllers window.
+     */
     private void defineStage() {
         stage = (Stage) canvasAnchor.getScene().getWindow();
     }
