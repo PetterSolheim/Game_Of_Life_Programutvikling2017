@@ -187,6 +187,24 @@ public class MainWindowController implements Initializable {
     }
 
     /**
+     * Places the center of the Board objects currentBoard in the canvases
+     * visible area.
+     */
+    @FXML
+    private void centerBoardOnCanvas() {
+        double boardWidthCenter = (board.getBoard()[0].length * (canvas.getCellSize() + canvas.getSpaceBetweenCells())/2);
+        double boardHeightCenter = (board.getBoard().length * (canvas.getCellSize() + canvas.getSpaceBetweenCells())/2);
+        double canvasWidthCenter = (canvas.getWidth() / 2);
+        double canvasHeightCenter = (canvas.getHeight() / 2);
+
+        double xOffset = canvasWidthCenter - boardWidthCenter;
+        double yOffset = canvasHeightCenter - boardHeightCenter;
+
+        canvas.setOffset(xOffset, yOffset);
+        canvas.drawBoard(board);
+    }
+
+    /**
      * Creates a file chooser for use with methods that open files from disk.
      *
      * @return a FileChooser object.
@@ -216,6 +234,7 @@ public class MainWindowController implements Initializable {
             try {
                 tmpBoard = fileImporter.readGameBoardFromDisk(file);
                 board = tmpBoard;
+                centerBoardOnCanvas();
                 canvas.drawBoard(board);
                 updateLivingCellCountLabel();
 
@@ -455,8 +474,9 @@ public class MainWindowController implements Initializable {
 
     /**
      * Determin if the given row and col is within the boundaries of the current
-     * Board. Used to avoid methods from going IndexOutOfBounds when dealing with
-     * the Board objects current Board.
+     * Board. Used to avoid methods from going IndexOutOfBounds when dealing
+     * with the Board objects current Board.
+     *
      * @param row
      * @param col
      * @return true or false depending on if the given values are within the

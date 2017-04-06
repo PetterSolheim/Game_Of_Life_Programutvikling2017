@@ -22,7 +22,7 @@
             <menus>
                 <Menu mnemonicParsing="false" text="File">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#newBoard" text="New" />
+                        <MenuItem mnemonicParsing="false" text="New" />
                     </items>
                     <items>
                         <Menu mnemonicParsing="false" text="Open">
@@ -99,6 +99,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
+                <Button fx:id="btnCenter" onAction="#centerBoardOnCanvas" text="Center"/>
                 <Button fx:id="btnRules" onAction="#showGameRulesWindow" text="Settings">
                     <graphic>
                         <ImageView fitHeight="19.0" pickOnBounds="true" preserveRatio="true">
