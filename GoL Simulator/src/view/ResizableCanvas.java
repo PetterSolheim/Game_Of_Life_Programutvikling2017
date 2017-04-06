@@ -114,9 +114,10 @@ public class ResizableCanvas extends Canvas {
      * @param col the x position of the cell to be drawn.
      */
     public void drawCell(Board b, int row, int col) {
-        // calculate the position of the given cell.
-        double xPosition = xOffset + (col * (cellSize + spaceBetweenCells));
-        double yPosition = yOffset + (row * (cellSize + spaceBetweenCells));
+        // calculate the position of the given cell. Use of Math.floor() to
+        // avoid pixelbleed due to decimal values.
+        double xPosition = Math.floor(xOffset + (col * (cellSize + spaceBetweenCells)));
+        double yPosition = Math.floor(yOffset + (row * (cellSize + spaceBetweenCells)));
 
         // determin if the given cells position is within the size of the canvas.
         // If it is, drawBoard that cell. If not, do nothing.
