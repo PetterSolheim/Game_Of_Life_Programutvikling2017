@@ -302,13 +302,15 @@ public class FileImporter {
 
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    throw new PatternFormatException("Defined board size does not"
-                            + " match the board definition!");
+                    throw new PatternFormatException("Board size defined by the"
+                            + "RLE file is to small to accomodate the board"
+                            + "described by the RLE file.");
                 }
                 cellPosition += numberOfCells;
                 m.find();
             }
 
+            // Handle blank lines
             Pattern blankLinesPattern = Pattern.compile("(\\d)*\\s*(?!.)");
             m = blankLinesPattern.matcher(boardStringArray[i]);
             m.find();
