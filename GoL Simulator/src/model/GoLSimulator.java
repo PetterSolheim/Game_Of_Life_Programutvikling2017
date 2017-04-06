@@ -16,6 +16,7 @@ public class GoLSimulator extends Application {
         stage.setScene(scene);
         stage.setMinHeight(400);
         stage.setMinWidth(700);
+        stage.setTitle("Game of Life Simulator");
         stage.show();
     }
 

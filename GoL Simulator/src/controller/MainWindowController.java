@@ -378,14 +378,14 @@ public class MainWindowController implements Initializable {
             int row = (int) ((event.getY() - canvas.getYOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
             int col = (int) ((event.getX() - canvas.getXOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
 
-            if (row < board.getBoard().length && col < board.getBoard()[0].length) {
+            if (isWithinBoard(row, col)) {
                 board.toggleCellState(row, col);
                 canvas.drawCell(board, row, col);
                 board.getLivingCellCount();
                 updateLivingCellCountLabel();
             }
         } else {
-            canvasDragStarted(event); // sets initial values needed to calculate offset while draging.
+            prepareForCanvasMovement(event); // sets initial values needed to calculate offset while draging.
         }
     }
 
@@ -412,7 +412,7 @@ public class MainWindowController implements Initializable {
      *
      * @param event the mouse event that triggered the drag.
      */
-    private void canvasDragStarted(MouseEvent event) {
+    private void prepareForCanvasMovement(MouseEvent event) {
         canvas.getScene().setCursor(Cursor.MOVE);
         previousXOffset = event.getX();
         previousYOffset = event.getY();
@@ -444,8 +444,8 @@ public class MainWindowController implements Initializable {
         int row = (int) ((event.getY() - canvas.getYOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
         int col = (int) ((event.getX() - canvas.getXOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
 
-        // ensure that the drag event was within the canvas.
-        if (row < board.getBoard().length && col < board.getBoard()[0].length) {
+        // ensure that the drag event was within the actual board.
+        if (isWithinBoard(row, col)) {
             board.setCellStateAlive(row, col);
             canvas.drawCell(board, row, col);
             board.getLivingCellCount();
@@ -454,8 +454,24 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * After a drag event on the board has finished, recount the number of
-     * living cells on the board, and update the corresponding label.
+     * Determin if the given row and col is within the boundaries of the current
+     * Board. Used to avoid methods from going IndexOutOfBounds when dealing with
+     * the Board objects current Board.
+     * @param row
+     * @param col
+     * @return true or false depending on if the given values are within the
+     * current board.
+     */
+    private boolean isWithinBoard(int row, int col) {
+        if (row < board.getBoard().length && row >= 0 && col < board.getBoard()[0].length && col >= 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Sets the cursor back to normal state.
      */
     @FXML
     private void canvasDragEnded() {
