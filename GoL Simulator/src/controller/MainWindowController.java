@@ -16,6 +16,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -373,16 +374,18 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     private void canvasClickEvent(MouseEvent event) {
-        if (event.getButton() == MouseButton.PRIMARY && !event.isDragDetect()) {
+        if (event.getButton() == MouseButton.PRIMARY && !event.isDragDetect()) { // single click registered
             int row = (int) ((event.getY() - canvas.getYOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
             int col = (int) ((event.getX() - canvas.getXOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
 
             if (row < board.getBoard().length && col < board.getBoard()[0].length) {
                 board.toggleCellState(row, col);
                 canvas.drawCell(board, row, col);
+                board.getLivingCellCount();
+                updateLivingCellCountLabel();
             }
         } else {
-            defineDragStart(event);
+            canvasDragStarted(event); // sets initial values needed to calculate offset while draging.
         }
     }
 
@@ -403,7 +406,14 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    private void defineDragStart(MouseEvent event) {
+    /**
+     * Define starting values for moving the canvas offset through mouse
+     * dragging.
+     *
+     * @param event the mouse event that triggered the drag.
+     */
+    private void canvasDragStarted(MouseEvent event) {
+        canvas.getScene().setCursor(Cursor.MOVE);
         previousXOffset = event.getX();
         previousYOffset = event.getY();
     }
@@ -411,11 +421,11 @@ public class MainWindowController implements Initializable {
     /**
      * Moves the canvas based on the direction of the mouse pointer.
      *
-     * @param event
+     * @param event the mouse event that triggered the drag.
      */
     private void moveCanvas(MouseEvent event) {
-        double newXOffset = canvas.getXOffset() + (event.getX()-previousXOffset);
-        double newYOffset = canvas.getYOffset() + (event.getY()-previousYOffset);
+        double newXOffset = canvas.getXOffset() + (event.getX() - previousXOffset);
+        double newYOffset = canvas.getYOffset() + (event.getY() - previousYOffset);
         canvas.setOffset(newXOffset, newYOffset);
         canvas.drawBoard(board);
         previousXOffset = event.getX();
@@ -438,6 +448,8 @@ public class MainWindowController implements Initializable {
         if (row < board.getBoard().length && col < board.getBoard()[0].length) {
             board.setCellStateAlive(row, col);
             canvas.drawCell(board, row, col);
+            board.getLivingCellCount();
+            updateLivingCellCountLabel();
         }
     }
 
@@ -446,9 +458,9 @@ public class MainWindowController implements Initializable {
      * living cells on the board, and update the corresponding label.
      */
     @FXML
-    private void countNumberOfLivingCells() {
-        board.getLivingCellCount();
-        updateLivingCellCountLabel();
+    private void canvasDragEnded() {
+        canvas.getScene().setCursor(Cursor.DEFAULT);
+
     }
 
     /**
