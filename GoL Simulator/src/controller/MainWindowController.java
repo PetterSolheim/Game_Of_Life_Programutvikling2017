@@ -55,10 +55,6 @@ public class MainWindowController implements Initializable {
     @FXML
     private Slider fpsSlider;
     @FXML
-    private Text txtShowCellSize;
-    @FXML
-    private Text txtShowFps;
-    @FXML
     private Text txtShowGen;
     @FXML
     private Text txtShowCellCount;
@@ -78,8 +74,6 @@ public class MainWindowController implements Initializable {
     private Stage stage;
     private double previousXOffset;
     private double previousYOffset;
-    private double mouseCurrentXPosition;
-    private double mouseCurrentYPosition;
 
     /**
      * Initializes the controller class.
@@ -87,10 +81,12 @@ public class MainWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Platform.runLater(this::defineStage); // allows easy referal to the stage.
-        Platform.runLater(this::prepareCanvas); // ensures the parent node is ready before resizing the canvas.
+        Platform.runLater(this::resizeCanvas); // ensures the parent node is ready before resizing the canvas.
 
         board = new Board(200, 200);
         time = new Timer(this);
+
+        // set the default value of the color pickers.
         livingCellColorPicker.setValue(canvas.getLivingCellColor());
         deadCellColorPicker.setValue(canvas.getDeadCellColor());
         backgroundColorPicker.setValue(canvas.getBackgroundColor());
@@ -108,17 +104,17 @@ public class MainWindowController implements Initializable {
             canvas.drawBoard(board);
         });
 
+        canvas.setCellSize((int) cellSizeSlider.getValue());
+
         // prepare the canvas, and add a listener to its parent node so that
         // the canvas will resize to fill the available space.
         canvasAnchor.heightProperty().addListener((observable) -> {
-            prepareCanvas();
+            resizeCanvas();
 
         });
         canvasAnchor.widthProperty().addListener((observable) -> {
-            prepareCanvas();
+            resizeCanvas();
         });
-
-        canvas.setCellSize((int) cellSizeSlider.getValue());
 
         // update the labels for the living cell count and generation count.
         updateLivingCellCountLabel();
@@ -126,7 +122,11 @@ public class MainWindowController implements Initializable {
 
     }
 
-    private void prepareCanvas() {
+    /**
+     * Resizes the canvas so that it fills the available space in the canvases
+     * parent node.
+     */
+    private void resizeCanvas() {
         canvas.resizeCanvas(canvasAnchor.getHeight(), canvasAnchor.getWidth());
         canvas.drawBoard(board);
     }
@@ -137,9 +137,7 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Sets the board back to the state it was in when current board was
-     * originally set, draws it, and resets the generation counter, and living
-     * cell counter.
+     * Sets the board back to its original state, and reset counters.
      */
     @FXML
     private void reset() {
@@ -151,7 +149,7 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Method used to toggle between Play and Pause states for the animation.
+     * Toggles the play/pause state of the animation.
      */
     @FXML
     private void togglePlayPause() {
@@ -163,8 +161,8 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Starts the animation and changes the label text to "Pause" and icon to a
-     * corresponding pause icon.
+     * Starts the animation. The play buttons text gets changed to "Pause" and
+     * the icon gets switched to a pause icon.
      */
     private void play() {
         Image imgPause = new Image("/img/pause.png");
@@ -175,8 +173,8 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Pauses the animation and changes the label text to "Play" and icon to a
-     * corresponding play icon.
+     * Pauses the animation. THe pause button text gets changed to "Play" and
+     * the icon gets switched to a play icon.
      */
     private void pause() {
         Image imgPlay = new Image("/img/play.png");
@@ -187,13 +185,12 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Places the center of the Board objects currentBoard in the canvases
-     * visible area.
+     * Centres the board on the canvas.
      */
     @FXML
     private void centerBoardOnCanvas() {
-        double boardWidthCenter = (board.getBoard()[0].length * (canvas.getCellSize() + canvas.getSpaceBetweenCells())/2);
-        double boardHeightCenter = (board.getBoard().length * (canvas.getCellSize() + canvas.getSpaceBetweenCells())/2);
+        double boardWidthCenter = (board.getBoard()[0].length * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
+        double boardHeightCenter = (board.getBoard().length * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
         double canvasWidthCenter = (canvas.getWidth() / 2);
         double canvasHeightCenter = (canvas.getHeight() / 2);
 
@@ -221,7 +218,9 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Opens a compatible GoL file from disk.
+     * Displays a FileChooser, and lets the user select a compatible pattern
+     * file which is then parsed and drawn to the canvas, replacing any existing
+     * board.
      */
     @FXML
     private void openFromDisk() {
@@ -248,11 +247,22 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    /**
+     * Displays a FileChooser, and lets the user select a compatible pattern
+     * file which is then parsed. The board is stored in a temporary Board
+     * object for placement on screen. This method is used when one does not
+     * wish to replace the existing board, but rather combine it with a new one.
+     */
     @FXML
     private void addFromDisk() {
 
     }
 
+    /**
+     * Displays a dialogue box requesting an URL. URL is used to download a
+     * compatible GoL pattern file. Pattern is then parsed and drawn to board,
+     * replacing any existing board.
+     */
     @FXML
     private void openFromUrl() {
         FileImporter fileImporter = new FileImporter();
@@ -278,13 +288,15 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    /**
+     * Displays a dialogue box requesting an URL. URL is used to download a
+     * compatible GoL pattern file. Pattern is then parsed and the board is
+     * stored in a temporary Board object for placement on screen. This method
+     * is used when one does not wish to replace the existing board, but rather
+     * combine it with a new one.
+     */
     @FXML
     private void addFromUrl() {
-
-    }
-
-    @FXML
-    private void showAboutWindow() {
 
     }
 
@@ -341,6 +353,10 @@ public class MainWindowController implements Initializable {
         txtShowGen.setText(Integer.toString(board.getGenerationCount()) + " ");
     }
 
+    /**
+     * Iterates the board to the next generation, draws the new board on canvas,
+     * and updates the GUIs labels for living cell count, and generation count.
+     */
     @FXML
     public void createNextGeneration() {
         board.nextGeneration();
@@ -349,26 +365,41 @@ public class MainWindowController implements Initializable {
         updateGenerationCountLabel();
     }
 
+    /**
+     * Shuts down the application.
+     */
     @FXML
     private void quit() {
         Platform.exit();
     }
 
+    /**
+     * Displays the game rules window where the user can alter the rules which
+     * the game abides by. Sends the current board object to the games window so
+     * that the rules can be read/changed.
+     * 
+     * Game rules window has Modality.APPLICATION_MODAL to prevent changes to
+     * the Board object while game rules window is open.
+     */
     @FXML
     private void showGameRulesWindow() throws Exception {
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("/view/GameRulesWindow.fxml"));
-        loader.load();
-        Parent parent = loader.getRoot();
-        Scene Scene = new Scene(parent);
-        Stage stage = new Stage();
-        stage.setScene(Scene);
+        try {
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getResource("/view/GameRulesWindow.fxml"));
+            loader.load();
+            Parent parent = loader.getRoot();
+            Scene Scene = new Scene(parent);
+            Stage stage = new Stage();
+            stage.setScene(Scene);
 
-        GameRulesWindowController controller = loader.getController();
-        controller.initData(board);
-        stage.setResizable(false);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.show();
+            GameRulesWindowController controller = loader.getController();
+            controller.initData(board);
+            stage.setResizable(false);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.show();
+        } catch (IOException e) {
+            DialogBoxes.ioException("There was an error displaying the game rules window!");
+        }
     }
 
     public void showStatistics() throws IOException {
@@ -389,7 +420,7 @@ public class MainWindowController implements Initializable {
      * Toggles the state of a clicked cell. A live cell becomes dead, and a dead
      * cell becomes alive.
      *
-     * @param event
+     * @param event the mouse event which triggered the method.
      */
     @FXML
     private void canvasClickEvent(MouseEvent event) {
@@ -409,11 +440,11 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Determines which mouse button is being draged on the canvas, and calls
+     * Determines which mouse button is being dragged on the canvas, and calls
      * the appropriate method. Left click drag results in drawing on the canvas
      * while right click drag results in moving the canvas.
      *
-     * @param event
+     * @param event the mouse event which triggered the method.
      */
     @FXML
     private void canvasDragEvent(MouseEvent event) {
@@ -432,13 +463,14 @@ public class MainWindowController implements Initializable {
      * @param event the mouse event that triggered the drag.
      */
     private void prepareForCanvasMovement(MouseEvent event) {
-        canvas.getScene().setCursor(Cursor.MOVE);
+        canvas.getScene().setCursor(Cursor.MOVE); 
         previousXOffset = event.getX();
         previousYOffset = event.getY();
     }
 
     /**
-     * Moves the canvas based on the direction of the mouse pointer.
+     * Moves the visible area of the board in the canvas 
+     * based on the direction of the mouse movement. 
      *
      * @param event the mouse event that triggered the drag.
      */
@@ -452,14 +484,15 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Allows for draged drawing on the canvas.
+     * Allows for dragged drawing on the canvas.
      *
-     * @param event
+     * @param event the mouse event which triggered the event.
      */
     private void dragDraw(MouseEvent event) {
         if (!isPaused) {
             togglePlayPause();
         }
+        // calculate which cell is being clicked
         int row = (int) ((event.getY() - canvas.getYOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
         int col = (int) ((event.getX() - canvas.getXOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
 
@@ -473,12 +506,11 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Determin if the given row and col is within the boundaries of the current
-     * Board. Used to avoid methods from going IndexOutOfBounds when dealing
-     * with the Board objects current Board.
+     * Determine if a cell exists on the current board. Use this method to avoid
+     * ArrayIndexOutOfBounds exceptions.
      *
-     * @param row
-     * @param col
+     * @param row y-axis location of desired cell.
+     * @param col x-axis location of desired cell.
      * @return true or false depending on if the given values are within the
      * current board.
      */
@@ -491,7 +523,7 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Sets the cursor back to normal state.
+     * Sets the cursor to default state at the end of a canvas drag.
      */
     @FXML
     private void canvasDragEnded() {

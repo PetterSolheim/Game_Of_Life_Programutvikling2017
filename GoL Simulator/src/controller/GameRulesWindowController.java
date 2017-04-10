@@ -71,7 +71,8 @@ public class GameRulesWindowController implements Initializable {
     }
 
     /**
-     * Stores a reference to the windows stage for easy access.
+     * Creates a reference to the windows Stage in the stage variable, allowing
+     * easy access to the windows Stage in the rest of the class.
      */
     private void defineStage() {
         stage = (Stage) s0.getScene().getWindow();
