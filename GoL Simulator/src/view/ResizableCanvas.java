@@ -62,6 +62,13 @@ public class ResizableCanvas extends Canvas {
      */
     public void setCellSize(int cellSize) {
         this.cellSize = cellSize;
+        if(cellSize < 3) {
+            spaceBetweenCells = 0;
+            this.cellSize++;
+        }
+        else {
+            spaceBetweenCells = 1;
+        }
     }
 
     /**
