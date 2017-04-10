@@ -11,7 +11,6 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import view.DialogBoxes;
 
 /**
  * Class for translating external files, such as RLE files, to a board object.
@@ -73,7 +72,7 @@ public class FileImporter {
     }
 
     /**
-     * Helper method. Passes the file to the correct parses based on file type,
+     * Passes the file to the correct parses based on file type,
      * and builds the actual board.
      *
      * @param r
