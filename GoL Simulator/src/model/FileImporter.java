@@ -15,7 +15,12 @@ import view.DialogBoxes;
 
 /**
  * Class for translating external files, such as RLE files, to a board object.
+ * Has two public methods for reading files, readGameBoardFromDisk and
+ * readGameBoardFromUrl, both returning a Board object containing the properties
+ * described by the parsed file.
+ *
  * Class has been created so as to be easily extended to support new formats.
+ *
  * @author aleks
  */
 public class FileImporter {
@@ -24,23 +29,26 @@ public class FileImporter {
     private byte[][] boardArray;
     private int row;
     private int col;
-    private int padding = 100;
+    private int padding = 100; // allows padding to be added.
     private int[] survivalRules;
     private int[] birthRules;
 
     /**
-     * File importers constructor.
+     * File importers constructor. Creates an empty board which is populated
+     * during the parsing process, and returned to the method caller once
+     * finished.
      */
     public FileImporter() {
-        board = new Board();
+
     }
 
     /**
      * Parses a file from disk, and returns a Board object based on this.
+     *
      * @param f
      * @return finished Board object.
      * @throws IOException
-     * @throws PatternFormatException 
+     * @throws PatternFormatException
      */
     public Board readGameBoardFromDisk(File f) throws IOException, PatternFormatException {
         String fileExtension = getFileExtension(f); // determine the filetype
@@ -50,10 +58,11 @@ public class FileImporter {
 
     /**
      * Parses a file from a given URL, and returns a Board object based on this.
+     *
      * @param url A Stream representing an URL.
      * @return finished Board object
      * @throws IOException
-     * @throws PatternFormatException 
+     * @throws PatternFormatException
      */
     public Board readGameBoardFromUrl(String url) throws IOException, PatternFormatException {
         String fileExtension = getFileExtension(url);
@@ -66,37 +75,41 @@ public class FileImporter {
     /**
      * Helper method. Passes the file to the correct parses based on file type,
      * and builds the actual board.
+     *
      * @param r
      * @param fileExtension
-     * @throws PatternFormatException 
+     * @throws PatternFormatException
      */
     private void readGameBoard(Reader r, String fileExtension) throws PatternFormatException, IOException {
-            switch (fileExtension) {
-                case "rle":
-                    rleReader(r);
-                    break;
-                case "life":
-                    throw new PatternFormatException("Unsuported file type");
-                case "lif":
-                    throw new PatternFormatException("Unsuported file type");
-                case "cells":
-                    throw new PatternFormatException("Unsuported file type");
-                default:
-                    throw new PatternFormatException("Unsuported file type");
+        board = new Board();
+
+        switch (fileExtension) {
+            case "rle":
+                rleReader(r);
+                break;
+            case "life":
+                throw new PatternFormatException("Unsuported file type");
+            case "lif":
+                throw new PatternFormatException("Unsuported file type");
+            case "cells":
+                throw new PatternFormatException("Unsuported file type");
+            default:
+                throw new PatternFormatException("Unsuported file type");
         }
 
-            // build the board.
-            //boardArray = addPadding(boardArray);
-            board.setBoard(boardArray);
-            board.setBirthRules(birthRules);
-            board.setSurviveRules(survivalRules);
+        // build the board.
+        //boardArray = addPadding(boardArray);
+        board.setBoard(boardArray);
+        board.setBirthRules(birthRules);
+        board.setSurviveRules(survivalRules);
     }
 
     /**
      * Parser for RLE files.
+     *
      * @param r
      * @throws IOException
-     * @throws PatternFormatException 
+     * @throws PatternFormatException
      */
     private void rleReader(Reader r) throws IOException, PatternFormatException {
         BufferedReader br = new BufferedReader(r);
@@ -118,9 +131,10 @@ public class FileImporter {
     }
 
     /**
-     * Helper method for parsing comments in RLE file. Currently, they are 
+     * Helper method for parsing comments in RLE file. Currently, they are
      * merely discarded.
-     * @param lineList 
+     *
+     * @param lineList
      */
     private void readRleComments(ArrayList<String> lineList) {
         Matcher m;
@@ -146,8 +160,9 @@ public class FileImporter {
 
     /**
      * Helper method to detect the board size in an RLE file.
+     *
      * @param lineList
-     * @throws PatternFormatException 
+     * @throws PatternFormatException
      */
     private void readRleBoardSize(ArrayList<String> lineList) throws PatternFormatException {
         Matcher m;
@@ -190,8 +205,9 @@ public class FileImporter {
 
     /**
      * Helper method for detecting game rules in RLE file.
+     *
      * @param lineList
-     * @throws PatternFormatException 
+     * @throws PatternFormatException
      */
     private void readRleRules(ArrayList<String> lineList) throws PatternFormatException {
         Matcher m;
@@ -250,9 +266,10 @@ public class FileImporter {
 
     /**
      * Helper method for parsing the board from RLE file.
+     *
      * @param lineList
      * @throws IOException
-     * @throws PatternFormatException 
+     * @throws PatternFormatException
      */
     private void readRleBoard(ArrayList<String> lineList) throws IOException, PatternFormatException {
         Matcher m;
@@ -265,12 +282,12 @@ public class FileImporter {
             }
         }
         String readString = stringBuilder.toString().trim();
-        
+
         //ensure file contains end of file indicator.
-        if(!readString.contains("!")) {
+        if (!readString.contains("!")) {
             throw new PatternFormatException("No end of file character (!) found.");
         }
-            
+
         String[] boardStringArray = readString.split("\\$");
 
         int rowOffsett = 0;
@@ -297,7 +314,7 @@ public class FileImporter {
                         } else if (m.group(2).equals("b")) {
                             boardArray[i + rowOffsett][j] = 0;
                         } else {
-                            i = (boardStringArray.length-1); // end of file reached. Break out of loop.
+                            i = (boardStringArray.length - 1); // end of file reached. Break out of loop.
                         }
 
                     }
@@ -332,8 +349,9 @@ public class FileImporter {
 
     /**
      * Helper method for determining the file extension of a File object.
-     * @param f
-     * @return 
+     *
+     * @param f the file for which one want to determine the extensions type.
+     * @return the extension of the file as a String.
      */
     private String getFileExtension(File f) {
         int i = f.getName().lastIndexOf(".");
@@ -344,8 +362,9 @@ public class FileImporter {
     /**
      * Helper method for determining the file extension of a file acquired from
      * an URL.
-     * @param s
-     * @return 
+     *
+     * @param s the file for which one wants to determine the extension type.
+     * @return the extension of the file as a String
      */
     private String getFileExtension(String s) {
         int i = s.lastIndexOf(".");
@@ -356,11 +375,12 @@ public class FileImporter {
     /**
      * Helper method which adds padding round a opened Board to give the board
      * "room to breath".
+     *
      * @param input
-     * @return 
+     * @return
      */
     private byte[][] addPadding(byte[][] input) {
-        byte[][] paddedBoard = new byte[input.length + padding*2][input[0].length + padding*2];
+        byte[][] paddedBoard = new byte[input.length + padding * 2][input[0].length + padding * 2];
         for (int i = 0; i < input.length; i++) {
             for (int j = 0; j < input[i].length; j++) {
                 paddedBoard[i + (padding)][j + (padding)] = input[i][j];
@@ -368,7 +388,7 @@ public class FileImporter {
         }
         return paddedBoard;
     }
-    
+
     public void setPadding(int padding) {
         this.padding = padding;
     }

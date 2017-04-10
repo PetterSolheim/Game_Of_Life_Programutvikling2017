@@ -188,7 +188,7 @@ public class MainWindowController implements Initializable {
      * Centres the board on the canvas.
      */
     @FXML
-    private void centerBoardOnCanvas() {
+    private void centreBoardOnCanvas() {
         double boardWidthCenter = (board.getBoard()[0].length * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
         double boardHeightCenter = (board.getBoard().length * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
         double canvasWidthCenter = (canvas.getWidth() / 2);
@@ -233,7 +233,7 @@ public class MainWindowController implements Initializable {
             try {
                 tmpBoard = fileImporter.readGameBoardFromDisk(file);
                 board = tmpBoard;
-                centerBoardOnCanvas();
+                centreBoardOnCanvas();
                 canvas.drawBoard(board);
                 updateLivingCellCountLabel();
 

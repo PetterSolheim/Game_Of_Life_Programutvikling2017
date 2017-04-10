@@ -41,14 +41,6 @@
                         </Menu>
                     </items>
                     <items>
-                        <Menu mnemonicParsing="false" text="Save">
-                            <items>
-                                <MenuItem mnemonicParsing="false" text="as RLE" />
-                                <MenuItem mnemonicParsing="false" text="as GIF" />
-                            </items>
-                        </Menu>
-                    </items>
-                    <items>
                         <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Settings" />
                     </items>
                     <items>
@@ -60,12 +52,8 @@
                 </Menu>
                 <Menu mnemonicParsing="false" text="Edit">
                     <items>
-                        <MenuItem mnemonicParsing="false" text="Edit board" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#showAboutWindow" text="About" />
+                        <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Rules" />
+                        <MenuItem mnemonicParsing="false" onAction="#centreBoardOnCanvas" text="Centre Board" />
                     </items>
                 </Menu>
             </menus>
@@ -99,7 +87,7 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="btnCenter" onAction="#centerBoardOnCanvas" text="Center"/>
+                <Button fx:id="btnCenter" onAction="#centreBoardOnCanvas" text="Centre"/>
                 <Button fx:id="btnRules" onAction="#showGameRulesWindow" text="Settings">
                     <graphic>
                         <ImageView fitHeight="19.0" pickOnBounds="true" preserveRatio="true">
