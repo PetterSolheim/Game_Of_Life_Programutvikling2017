@@ -31,6 +31,7 @@ public class FileImporter {
     private int padding = 100; // allows padding to be added.
     private int[] survivalRules;
     private int[] birthRules;
+    private Rules rules = Rules.getInstance();
 
     /**
      * File importers constructor. Creates an empty board which is populated
@@ -99,8 +100,8 @@ public class FileImporter {
         // build the board.
         //boardArray = addPadding(boardArray);
         board.setBoard(boardArray);
-        board.setBirthRules(birthRules);
-        board.setSurviveRules(survivalRules);
+        rules.setBirthRules(birthRules);
+        rules.setSurviveRules(survivalRules);
     }
 
     /**

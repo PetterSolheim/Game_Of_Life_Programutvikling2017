@@ -19,6 +19,7 @@ public class BoardDynamicTest {
 
     byte dead = 0;
     byte alive = 1;
+    Rules rules = Rules.getInstance();
 
     public BoardDynamicTest() {
 
@@ -177,7 +178,7 @@ public class BoardDynamicTest {
         assertEquals(expResult, instance.getCurrentBoard());
 
         // run test with dynamic board
-        instance.setDynamic(true);
+        rules.setDynamic(true);
         instance.nextGeneration();
         instance.nextGeneration();
         instance.nextGeneration();

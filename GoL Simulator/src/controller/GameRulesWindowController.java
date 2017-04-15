@@ -15,6 +15,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.stage.Stage;
 import model.Board;
+import model.Rules;
 
 /**
  * Controller for the game rules window. 
@@ -26,7 +27,7 @@ public class GameRulesWindowController implements Initializable {
     private CheckBox s0, s1, s2, s3, s4, s5, s6, s7, s8;
     @FXML
     private CheckBox b0, b1, b2, b3, b4, b5, b6, b7, b8;
-
+    private Rules rules = Rules.getInstance();
     private Stage stage;
     private Board board;
 
@@ -65,8 +66,8 @@ public class GameRulesWindowController implements Initializable {
         }
 
         // set the new rules, and close the window.
-        board.setSurviveRules(survivalRules);
-        board.setBirthRules(birthRules);
+        rules.setSurviveRules(survivalRules);
+        rules.setBirthRules(birthRules);
         stage.close();
     }
 
@@ -81,15 +82,15 @@ public class GameRulesWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         Platform.runLater(this::defineStage); // makes the stage available.
+        Platform.runLater(this::loadRules); // set checkbox values based on current rules.
     }
 
     /**
-     * Used to pass the Board that the GameRulesWindow will reflect. The method
-     * uses this Board to determine the state of the windows CheckBoxes.
-     * @param b 
+     * After the Stage and Scene (with all its nodes) have been created, this
+     * method runs, to load the current rules from the Rules singleton object,
+     * and applies its values to this windows checkboxes.
      */
-    public void initData(Board b) {
-        board = b;
+    public void loadRules() {
         
         // create an array of the checkboxes to allow easy iteration of their
         // values.
@@ -97,18 +98,18 @@ public class GameRulesWindowController implements Initializable {
         CheckBox[] birthCheckBoxes = {b0, b1, b2, b3, b4, b5, b6, b7, b8};
 
         // load and display current survival rules
-        for (int i = 0; i < board.getSurviveRules().size(); i++) {
+        for (int i = 0; i < rules.getSurviveRules().size(); i++) {
             for (int j = 0; j <= 8; j++) {
-                if (board.getSurviveRules().get(i) == j) {
+                if (rules.getSurviveRules().get(i) == j) {
                     survivalCheckBoxes[j].setSelected(true);
                 }
             }
         }
 
         // load and display current birth rules
-        for (int i = 0; i < board.getBirthRules().size(); i++) {
+        for (int i = 0; i < rules.getBirthRules().size(); i++) {
             for (int j = 0; j <= 8; j++) {
-                if (board.getBirthRules().get(i) == j) {
+                if (rules.getBirthRules().get(i) == j) {
                     birthCheckBoxes[j].setSelected(true);
                 }
             }

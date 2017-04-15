@@ -13,31 +13,18 @@ public class Board {
     private byte[][] originalBoard;
     private int generationCount = 0;
     private int livingCells = 0;
-    private ArrayList<Integer> survivalRules;
-    private ArrayList<Integer> birthRules;
+    //private ArrayList<Integer> survivalRules;
+    //private ArrayList<Integer> birthRules;
+    private Rules rules = Rules.getInstance();
 
     public Board() {
         currentBoard = new byte[200][200];
         originalBoard = duplicateBoard(currentBoard);
-
-        // apply Conway Rules (23/3) by default
-        survivalRules = new ArrayList<Integer>();
-        survivalRules.add(2);
-        survivalRules.add(3);
-        birthRules = new ArrayList<Integer>();
-        birthRules.add(3);
     }
 
     public Board(int row, int col) {
         currentBoard = new byte[row][col];
         originalBoard = duplicateBoard(currentBoard);
-
-        // apply Conway Rules (23/3) by default
-        survivalRules = new ArrayList<Integer>();
-        survivalRules.add(2);
-        survivalRules.add(3);
-        birthRules = new ArrayList<Integer>();
-        birthRules.add(3);
     }
 
     /**
@@ -57,20 +44,7 @@ public class Board {
     public Board deepCopy() {
         Board b = new Board();
         b.currentBoard = duplicateBoard(this.currentBoard);
-        b.originalBoard = duplicateBoard(this.originalBoard);
-        
-        ArrayList<Integer> survivalRulesCopy = new ArrayList<Integer>();
-        for(int i = 0; i < survivalRules.size(); i++) {
-            survivalRulesCopy.add(survivalRules.get(i));
-        }
-        b.setSurviveRules(survivalRulesCopy);
-        
-        ArrayList<Integer> birthRulesCopy = new ArrayList<Integer>();
-        for(int i = 0; i < birthRules.size(); i++) {
-            birthRulesCopy.add(birthRules.get(i));
-        }
-        b.setBirthRules(birthRulesCopy);
-        
+        b.originalBoard = duplicateBoard(this.originalBoard);        
         b.generationCount = this.generationCount;
         b.countLivingCells();
         return b;
@@ -89,76 +63,6 @@ public class Board {
                 }
             }
         }
-    }
-
-    /**
-     * Sets the survival values for the game rules. New values can be passed as
-     * either a number of integers, or an array of integers. If duplicate values
-     * are passed, they will be removed, i.e. 2,3,3,4 will be stored as 2,3,4.
-     *
-     * @param input
-     */
-    public void setSurviveRules(int... input) {
-        Arrays.sort(input);
-        ArrayList<Integer> inputWithoutDuplicates = new ArrayList<Integer>();
-
-        for (int i = 0; i < input.length; i++) {
-            if (i == 0) {
-                inputWithoutDuplicates.add(input[i]);
-            } else if (input[i] != input[i - 1]) {
-                inputWithoutDuplicates.add(input[i]);
-            }
-        }
-        survivalRules = inputWithoutDuplicates;
-    }
-    
-    public void setSurviveRules(ArrayList<Integer> input) {
-        survivalRules = input;
-    }
-
-    /**
-     * Sets the birth values for the game rules. New values can be passed as
-     * either a number of integers, or an array of integers. If duplicate values
-     * are passed, they will be removed, i.e. 2,3,3,4 will be stored as 2,3,4.
-     *
-     * @param input
-     */
-    public void setBirthRules(int... input) {
-        Arrays.sort(input);
-        ArrayList<Integer> inputWithoutDuplicates = new ArrayList<Integer>();
-
-        for (int i = 0; i < input.length; i++) {
-            if (i == 0) {
-                inputWithoutDuplicates.add(input[i]);
-            } else if (input[i] != input[i - 1]) {
-                inputWithoutDuplicates.add(input[i]);
-            }
-        }
-        birthRules = inputWithoutDuplicates;
-    }
-    
-    public void setBirthRules(ArrayList<Integer> input) {
-        birthRules = input;
-    }
-
-    /**
-     * Acquires an ArrayList of integer values which define the number of live
-     * neighbours a dead cell must have to be born.
-     *
-     * @return an ArrayList of Integers.
-     */
-    public ArrayList<Integer> getBirthRules() {
-        return birthRules;
-    }
-
-    /**
-     * Acquires an ArrayList of integer values which define the number of live
-     * neighbours a live cell must have to survive.
-     *
-     * @return an ArrayList of Integers.
-     */
-    public ArrayList<Integer> getSurviveRules() {
-        return survivalRules;
     }
 
     /**
@@ -206,11 +110,11 @@ public class Board {
             for (int col = 0; col < testPattern[0].length; col++) {
                 int neighbours = countNeighbours(testPattern, row, col);
 
-                if (testPattern[row][col] == 1 && (!survivalRules.contains(neighbours))) {
+                if (testPattern[row][col] == 1 && (!rules.getSurviveRules().contains(neighbours))) {
                     currentBoard[row][col] = 0;
                     changedCells[row][col] = 1;
                     livingCells--;
-                } else if (testPattern[row][col] == 0 && birthRules.contains(neighbours)) {
+                } else if (testPattern[row][col] == 0 && rules.getBirthRules().contains(neighbours)) {
                     currentBoard[row][col] = 1;
                     changedCells[row][col] = 1;
                     livingCells++;

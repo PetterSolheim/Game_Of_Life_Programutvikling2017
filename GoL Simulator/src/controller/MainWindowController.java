@@ -391,9 +391,6 @@ public class MainWindowController implements Initializable {
             Scene Scene = new Scene(parent);
             Stage stage = new Stage();
             stage.setScene(Scene);
-
-            GameRulesWindowController controller = loader.getController();
-            controller.initData(board);
             stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);
             stage.show();
