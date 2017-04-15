@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- * Class representing dynamic boards using ArrayLists to represent the board.
- * Class is a rewrite of the depricated Board, and methods work much the same.
- *
+ * Class representing dynamic game boards using ArrayLists to represent the
+ * board. Class is a rewrite of the depricated class Board, and methods work
+ * much the same.
  */
 public class BoardDynamic {
 
@@ -56,6 +56,14 @@ public class BoardDynamic {
         return boardCopy;
     }
 
+    /**
+     * Generates a 2D (an ArrayList of ArrayList of Bytes) ArrayList of Bytes
+     * representing the game board. All Bytes are set to 0.
+     *
+     * @param row the number of rows the 2D ArrayList should have.
+     * @param col the number of columns the 2D ArrayList should have.
+     * @return the ArrayList.
+     */
     private ArrayList<ArrayList<Byte>> generateEmptyArrayList(int row, int col) {
         ArrayList<ArrayList<Byte>> emptyBoard = new ArrayList<>();
         byte dead = 0;
@@ -68,127 +76,29 @@ public class BoardDynamic {
         return emptyBoard;
     }
 
-    private boolean shouldExpandNorth(ArrayList<ArrayList<Byte>> board) {
-        int numberOfLiveCells = 0;
-        for (int i = 0; i < board.get(0).size(); i++) {
-            numberOfLiveCells += board.get(0).get(i);
-        }
-        if (numberOfLiveCells > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean shouldExpandEast(ArrayList<ArrayList<Byte>> board) {
-        int numberOfLiveCells = 0;
-        for (int i = 0; i < board.size(); i++) {
-            numberOfLiveCells += board.get(i).get(0);
-        }
-        if (numberOfLiveCells > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private boolean shouldExpandSouth(ArrayList<ArrayList<Byte>> board) {
-        int numberOfLiveCells = 0;
-        for (int i = 0; i < board.get(board.size() - 1).size(); i++) {
-            numberOfLiveCells += board.get(board.size() - 1).get(i);
-        }
-        if (numberOfLiveCells > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    private boolean shouldExpandWest(ArrayList<ArrayList<Byte>> board) {
-        int numberOfLiveCells = 0;
-        for (int i = 0; i < board.size(); i++) {
-            numberOfLiveCells += board.get(i).get(board.get(i).size() - 1);
-        }
-        if (numberOfLiveCells > 0) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     /**
-     * Determine if the board needs to expand. If so, apply space to the board
-     * and the needed location.
+     * Iterates the currentBoard to its next generation using the rules defined
+     * in the Rules class object.
      *
-     * @param board the board that should be checked.
+     * TODO: changedCells is not currently being used.
      */
-    private void determinAndExpand(ArrayList<ArrayList<Byte>> board) {
-        if(shouldExpandNorth(board)) {
-            expandNorth(board);
-        }
-        
-        if(shouldExpandEast(board)) {
-            expandEast(board);
-        }
-        
-        if(shouldExpandSouth(board)) {
-            expandSouth(board);
-        }
-        
-        if(shouldExpandWest(board)) {
-            expandWest(board);
-        }
-    }
-
-    /**
-     * Expand the board with a row of dead cells on the north side of the board.
-     *
-     * @param board
-     */
-    private void expandNorth(ArrayList<ArrayList<Byte>> board) {
-        board.add(0, new ArrayList<>());
-        for (int i = 0; i < board.get(1).size(); i++) {
-            board.get(0).add(dead);
-        }
-    }
-
-    /**
-     * Expand the board with a row of dead cells on the south side of the board.
-     *
-     * @param board
-     */
-    private void expandSouth(ArrayList<ArrayList<Byte>> board) {
-        board.add(new ArrayList<>());
-        for (int i = 0; i < board.get(0).size(); i++) {
-            board.get(board.size() - 1).add(dead);
-        }
-    }
-
-    /**
-     * Expand the board with a row of dead cells on the east side of the board.
-     *
-     * @param board
-     */
-    private void expandEast(ArrayList<ArrayList<Byte>> board) {
-        for (int i = 0; i < board.size(); i++) {
-            board.get(i).add(0, dead);
-        }
-    }
-
-    /**
-     * Expand the board with a row of dead cells on the west side of the board.
-     *
-     * @param board
-     */
-    private void expandWest(ArrayList<ArrayList<Byte>> board) {
-        for (int i = 0; i < board.size(); i++) {
-            board.get(i).add(dead);
-        }
-    }
-
     public void nextGeneration() {
         if (rules.isDynamic()) {
-            determinAndExpand(currentBoard);
+            if (shouldExpandNorth(currentBoard)) {
+                expandNorth(currentBoard);
+            }
+
+            if (shouldExpandEast(currentBoard)) {
+                expandEast(currentBoard);
+            }
+
+            if (shouldExpandSouth(currentBoard)) {
+                expandSouth(currentBoard);
+            }
+
+            if (shouldExpandWest(currentBoard)) {
+                expandWest(currentBoard);
+            }
         }
 
         // make a copy of the board for testing the rules.
@@ -207,6 +117,126 @@ public class BoardDynamic {
             }
         }
 
+    }
+
+    /**
+     * Method for testing if the given board needs to expand by adding one row
+     * to the top of the board. Requirement for this to happen is if there is a
+     * live cell in the top row. If all cells in top row are dead, return false.
+     *
+     * @param board
+     * @return weather the board meets the requirements for expansion.
+     */
+    private boolean shouldExpandNorth(ArrayList<ArrayList<Byte>> board) {
+        int numberOfLiveCells = 0;
+        for (int i = 0; i < board.get(0).size(); i++) {
+            numberOfLiveCells += board.get(0).get(i);
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Expand the board with a row of dead cells on the top of the board.
+     *
+     * @param board
+     */
+    private void expandNorth(ArrayList<ArrayList<Byte>> board) {
+        board.add(0, new ArrayList<>());
+        for (int i = 0; i < board.get(1).size(); i++) {
+            board.get(0).add(dead);
+        }
+    }
+
+    /**
+     * Method for testing if the given board needs to expand by adding one row
+     * to its left side. Requirement for this to happen is if there is currently
+     * a live cell in the left most column. If not, return false.
+     *
+     * @param board
+     * @return weather the board meets the requirements for expansion.
+     */
+    private boolean shouldExpandEast(ArrayList<ArrayList<Byte>> board) {
+        int numberOfLiveCells = 0;
+        for (int i = 0; i < board.size(); i++) {
+            numberOfLiveCells += board.get(i).get(0);
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Expand the board with a row of dead cells on the left most side of the
+     * board.
+     *
+     * @param board
+     */
+    private void expandEast(ArrayList<ArrayList<Byte>> board) {
+        for (int i = 0; i < board.size(); i++) {
+            board.get(i).add(0, dead);
+        }
+    }
+
+    /**
+     * TODO: FINISH
+     * Method for testing if the given board needs to expand by adding one row
+     * to the bottom. Requirement for this to happen is if there is currently
+     * a live cell in the left most column. If not, return false.
+     *
+     * @param board
+     * @return weather the board meets the requirements for expansion.
+     */
+    private boolean shouldExpandSouth(ArrayList<ArrayList<Byte>> board) {
+        int numberOfLiveCells = 0;
+        for (int i = 0; i < board.get(board.size() - 1).size(); i++) {
+            numberOfLiveCells += board.get(board.size() - 1).get(i);
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Expand the board with a row of dead cells on the south side of the board.
+     *
+     * @param board
+     */
+    private void expandSouth(ArrayList<ArrayList<Byte>> board) {
+        board.add(new ArrayList<>());
+        for (int i = 0; i < board.get(0).size(); i++) {
+            board.get(board.size() - 1).add(dead);
+        }
+    }
+
+    private boolean shouldExpandWest(ArrayList<ArrayList<Byte>> board) {
+        int numberOfLiveCells = 0;
+        for (int i = 0; i < board.size(); i++) {
+            numberOfLiveCells += board.get(i).get(board.get(i).size() - 1);
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Expand the board with a row of dead cells on the west side of the board.
+     *
+     * @param board
+     */
+    private void expandWest(ArrayList<ArrayList<Byte>> board) {
+        for (int i = 0; i < board.size(); i++) {
+            board.get(i).add(dead);
+        }
     }
 
     private int countNeighbours(ArrayList<ArrayList<Byte>> board, int row, int col) {
