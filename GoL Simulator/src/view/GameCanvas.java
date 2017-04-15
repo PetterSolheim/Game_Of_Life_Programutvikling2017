@@ -11,7 +11,7 @@ import model.Board;
  * class.
  *
  */
-public class ResizableCanvas extends Canvas {
+public class GameCanvas extends Canvas {
 
     private int cellSize = 5;
     private int spaceBetweenCells = 2; // the border.
@@ -22,7 +22,7 @@ public class ResizableCanvas extends Canvas {
     private Color deadCellColor;
     private GraphicsContext gc;
 
-    public ResizableCanvas() {
+    public GameCanvas() {
         gc = this.getGraphicsContext2D();
         backgroundColor = Color.LIGHTGOLDENRODYELLOW;
         deadCellColor = Color.WHITE;

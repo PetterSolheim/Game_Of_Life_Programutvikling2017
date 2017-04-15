@@ -1,15 +1,10 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
 import javafx.scene.control.Alert;
 
 /**
- * A class containing simple dialog boxes that can be called statically.
- * @author aleks
+ * A class containing simple dialog boxes that can be called statically. Allows
+ * one to display dialog boxes with fewer lines of code.
  */
 public class DialogBoxes {
 

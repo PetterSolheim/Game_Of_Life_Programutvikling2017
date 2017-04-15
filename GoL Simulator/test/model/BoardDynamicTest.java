@@ -67,6 +67,7 @@ public class BoardDynamicTest {
     }
 
     @Test
+    // TODO: bad test, should rewrite
     public void testGetChangedCells() {
         System.out.println("getChangedCells");
 

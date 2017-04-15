@@ -1,16 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
+ * Class representing dynamic boards using ArrayLists to represent the board.
+ * Class is a rewrite of the depricated Board, and methods work much the same.
  *
- * @author aleks
  */
 public class BoardDynamic {
 
@@ -72,45 +68,74 @@ public class BoardDynamic {
         return emptyBoard;
     }
 
-    /**
-     * Determin if a board should expand, and if so, expand it.
-     *
-     * @param board the board that should be checked.
-     */
-    private void determinAndExpand(ArrayList<ArrayList<Byte>> board) {
-        //test northern border of board
+    private boolean shouldExpandNorth(ArrayList<ArrayList<Byte>> board) {
         int numberOfLiveCells = 0;
         for (int i = 0; i < board.get(0).size(); i++) {
             numberOfLiveCells += board.get(0).get(i);
         }
         if (numberOfLiveCells > 0) {
-            expandNorth(board);
+            return true;
+        } else {
+            return false;
         }
+    }
 
-        // test south border of board
-        numberOfLiveCells = 0;
-        for (int i = 0; i < board.get(board.size() - 1).size(); i++) {
-            numberOfLiveCells += board.get(board.size() - 1).get(i);
-        }
-        if (numberOfLiveCells > 0) {
-            expandSouth(board);
-        }
-
-        // test east border of board
-        numberOfLiveCells = 0;
+    private boolean shouldExpandEast(ArrayList<ArrayList<Byte>> board) {
+        int numberOfLiveCells = 0;
         for (int i = 0; i < board.size(); i++) {
             numberOfLiveCells += board.get(i).get(0);
         }
         if (numberOfLiveCells > 0) {
-            expandEast(board);
+            return true;
+        } else {
+            return false;
         }
+    }
 
-        // test west border of board
-        numberOfLiveCells = 0;
+    private boolean shouldExpandSouth(ArrayList<ArrayList<Byte>> board) {
+        int numberOfLiveCells = 0;
+        for (int i = 0; i < board.get(board.size() - 1).size(); i++) {
+            numberOfLiveCells += board.get(board.size() - 1).get(i);
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    private boolean shouldExpandWest(ArrayList<ArrayList<Byte>> board) {
+        int numberOfLiveCells = 0;
         for (int i = 0; i < board.size(); i++) {
             numberOfLiveCells += board.get(i).get(board.get(i).size() - 1);
         }
         if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Determine if the board needs to expand. If so, apply space to the board
+     * and the needed location.
+     *
+     * @param board the board that should be checked.
+     */
+    private void determinAndExpand(ArrayList<ArrayList<Byte>> board) {
+        if(shouldExpandNorth(board)) {
+            expandNorth(board);
+        }
+        
+        if(shouldExpandEast(board)) {
+            expandEast(board);
+        }
+        
+        if(shouldExpandSouth(board)) {
+            expandSouth(board);
+        }
+        
+        if(shouldExpandWest(board)) {
             expandWest(board);
         }
     }

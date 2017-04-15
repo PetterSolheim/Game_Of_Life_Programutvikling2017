@@ -29,7 +29,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import model.*;
-import view.ResizableCanvas;
+import view.GameCanvas;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
@@ -47,7 +47,7 @@ import view.DialogBoxes;
 public class MainWindowController implements Initializable {
 
     @FXML
-    private ResizableCanvas canvas;
+    private GameCanvas canvas;
     @FXML
     private Button btnPlay;
     @FXML
