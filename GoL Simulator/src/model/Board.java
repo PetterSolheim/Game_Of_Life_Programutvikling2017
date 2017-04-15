@@ -13,8 +13,6 @@ public class Board {
     private byte[][] originalBoard;
     private int generationCount = 0;
     private int livingCells = 0;
-    //private ArrayList<Integer> survivalRules;
-    //private ArrayList<Integer> birthRules;
     private Rules rules = Rules.getInstance();
 
     public Board() {

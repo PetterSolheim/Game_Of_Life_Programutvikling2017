@@ -32,6 +32,7 @@ public class BoardTest {
         System.out.println("nextGeneration");
         Board instance = new Board();
 
+        // board test nr. 1 of 4
         byte[][] board = {
             {0, 1, 0},
             {0, 1, 0},
@@ -41,6 +42,7 @@ public class BoardTest {
         instance.nextGeneration();
         org.junit.Assert.assertEquals(instance.toString(), "000111000");
 
+        // board test nr. 2 of 4
         byte[][] board2 = {
             {0, 0, 0, 0},
             {0, 1, 1, 0},
@@ -51,6 +53,7 @@ public class BoardTest {
         instance.nextGeneration();
         assertEquals(instance.toString(), "0000011001100000");
 
+        // board test nr. 3 of 4
         byte[][] board3 = {
             {0, 0, 0, 1, 0, 0, 0},
             {0, 0, 0, 1, 0, 0, 0},
@@ -61,6 +64,7 @@ public class BoardTest {
         instance.nextGeneration();
         assertEquals(instance.toString(), "0000000001110000111000000000");
 
+        // board test nr. 4 of 4
         byte[][] board4 = {
             {0, 0, 0, 0, 0, 0, 0},
             {0, 0, 1, 0, 1, 0, 0},
@@ -72,24 +76,6 @@ public class BoardTest {
         instance.nextGeneration();
         assertEquals(instance.toString(), "00000000000000000000000000000000000");
 
-    }
-
-    @Test
-    public void testGetBirthRules() {
-        System.out.println("getBirthRules");
-        Board instance = new Board();
-        ArrayList<Integer> expResult = new ArrayList<Integer>(Arrays.asList(3));
-        ArrayList<Integer> result = instance.getBirthRules();
-        assertEquals(expResult, result);
-    }
-
-    @Test
-    public void testGetSurviveRules() {
-        System.out.println("getSurvivalRules");
-        Board instance = new Board();
-        ArrayList<Integer> expResult = new ArrayList<Integer>(Arrays.asList(2, 3));
-        ArrayList<Integer> result = instance.getSurviveRules();
-        assertEquals(expResult, result);
     }
 
     @Test
@@ -127,12 +113,10 @@ public class BoardTest {
     @Test
     public void testToggleCellState() {
         System.out.println("toggleCellState");
-        int row = 0;
-        int col = 0;
         Board instance = new Board();
         byte[][] testBoard = {{1, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         instance.setBoard(testBoard);
-        instance.toggleCellState(row, col);
+        instance.toggleCellState(0, 0);
         assertEquals(instance.toString(), "000000000");
 
     }
@@ -141,11 +125,14 @@ public class BoardTest {
     public void testSetCellStateAlive() {
         System.out.println("settCellStateAlive");
         Board instance = new Board();
+
+        // test the method against a living cell (i.e. cell state should not change).
         byte[][] testBoard = {{1, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         instance.setBoard(testBoard);
         instance.setCellStateAlive(0, 0);
         assertEquals(instance.toString(), "100000000");
 
+        // test the method against a dead cell.
         byte[][] testBoard2 = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         instance.setBoard(testBoard2);
         instance.setCellStateAlive(0, 0);
@@ -190,15 +177,6 @@ public class BoardTest {
         System.out.println("deepCopy");
         Board orig = new Board();
 
-        ArrayList<Integer> origSurviveRules = new ArrayList<Integer>();
-        origSurviveRules.add(2);
-        origSurviveRules.add(3);
-        orig.setSurviveRules(origSurviveRules);
-
-        ArrayList<Integer> origBirthRules = new ArrayList<Integer>();
-        origBirthRules.add(3);
-        orig.setBirthRules(origBirthRules);
-
         byte[][] origBoardArray = {
             {0, 1, 0},
             {0, 1, 0},
@@ -206,33 +184,23 @@ public class BoardTest {
         };
         orig.setBoard(origBoardArray);
 
+        // create a deep copy of the board
         Board deepCopy = orig.deepCopy();
-        ArrayList<Integer> newSurviveRules = new ArrayList<Integer>();
-        newSurviveRules.add(6);
-        newSurviveRules.add(7);
-        deepCopy.setSurviveRules(newSurviveRules);
-
-        ArrayList<Integer> newBirthRules = new ArrayList<Integer>();
-        newBirthRules.add(1);
-        newBirthRules.add(5);
-        deepCopy.setBirthRules(newBirthRules);
-
+        
+        // change the board of the new board.
         byte[][] newBoardArray = {
             {1, 0, 1},
             {1, 0, 1},
             {1, 0, 1}
         };
         deepCopy.setBoard(newBoardArray);
-        
+
         // check that the new board has changed compared to the old one.
-        assertEquals(deepCopy.getBoard(), newBoardArray);
-        assertEquals(deepCopy.getSurviveRules(), newSurviveRules);
-        assertEquals(deepCopy.getBirthRules(), newBirthRules);
-        
-        // check that the original Board object has not changed.
+        assertArrayEquals(deepCopy.getBoard(), newBoardArray);
+
+        // check that the original Board object has been left untouched by
+        // changes made to the new, deep copy.
         assertArrayEquals(orig.getBoard(), origBoardArray);
-        assertEquals(orig.getSurviveRules(), origSurviveRules);
-        assertEquals(orig.getBirthRules(), origBirthRules);
     }
 
 }

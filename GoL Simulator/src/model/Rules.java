@@ -1,15 +1,19 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
- *
+ * <p>Game rules are stored and altered through this class. Class is a singleton,
+ * and the constructor is therefore private. A reference to the object can be
+ * acquired using the static getInstance() method. The following rules are
+ * currently supported;</p>
+ * <ul>
+ * <li><b>survivalRules</b>, defines which living cells should survive.</li>
+ * <li><b>birthRules</b>, defines which dead cells should become alive.</li>
+ * <li><b>dynamic</b>, defines if the board should behave dynamically.</li>
+ * </ul>
+ * 
  * @author aleks
  */
 public class Rules {
@@ -19,6 +23,10 @@ public class Rules {
     private boolean dynamic = false;
     private static Rules rules;
 
+    /**
+     * Class is a singleton. Constructor is therefore private. Constructor sets
+     * Conway rules (S23/B3) as default values.
+     */
     private Rules() {
         survivalRules = new ArrayList<Integer>();
         survivalRules.add(2);
@@ -27,6 +35,12 @@ public class Rules {
         birthRules.add(3);
     }
 
+    /**
+     * Rules is a singleton. Constructor is therefore private. Use this method
+     * to aquire a reference to the Rules singleton object.
+     *
+     * @return reference to the Rules object.
+     */
     public static Rules getInstance() {
         if (rules == null) {
             rules = new Rules();
@@ -34,10 +48,21 @@ public class Rules {
         return rules;
     }
 
+    /**
+     *
+     * @return a boolean value indicating if the board should behave
+     * dynamically.
+     */
     public boolean isDynamic() {
         return dynamic;
     }
 
+    /**
+     * Specify if the board should behave dynamically. If so, board size will
+     * increase to acomadate boards that grow.
+     *
+     * @param dynamic
+     */
     public void setDynamic(boolean dynamic) {
         this.dynamic = dynamic;
     }
@@ -46,7 +71,8 @@ public class Rules {
      * Sets the survival values for the game rules. New values can be passed as
      * either a number of integers, or an array of integers. If duplicate values
      * are passed, they will be removed, i.e. 2,3,3,4 will be stored as 2,3,4.
-     * Old rules are overwritten.
+     *
+     * Existing rules are discarded before new rules are applied.
      *
      * @param input
      */
@@ -64,6 +90,12 @@ public class Rules {
         survivalRules = inputWithoutDuplicates;
     }
 
+    /**
+     * Takes an ArrayList of integers and uses it as the new definition for
+     * survival rules.
+     *
+     * @param input
+     */
     public void setSurviveRules(ArrayList<Integer> input) {
         survivalRules = input;
     }
@@ -82,7 +114,8 @@ public class Rules {
      * Sets the birth values for the game rules. New values can be passed as
      * either a number of integers, or an array of integers. If duplicate values
      * are passed, they will be removed, i.e. 2,3,3,4 will be stored as 2,3,4.
-     * Old rules are overwritten.
+     *
+     * Existing rules are discarded before new rules are applied.
      *
      * @param input
      */
@@ -100,6 +133,12 @@ public class Rules {
         birthRules = inputWithoutDuplicates;
     }
 
+    /**
+     * Takes an ArrayList of integers and uses it as the new definition for
+     * survival rules.
+     *
+     * @param input
+     */
     public void setBirthRules(ArrayList<Integer> input) {
         birthRules = input;
     }

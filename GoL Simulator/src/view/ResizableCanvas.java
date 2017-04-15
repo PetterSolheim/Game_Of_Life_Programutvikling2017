@@ -7,7 +7,8 @@ import model.Board;
 
 /**
  * Resizable canvas object with the necessary methods for drawing, and changing
- * the apperance of the game board.
+ * the visual apperance of the game board. Is a subclass of the JavaFX Canvas 
+ * class.
  *
  */
 public class ResizableCanvas extends Canvas {
@@ -29,7 +30,7 @@ public class ResizableCanvas extends Canvas {
     }
 
     /**
-     * Set the offset for the canvas drawing methods. Allows for moving around
+     * Set the offset for the canvas draw methods. Allows for moving around
      * on the canvas.
      *
      * @param xOffset x-axis offset.
@@ -58,11 +59,17 @@ public class ResizableCanvas extends Canvas {
 
     /**
      *
-     * @param cellSize sets the pixels size of a cell.
+     * @param cellSize set the pixels size of a cell. If cell size is bellow 
+     * 3 the border will be removed (spaceBetweenCells gets set to 0), as the
+     * border colour becomes to hard to differentiate from the dead cells colour
+     * at this size.
      */
     public void setCellSize(int cellSize) {
         this.cellSize = cellSize;
         if(cellSize < 3) {
+            // cellSize used is actually 1 higher than the value passed to the
+            // method once value is low enough that the border is removed. This
+            // to make zooming inn and out smoother when the border is removed. 
             spaceBetweenCells = 0;
             this.cellSize++;
         }
@@ -80,7 +87,8 @@ public class ResizableCanvas extends Canvas {
     }
 
     /**
-     * Draws the entire board to canvas.
+     * Draws the entire part of the board which is currently within the canvas
+     * objects dimensions (and thereby also visible).
      *
      * @param b Board class containing a two dimensional byte array.
      */
@@ -97,7 +105,8 @@ public class ResizableCanvas extends Canvas {
 
     /**
      * Takes a board object and draws only the cells which have changed during
-     * the last nexGeneration() method call.
+     * the last generation shift, and which is also located within the canvas
+     * objects dimensions (and thereby also visible).
      *
      * @param b the Board object.
      */
@@ -113,8 +122,8 @@ public class ResizableCanvas extends Canvas {
     }
 
     /**
-     * Draws the state of a single cell if, and only if, that cell is within the
-     * visible area of the canvas.
+     * Draws the state of a single specified cell if, and only if, that cell is 
+     * located within the canvas objects dimensions (and thereby also visible).
      *
      * @param b the board object.
      * @param row the y position of the cell to be drawn.
@@ -159,14 +168,14 @@ public class ResizableCanvas extends Canvas {
 
     /**
      *
-     * @return the color of living cells.
+     * @return the colour of living cells.
      */
     public Color getLivingCellColor() {
         return livingCellColor;
     }
 
     /**
-     * Sets the color of living cells.
+     * Sets the colour of living cells.
      *
      * @param livingCellColor
      */
@@ -176,14 +185,14 @@ public class ResizableCanvas extends Canvas {
 
     /**
      *
-     * @return the color of dead cells.
+     * @return the colour of dead cells.
      */
     public Color getDeadCellColor() {
         return deadCellColor;
     }
 
     /**
-     * Sets the color of dead cells.
+     * Sets the colour of dead cells.
      *
      * @param deadCellColor
      */
@@ -193,7 +202,7 @@ public class ResizableCanvas extends Canvas {
 
     /**
      *
-     * @return the background color of the board, which is also the color of the
+     * @return the background colour of the board, which is also the colour of the
      * border.
      */
     public Color getBackgroundColor() {
@@ -201,7 +210,7 @@ public class ResizableCanvas extends Canvas {
     }
 
     /**
-     * Sets the background color, which is also the color of the border.
+     * Sets the background colour, which is also the colour of the border.
      *
      * @param backgroundColor
      */
@@ -210,9 +219,11 @@ public class ResizableCanvas extends Canvas {
     }
 
     /**
-     * Allows the canvas object to be resized.
+     * Overrides the super classes (Canvas) isResizable state, changing it from
+     * false, to true. This allows canvas objects based on this class to be
+     * resizable.
      *
-     * @return
+     * @return true, indicating that objects based on this class can be resized.
      */
     @Override
     public boolean isResizable() {
