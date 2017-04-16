@@ -14,7 +14,7 @@ public class Board {
     private Rules rules = Rules.getInstance();
 
     /**
-     * Deault constructor creates an empty starting board of 200x200 cells.
+     * Default constructor creates an empty starting board of 200x200 cells.
      */
     public Board() {
         currentBoard = new byte[200][200];
@@ -115,7 +115,6 @@ public class Board {
     /**
      * Iterates the current board to its next generation, playing by the rules
      * defined in the Rules class object.
-     *
      */
     public void nextGeneration() {
         // reset list of changed cells.

@@ -375,8 +375,7 @@ public class MainWindowController implements Initializable {
 
     /**
      * Displays the game rules window where the user can alter the rules which
-     * the game abides by. Sends the current board object to the games window so
-     * that the rules can be read/changed.
+     * the game plays by.
      * 
      * Game rules window has Modality.APPLICATION_MODAL to prevent changes to
      * the Board object while game rules window is open.

@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controller;
 
 import java.net.URL;
@@ -19,8 +14,6 @@ import model.Rules;
 
 /**
  * Controller for the game rules window.
- *
- * @author aleks
  */
 public class GameRulesWindowController implements Initializable {
 
@@ -30,6 +23,7 @@ public class GameRulesWindowController implements Initializable {
     private CheckBox b0, b1, b2, b3, b4, b5, b6, b7, b8;
     @FXML
     private RadioButton rbtnStatic, rbtnDynamic;
+    
     private Rules rules = Rules.getInstance();
     private Stage stage;
     private Board board;
@@ -116,7 +110,7 @@ public class GameRulesWindowController implements Initializable {
      * method runs, to load the current rules from the Rules singleton object,
      * and applies its values to this windows checkboxes.
      */
-    public void loadRules() {
+    private void loadRules() {
 
         // create an array of the checkboxes to allow easy iteration of their
         // values.
