@@ -165,10 +165,10 @@ public class BoardDynamic {
     }
 
     /**
-     * Method for testing if the given board needs to expand by adding one row
-     * to the top of the board. Requirement for this to happen is if there is a
-     * live cell in the top row. If all cells in top row are dead, return false.
-     *
+     * Determine if game board should expand by one row on the top. 
+     * Requirement for this is that there is currently a live cell in the top 
+     * row.
+     * 
      * @param board, the board to check.
      * @return weather the board meets the requirements for expansion.
      */

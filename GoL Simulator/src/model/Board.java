@@ -23,6 +23,7 @@ public class Board {
 
     /**
      * Constructor which creates an empty starting board of a specified size.
+     *
      * @param row the number of rows the starting board should have.
      * @param col the number of columns the starting board should have.
      */
@@ -33,6 +34,7 @@ public class Board {
 
     /**
      * Set a new board.
+     *
      * @param newBoard, the new board to use in the game.
      */
     public void setBoard(byte[][] newBoard) {
@@ -51,8 +53,8 @@ public class Board {
 
     /**
      *
-     * @return a byte[][] array of the cells which changed during the games
-     * last generation shift.
+     * @return a byte[][] array of the cells which changed during the games last
+     * generation shift.
      */
     public byte[][] getChangedCells() {
         return changedCells;
@@ -117,12 +119,34 @@ public class Board {
      * TODO: implement dynamic rules.
      */
     public void nextGeneration() {
+
+        // determin if the board needs to expand
+        if (rules.isDynamic()) {
+            if (shouldExpandNorth()) {
+                expandNorth();
+            }
+
+            if (shouldExpandEast()) {
+                expandEast();
+            }
+
+            if (shouldExpandSouth()) {
+                expandSouth();
+            }
+
+            if (shouldExpandWest()) {
+                expandWest();
+            }
+        }
+
+        // reset the list of changed cells
+        changedCells = new byte[currentBoard.length][currentBoard[0].length];
+
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.
         byte[][] testPattern = duplicateBoard(currentBoard);
-        changedCells = new byte[currentBoard.length][currentBoard[0].length];
 
-        // iterates through the board cells, count number of neighbours for each
+        // iterate through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
         for (int row = 0; row < testPattern.length; row++) {
             for (int col = 0; col < testPattern[0].length; col++) {
@@ -139,8 +163,107 @@ public class Board {
                 }
             }
         }
-        System.out.println(livingCells);
         generationCount++;
+    }
+
+    /**
+     * Determine if game board should expand by one row on the top. Requirement
+     * for this is that there is currently a live cell in the top row.
+     *
+     * @param board, the board to check.
+     * @return weather the board meets the requirements for expansion.
+     */
+    private boolean shouldExpandNorth() {
+        int numberOfLiveCells = 0;
+        for (int col = 0; col < currentBoard[0].length; col++) {
+            numberOfLiveCells += currentBoard[0][col];
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Expand the board with a row of dead cells on the top of the board.
+     *
+     * @param currentBoard, the board to apply the row.
+     */
+    private void expandNorth() {
+        byte[][] newBoard = new byte[currentBoard.length + 1][currentBoard[0].length];
+        for (int row = 0; row < currentBoard.length; row++) {
+            for (int col = 0; col < currentBoard[0].length; col++) {
+                newBoard[row + 1][col] = currentBoard[row][col];
+            }
+        }
+        currentBoard = newBoard;
+    }
+
+    private boolean shouldExpandEast() {
+        int numberOfLiveCells = 0;
+        for (int row = 0; row < currentBoard.length; row++) {
+            numberOfLiveCells += currentBoard[row][currentBoard[0].length - 1];
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void expandEast() {
+        byte[][] newBoard = new byte[currentBoard.length][currentBoard[0].length + 1];
+        for (int row = 0; row < currentBoard.length; row++) {
+            for (int col = 0; col < currentBoard[0].length; col++) {
+                newBoard[row][col] = currentBoard[row][col];
+            }
+        }
+        currentBoard = newBoard;
+    }
+
+    private boolean shouldExpandSouth() {
+        int numberOfLiveCells = 0;
+        for (int col = 0; col < currentBoard[0].length; col++) {
+            numberOfLiveCells += currentBoard[currentBoard.length - 1][col];
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void expandSouth() {
+        byte[][] newBoard = new byte[currentBoard.length + 1][currentBoard[0].length];
+        for (int row = 0; row < currentBoard.length; row++) {
+            for (int col = 0; col < currentBoard[0].length; col++) {
+                newBoard[row][col] = currentBoard[row][col];
+            }
+        }
+        currentBoard = newBoard;
+    }
+
+    private boolean shouldExpandWest() {
+        int numberOfLiveCells = 0;
+        for (int row = 0; row < currentBoard.length; row++) {
+            numberOfLiveCells += currentBoard[row][0];
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void expandWest() {
+        byte[][] newBoard = new byte[currentBoard.length][currentBoard[0].length + 1];
+        for (int row = 0; row < currentBoard.length; row++) {
+            for (int col = 0; col < currentBoard[0].length; col++) {
+                newBoard[row][col + 1] = currentBoard[row][col];
+            }
+        }
+        currentBoard = newBoard;
     }
 
     /**

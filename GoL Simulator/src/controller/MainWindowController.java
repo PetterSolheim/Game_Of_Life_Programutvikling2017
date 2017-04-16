@@ -83,7 +83,7 @@ public class MainWindowController implements Initializable {
         Platform.runLater(this::defineStage); // allows easy referal to the stage.
         Platform.runLater(this::resizeCanvas); // ensures the parent node is ready before resizing the canvas.
 
-        board = new Board(200, 200);
+        board = new Board(10, 10);
         time = new Timer(this);
 
         // set the default value of the color pickers.
@@ -360,7 +360,7 @@ public class MainWindowController implements Initializable {
     @FXML
     public void createNextGeneration() {
         board.nextGeneration();
-        canvas.drawBoardChanges(board);
+        canvas.drawBoard(board);
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
     }

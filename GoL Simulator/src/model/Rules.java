@@ -20,7 +20,7 @@ public class Rules {
 
     private ArrayList<Integer> survivalRules;
     private ArrayList<Integer> birthRules;
-    private boolean dynamic = false;
+    private boolean dynamic = true;
     private static Rules rules;
 
     /**
