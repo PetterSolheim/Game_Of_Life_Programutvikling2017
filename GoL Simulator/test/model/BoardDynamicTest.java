@@ -113,7 +113,7 @@ public class BoardDynamicTest {
         expResult.get(1).add(alive);
 
         instance.setBoard(expResult);
-        ArrayList<ArrayList<Byte>> result = instance.getCurrentBoard();
+        ArrayList<ArrayList<Byte>> result = instance.getBoard();
 
         assertEquals(expResult, result);
     }
@@ -176,7 +176,7 @@ public class BoardDynamicTest {
         expResult.get(2).add(dead);
         expResult.get(2).add(dead);
 
-        assertEquals(expResult, instance.getCurrentBoard());
+        assertEquals(expResult, instance.getBoard());
 
         // run test with dynamic board
         rules.setDynamic(true);
@@ -218,7 +218,7 @@ public class BoardDynamicTest {
         expResultDynamic.get(4).add(dead);
         expResultDynamic.get(4).add(dead);
 
-        assertEquals(expResultDynamic, instance.getCurrentBoard());
+        assertEquals(expResultDynamic, instance.getBoard());
 
     }
 

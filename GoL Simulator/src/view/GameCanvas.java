@@ -111,10 +111,10 @@ public class GameCanvas extends Canvas {
      * @param b the Board object.
      */
     public void drawBoardChanges(Board b) {
-        for (int row = 0; row < b.getBoardChanges().length; row++) {
-            for (int col = 0; col < b.getBoardChanges()[0].length; col++) {
+        for (int row = 0; row < b.getChangedCells().length; row++) {
+            for (int col = 0; col < b.getChangedCells()[0].length; col++) {
                 // cells that have changed are symbolised by the number 1.
-                if (b.getBoardChanges()[row][col] == 1) {
+                if (b.getChangedCells()[row][col] == 1) {
                     drawCell(b, row, col);
                 }
             }

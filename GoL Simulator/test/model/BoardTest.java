@@ -96,7 +96,7 @@ public class BoardTest {
         instance.setBoard(testBoard);
         instance.nextGeneration();
         byte[][] expResult = {{0, 1, 0}, {1, 0, 1}, {0, 1, 0}};
-        byte[][] result = instance.getBoardChanges();
+        byte[][] result = instance.getChangedCells();
         assertArrayEquals(expResult, result);
     }
 
