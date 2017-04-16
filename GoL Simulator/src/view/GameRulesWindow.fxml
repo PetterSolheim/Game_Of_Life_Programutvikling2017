@@ -4,18 +4,21 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="vBox" prefHeight="339.0" prefWidth="400" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameRulesWindowController">
+<VBox fx:id="vBox" prefHeight="399.0" prefWidth="400" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameRulesWindowController">
     <children>
       <Label text="Game Rules">
          <font>
             <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <Label prefHeight="106.0" prefWidth="380.0" text="This is where you define the rules that the game will follow. In the Game of Life, each cell has eight neighbours. The number of live neighbours each cell has, defines its behaviour during a change in generation. The behaviour of the cell is defined by two rules. The number of living neighbours a living cell must have to survive, and the number of living neighbours a dead cell must have to be born." wrapText="true" />
+      <Label prefHeight="16.0" prefWidth="380.0" text="This is where you edit all the rules for the game." wrapText="true" />
+      <Separator prefWidth="200.0" />
         <HBox spacing="5.0">
          <children>
             <VBox prefHeight="131.0" prefWidth="383.0">
@@ -71,6 +74,22 @@
             </VBox>
          </children>
         </HBox>
+      <Separator prefWidth="200.0" />
+      <Label text="Border behaviour">
+         <font>
+            <Font name="System Bold" size="12.0" />
+         </font>
+      </Label>
+      <Label text="Define how the game should behave if a living cell reaches the border. " />
+      <VBox prefHeight="57.0" prefWidth="380.0" spacing="10.0">
+         <children>
+            <RadioButton fx:id="rbtnStatic" onAction="#rbtnStaticClicked" mnemonicParsing="false" text="Static: board stays the same size." wrapText="true" />
+            <RadioButton fx:id="rbtnDynamic" onAction="#rbtnDynamicClicked" mnemonicParsing="false" text="Dynamic: board expands to accomodate the growth of new cells." wrapText="true" />
+         </children>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </VBox>
         <HBox id="buttonRow" alignment="TOP_RIGHT" spacing="5">
             <children>
                 <Button fx:id="btnCancel" onAction="#cancel">Cancel</Button>

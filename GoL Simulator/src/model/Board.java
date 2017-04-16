@@ -113,48 +113,16 @@ public class Board {
     }
 
     /**
-     * Iterates the currentBoard to its next generation using the rules defined
-     * in the Rules class object.
+     * Iterates the current board to its next generation, playing by the rules
+     * defined in the Rules class object.
      *
-     * TODO: implement dynamic rules.
      */
     public void nextGeneration() {
-        // determin if the board needs to expand
-        boolean boardExpanded = false;
+        // reset list of changed cells.
+        changedCells = new byte[currentBoard.length][currentBoard[0].length];
+
         if (rules.isDynamic()) {
-            if (shouldExpandNorth()) {
-                expandNorth();
-                boardExpanded = true;
-            }
-
-            if (shouldExpandEast()) {
-                expandEast();
-                boardExpanded = true;
-            }
-
-            if (shouldExpandSouth()) {
-                expandSouth();
-                boardExpanded = true;
-            }
-
-            if (shouldExpandWest()) {
-                expandWest();
-                boardExpanded = true;
-            }
-        }
-
-        // if the board changed size, the entire board will have to be redrawn.
-        // Therefore, set all values of the changedCells list to 1.
-        if (boardExpanded) {
-            changedCells = new byte[currentBoard.length][currentBoard[0].length];
-            for(int row = 0; row < changedCells.length; row++) {
-                for (int col = 0; col < changedCells[0].length; col++) {
-                    changedCells[row][col] = 1;
-                }
-            }
-        } // if not, simply reset the list from the previous generation.
-        else {
-            changedCells = new byte[currentBoard.length][currentBoard[0].length];
+            expandBoardIfNeeded();
         }
 
         // a copy of the board is used to test the rules, while changes are
@@ -179,6 +147,40 @@ public class Board {
             }
         }
         generationCount++;
+    }
+
+    /**
+     * Checks the current board to see if it should be expanded. If so, expand
+     * it.
+     */
+    private void expandBoardIfNeeded() {
+        boolean boardExpanded = false;
+        if (shouldExpandNorth()) {
+            expandNorth();
+            boardExpanded = true;
+        }
+        if (shouldExpandEast()) {
+            expandEast();
+            boardExpanded = true;
+        }
+        if (shouldExpandSouth()) {
+            expandSouth();
+            boardExpanded = true;
+        }
+        if (shouldExpandWest()) {
+            expandWest();
+            boardExpanded = true;
+        }
+        if (boardExpanded) {
+            // if board expanded, all cells will have shifted, and thereby
+            // changed.
+            changedCells = new byte[currentBoard.length][currentBoard[0].length];
+            for (int row = 0; row < changedCells.length; row++) {
+                for (int col = 0; col < changedCells[0].length; col++) {
+                    changedCells[row][col] = 1;
+                }
+            }
+        }
     }
 
     /**

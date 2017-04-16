@@ -11,14 +11,15 @@ import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.RadioButton;
 import javafx.stage.Stage;
 import model.Board;
 import model.Rules;
 
 /**
- * Controller for the game rules window. 
+ * Controller for the game rules window.
+ *
  * @author aleks
  */
 public class GameRulesWindowController implements Initializable {
@@ -27,6 +28,8 @@ public class GameRulesWindowController implements Initializable {
     private CheckBox s0, s1, s2, s3, s4, s5, s6, s7, s8;
     @FXML
     private CheckBox b0, b1, b2, b3, b4, b5, b6, b7, b8;
+    @FXML
+    private RadioButton rbtnStatic, rbtnDynamic;
     private Rules rules = Rules.getInstance();
     private Stage stage;
     private Board board;
@@ -40,7 +43,25 @@ public class GameRulesWindowController implements Initializable {
     }
 
     /**
-     * Uses the state of the CheckBoxes to apply the given rules.
+     * Set "Static" as selected option for radio buttons.
+     */
+    @FXML
+    private void rbtnStaticClicked() {
+        rbtnStatic.setSelected(true);
+        rbtnDynamic.setSelected(false);
+    }
+
+    /**
+     * Set "Dynamic" as selected option for radio buttons.
+     */
+    @FXML
+    private void rbtnDynamicClicked() {
+        rbtnDynamic.setSelected(true);
+        rbtnStatic.setSelected(false);
+    }
+
+    /**
+     * Apply the user selected rules to the game.
      */
     @FXML
     private void save() {
@@ -51,9 +72,9 @@ public class GameRulesWindowController implements Initializable {
         ArrayList<Integer> survivalRules = new ArrayList<Integer>();
         ArrayList<Integer> birthRules = new ArrayList<Integer>();
 
+        // determin which survivalCheckBoxes are checked, and store the value
+        // they represent in an arraylist.
         for (int i = 0; i <= 8; i++) {
-            // determin which survivalCheckBoxes are checked, and store the value
-            // they represent in an arraylist.
             if (survivalCheckBoxes[i].isSelected()) {
                 survivalRules.add(i);
             }
@@ -66,6 +87,11 @@ public class GameRulesWindowController implements Initializable {
         }
 
         // set the new rules, and close the window.
+        if (rbtnStatic.isSelected()) {
+            rules.setDynamic(false);
+        } else {
+            rules.setDynamic(true);
+        }
         rules.setSurviveRules(survivalRules);
         rules.setBirthRules(birthRules);
         stage.close();
@@ -91,7 +117,7 @@ public class GameRulesWindowController implements Initializable {
      * and applies its values to this windows checkboxes.
      */
     public void loadRules() {
-        
+
         // create an array of the checkboxes to allow easy iteration of their
         // values.
         CheckBox[] survivalCheckBoxes = {s0, s1, s2, s3, s4, s5, s6, s7, s8};
@@ -113,6 +139,15 @@ public class GameRulesWindowController implements Initializable {
                     birthCheckBoxes[j].setSelected(true);
                 }
             }
+        }
+
+        // load and display dynamic rules
+        if (rules.isDynamic()) {
+            rbtnStatic.setSelected(false);
+            rbtnDynamic.setSelected(true);
+        } else {
+            rbtnStatic.setSelected(true);
+            rbtnDynamic.setSelected(false);
         }
     }
 
