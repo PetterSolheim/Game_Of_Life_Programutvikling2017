@@ -42,6 +42,7 @@ public class BoardDynamic {
     public BoardDynamic() {
         originalBoard = createEmptyBoard(200, 200);
         currentBoard = duplicateBoard(originalBoard);
+        changedCells = createEmptyBoard(200, 200);
     }
 
     /**
@@ -60,6 +61,7 @@ public class BoardDynamic {
         }
         originalBoard = createEmptyBoard(row, col);
         currentBoard = duplicateBoard(originalBoard);
+        changedCells = createEmptyBoard(row, col);
     }
 
     /**

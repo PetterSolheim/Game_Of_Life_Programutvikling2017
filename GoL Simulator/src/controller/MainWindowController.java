@@ -381,7 +381,8 @@ public class MainWindowController implements Initializable {
         FlowPane root = loader.load();
 
         StatisticsWindowController controller = loader.getController();
-        controller.setBoard(board.deepCopy());
+        Board copy = board.deepCopy();
+        controller.setBoard(copy);
         Scene scene = new Scene(root);
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);

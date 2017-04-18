@@ -33,14 +33,6 @@
                         </Menu>
                     </items>
                     <items>
-                        <Menu mnemonicParsing="false" text="Add">
-                            <items>
-                                <MenuItem mnemonicParsing="false" onAction="#addFromDisk" text="from disk" />
-                                <MenuItem mnemonicParsing="false" onAction="#addFromUrl" text="from url" />
-                            </items>
-                        </Menu>
-                    </items>
-                    <items>
                         <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Settings" />
                     </items>
                     <items>

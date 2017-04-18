@@ -40,6 +40,7 @@ public class Board {
     public Board() {
         currentBoard = new byte[200][200];
         originalBoard = duplicateBoard(currentBoard);
+        changedCells = new byte[200][200];
     }
 
     /**
@@ -58,6 +59,7 @@ public class Board {
         }
         currentBoard = new byte[row][col];
         originalBoard = duplicateBoard(currentBoard);
+        changedCells = new byte[row][col];
     }
 
     /**
@@ -456,8 +458,10 @@ public class Board {
     private byte[][] duplicateBoard(byte[][] original) {
         byte[][] boardCopy = new byte[original.length][original[0].length];
 
-        for (int i = 0; i < original.length; i++) {
-            System.arraycopy(original[i], 0, boardCopy[i], 0, original[0].length);
+        for(int row = 0; row < original.length; row++) {
+            for(int col = 0; col < original[0].length; col++) {
+                boardCopy[row][col] = original[row][col];
+            }
         }
         return boardCopy;
     }

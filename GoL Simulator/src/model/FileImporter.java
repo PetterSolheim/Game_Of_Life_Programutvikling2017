@@ -73,8 +73,8 @@ public class FileImporter {
     }
 
     /**
-     * Passes the file to the correct parses based on file type,
-     * and builds the actual board.
+     * Passes the file to the correct parser based on file type and builds the 
+     * actual board.
      *
      * @param r
      * @param fileExtension
