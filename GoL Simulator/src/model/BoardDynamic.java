@@ -3,8 +3,8 @@ package model;
 import java.util.ArrayList;
 
 /**
- * This class contains the game board and its mechanics, such as moving a
- * game board to its next generation. This class replaces the now deprecated 
+ * This class contains the game board and its mechanics, such as moving a game
+ * board to its next generation. This class replaces the now deprecated
  * {@link model.Board} class.
  *
  */
@@ -70,6 +70,7 @@ public class BoardDynamic {
     public void setBoard(ArrayList<ArrayList<Byte>> newBoard) {
         originalBoard = duplicateBoard(newBoard);
         currentBoard = duplicateBoard(newBoard);
+        countLivingCells();
     }
 
     /**
@@ -86,6 +87,7 @@ public class BoardDynamic {
             }
         }
         currentBoard = duplicateBoard(originalBoard);
+        countLivingCells();
     }
 
     /**
@@ -462,13 +464,12 @@ public class BoardDynamic {
      */
     private ArrayList<ArrayList<Byte>> duplicateBoard(ArrayList<ArrayList<Byte>> original) {
         ArrayList<ArrayList<Byte>> boardCopy = new ArrayList<>();
-        for (int i = 0; i < original.size(); i++) {
-            boardCopy.add(new ArrayList<Byte>());
-            for (int j = 0; j < original.get(0).size(); j++) {
-                boardCopy.get(i).add(original.get(i).get(j));
+        for (int row = 0; row < original.size(); row++) {
+            boardCopy.add(row, new ArrayList<Byte>());
+            for (int col = 0; col < original.get(0).size(); col++) {
+                boardCopy.get(row).add(original.get(row).get(col));
             }
         }
-
         return boardCopy;
     }
 

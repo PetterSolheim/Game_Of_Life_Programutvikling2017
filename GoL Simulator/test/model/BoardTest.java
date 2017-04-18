@@ -31,6 +31,8 @@ public class BoardTest {
     public void testNextGeneration() {
         System.out.println("nextGeneration");
         Board instance = new Board();
+        Rules rules = Rules.getInstance();
+        rules.setDynamic(false);
 
         // board test nr. 1 of 4
         byte[][] board = {
@@ -76,21 +78,69 @@ public class BoardTest {
         instance.nextGeneration();
         assertEquals(instance.toString(), "00000000000000000000000000000000000");
 
+        byte[][] board5 = {
+            {1, 1, 1}
+        };
+        instance.setBoard(board5);
+        instance.nextGeneration();
+        assertEquals(instance.toString(), "010");
+
+        byte[][] board6 = {
+            {1},
+            {1},
+            {1}
+        };
+        instance.setBoard(board6);
+        instance.nextGeneration();
+        assertEquals(instance.toString(), "010");
+
+        // test dynamic board nr. 1 of 2
+        rules.setDynamic(true);
+        byte[][] boardDynamic1 = {
+            {0, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0},
+            {1, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0}
+        };
+        instance.setBoard(boardDynamic1);
+        instance.nextGeneration();
+        assertEquals(instance.toString(), "000000000000111000111000000000000000");
+
+        // test dynamic board nr. 2 of 2
+        byte[][] boardDynamic2 = {
+            {1},
+            {1},
+            {1}
+        };
+        instance.setBoard(boardDynamic2);
+        instance.nextGeneration();
+        assertEquals(instance.toString(), "000000111000000");
     }
 
     @Test
     public void testGetBoard() {
         System.out.println("getBoard");
         Board instance = new Board();
-        byte[][] expResult = {{0, 1, 0}, {0, 0, 0}, {0, 1, 0}};
-        instance.setBoard(expResult);
-        byte[][] result = instance.getBoard();
-        assertArrayEquals(expResult, result);
+        byte[][] startingBoard = {
+            {0,0,0},
+            {1,1,1},
+            {0,0,0}
+        };
+        instance.setBoard(startingBoard);
+        instance.nextGeneration();
+        byte[][] expResult = {
+            {0,1,0},
+            {0,1,0},
+            {0,1,0}
+        };
+        assertArrayEquals(expResult, instance.getBoard());
     }
 
     @Test
-    public void testGetBoardChanges() {
-        System.out.println("getBoardChanges");
+    public void testGetChangedCells() {
+        System.out.println("getChangedCells");
         Board instance = new Board();
         byte[][] testBoard = {{0, 1, 0}, {0, 1, 0}, {0, 1, 0}};
         instance.setBoard(testBoard);
@@ -126,7 +176,7 @@ public class BoardTest {
         System.out.println("settCellStateAlive");
         Board instance = new Board();
 
-        // test the method against a living cell (i.e. cell state should not change).
+        // test the method against a living cell.
         byte[][] testBoard = {{1, 0, 0}, {0, 0, 0}, {0, 0, 0}};
         instance.setBoard(testBoard);
         instance.setCellStateAlive(0, 0);
@@ -143,11 +193,11 @@ public class BoardTest {
     public void testGetGenerationCount() {
         System.out.println("getGenerationCount");
         Board instance = new Board();
-        int expResult = 2;
-        instance.nextGeneration();
-        instance.nextGeneration();
-        int result = instance.getGenerationCount();
-        assertEquals(expResult, result);
+        int expResult = 20;
+        for(int i = 0; i < 20; i++) {
+            instance.nextGeneration();
+        }
+        assertEquals(expResult, instance.getGenerationCount());
     }
 
     @Test
@@ -165,13 +215,12 @@ public class BoardTest {
     public void testToString() {
         System.out.println("toString");
         Board instance = new Board();
-        String expResult = "010010010";
         byte[][] testBoard = {{0, 1, 0}, {0, 1, 0}, {0, 1, 0}};
         instance.setBoard(testBoard);
-        String result = instance.toString();
-        assertEquals(expResult, result);
+        assertEquals("010010010", instance.toString());
     }
 
+    // TODO: Must check all values
     @Test
     public void testDeepCopy() {
         System.out.println("deepCopy");
@@ -186,7 +235,7 @@ public class BoardTest {
 
         // create a deep copy of the board
         Board deepCopy = orig.deepCopy();
-        
+
         // change the board of the new board.
         byte[][] newBoardArray = {
             {1, 0, 1},
@@ -203,4 +252,27 @@ public class BoardTest {
         assertArrayEquals(orig.getBoard(), origBoardArray);
     }
 
+    @Test
+    public void testGetNumberOfCells() {
+        System.out.println("getNumberOfCells");
+        Board instance = new Board();
+        assertEquals(40000, instance.getNumberOfCells());
+        
+        byte[][] testBoard = {
+            {1,0,1},
+            {1,1,1},
+            {0,0,0},
+            {1,0,1}
+        };
+        instance.setBoard(testBoard);
+        assertEquals(12, instance.getNumberOfCells());
+    }
+
+    
+    @Test
+    public void testGetLivingCellCount() {
+        System.out.println("getLivingCellCount");
+        Board instance = new Board();
+        assertEquals(0, instance.getLivingCellCount());
+    }
 }

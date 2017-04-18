@@ -98,7 +98,7 @@ public class Board {
     private void countLivingCells() {
         livingCells = 0;
         for (int row = 0; row < currentBoard.length; row++) {
-            for (int col = 0; col < currentBoard.length; col++) {
+            for (int col = 0; col < currentBoard[0].length; col++) {
                 if (currentBoard[row][col] == 1) {
                     livingCells++;
                 }

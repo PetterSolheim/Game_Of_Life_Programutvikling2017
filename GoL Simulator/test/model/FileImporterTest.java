@@ -104,10 +104,10 @@ public class FileImporterTest {
 
         // set game rules to the expected result.
         ArrayList<Integer> expSurvivalRules2 = new ArrayList<>();
-        expSurvivalRules.add(2);
-        expSurvivalRules.add(3);
+        expSurvivalRules2.add(2);
+        expSurvivalRules2.add(3);
         ArrayList<Integer> expBirthRules2 = new ArrayList<>();
-        expBirthRules.add(3);
+        expBirthRules2.add(3);
 
         // compare expected result with actual result.
         assertArrayEquals(expResult2.getBoard(), result2.getBoard());
