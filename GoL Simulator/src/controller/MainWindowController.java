@@ -248,17 +248,6 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Displays a FileChooser, and lets the user select a compatible pattern
-     * file which is then parsed. The board is stored in a temporary Board
-     * object for placement on screen. This method is used when one does not
-     * wish to replace the existing board, but rather combine it with a new one.
-     */
-    @FXML
-    private void addFromDisk() {
-
-    }
-
-    /**
      * Displays a dialogue box requesting an URL. URL is used to download a
      * compatible GoL pattern file. Pattern is then parsed and drawn to board,
      * replacing any existing board.
@@ -286,18 +275,6 @@ public class MainWindowController implements Initializable {
                 DialogBoxes.patternFormatException("There was an error parsing the file: " + e.getMessage());
             }
         }
-    }
-
-    /**
-     * Displays a dialogue box requesting an URL. URL is used to download a
-     * compatible GoL pattern file. Pattern is then parsed and the board is
-     * stored in a temporary Board object for placement on screen. This method
-     * is used when one does not wish to replace the existing board, but rather
-     * combine it with a new one.
-     */
-    @FXML
-    private void addFromUrl() {
-
     }
 
     /**

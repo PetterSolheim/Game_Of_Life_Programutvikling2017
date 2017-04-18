@@ -194,7 +194,7 @@ public class BoardDynamicTest {
         Rules rules = Rules.getInstance();
         rules.setDynamic(false);
 
-        // board test nr. 1 of 4
+        // static board test nr. 1 of 6
         byte[][] board = {
             {0, 1, 0},
             {0, 1, 0},
@@ -204,7 +204,7 @@ public class BoardDynamicTest {
         instance.nextGeneration();
         org.junit.Assert.assertEquals("000111000", instance.toString());
 
-        // board test nr. 2 of 4
+        // static board test nr. 2 of 6
         byte[][] board2 = {
             {0, 0, 0, 0},
             {0, 1, 1, 0},
@@ -215,7 +215,7 @@ public class BoardDynamicTest {
         instance.nextGeneration();
         assertEquals("0000011001100000", instance.toString());
 
-        // board test nr. 3 of 4
+        // static board test nr. 3 of 6
         byte[][] board3 = {
             {0, 0, 0, 1, 0, 0, 0},
             {0, 0, 0, 1, 0, 0, 0},
@@ -226,7 +226,7 @@ public class BoardDynamicTest {
         instance.nextGeneration();
         assertEquals("0000000001110000111000000000", instance.toString());
 
-        // board test nr. 4 of 4
+        // static board test nr. 4 of 6
         byte[][] board4 = {
             {0, 0, 0, 0, 0, 0, 0},
             {0, 0, 1, 0, 1, 0, 0},
@@ -238,6 +238,7 @@ public class BoardDynamicTest {
         instance.nextGeneration();
         assertEquals("00000000000000000000000000000000000", instance.toString());
 
+        // static board test nr. 5 of 6
         byte[][] board5 = {
             {1, 1, 1}
         };
@@ -245,6 +246,7 @@ public class BoardDynamicTest {
         instance.nextGeneration();
         assertEquals("010", instance.toString());
 
+        // static board test nr. 6 of 6
         byte[][] board6 = {
             {1},
             {1},
@@ -254,7 +256,7 @@ public class BoardDynamicTest {
         instance.nextGeneration();
         assertEquals("010", instance.toString());
 
-        // test dynamic board nr. 1 of 2
+        // dynamic board test nr. 1 of 2
         rules.setDynamic(true);
         byte[][] boardDynamic1 = {
             {0, 0, 0, 0, 0},
@@ -268,7 +270,7 @@ public class BoardDynamicTest {
         instance.nextGeneration();
         assertEquals("000000000000111000111000000000000000", instance.toString());
 
-        // test dynamic board nr. 2 of 2
+        // dynamic board test nr. 2 of 2
         byte[][] boardDynamic2 = {
             {1},
             {1},

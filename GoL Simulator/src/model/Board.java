@@ -144,8 +144,9 @@ public class Board {
         Board b = new Board();
         b.currentBoard = duplicateBoard(this.currentBoard);
         b.originalBoard = duplicateBoard(this.originalBoard);
+        b.changedCells = duplicateBoard(this.changedCells);
+        b.livingCells = this.livingCells;
         b.generationCount = this.generationCount;
-        b.countLivingCells();
         return b;
     }
 

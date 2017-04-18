@@ -34,7 +34,7 @@ public class BoardTest {
         Rules rules = Rules.getInstance();
         rules.setDynamic(false);
 
-        // board test nr. 1 of 4
+        // static board test nr. 1 of 6
         byte[][] board = {
             {0, 1, 0},
             {0, 1, 0},
@@ -44,7 +44,7 @@ public class BoardTest {
         instance.nextGeneration();
         org.junit.Assert.assertEquals(instance.toString(), "000111000");
 
-        // board test nr. 2 of 4
+        // static board test nr. 2 of 6
         byte[][] board2 = {
             {0, 0, 0, 0},
             {0, 1, 1, 0},
@@ -55,7 +55,7 @@ public class BoardTest {
         instance.nextGeneration();
         assertEquals(instance.toString(), "0000011001100000");
 
-        // board test nr. 3 of 4
+        // static board test nr. 3 of 6
         byte[][] board3 = {
             {0, 0, 0, 1, 0, 0, 0},
             {0, 0, 0, 1, 0, 0, 0},
@@ -66,7 +66,7 @@ public class BoardTest {
         instance.nextGeneration();
         assertEquals(instance.toString(), "0000000001110000111000000000");
 
-        // board test nr. 4 of 4
+        // static board test nr. 4 of 6
         byte[][] board4 = {
             {0, 0, 0, 0, 0, 0, 0},
             {0, 0, 1, 0, 1, 0, 0},
@@ -78,6 +78,7 @@ public class BoardTest {
         instance.nextGeneration();
         assertEquals(instance.toString(), "00000000000000000000000000000000000");
 
+        // static board test nr. 5 of 6
         byte[][] board5 = {
             {1, 1, 1}
         };
@@ -85,6 +86,7 @@ public class BoardTest {
         instance.nextGeneration();
         assertEquals(instance.toString(), "010");
 
+        // static board test nr. 6 of 6
         byte[][] board6 = {
             {1},
             {1},
@@ -94,7 +96,7 @@ public class BoardTest {
         instance.nextGeneration();
         assertEquals(instance.toString(), "010");
 
-        // test dynamic board nr. 1 of 2
+        // dynamic board test nr. 1 of 2
         rules.setDynamic(true);
         byte[][] boardDynamic1 = {
             {0, 0, 0, 0, 0},
@@ -108,7 +110,7 @@ public class BoardTest {
         instance.nextGeneration();
         assertEquals(instance.toString(), "000000000000111000111000000000000000");
 
-        // test dynamic board nr. 2 of 2
+        // dynamic board test nr. 2 of 2
         byte[][] boardDynamic2 = {
             {1},
             {1},
@@ -223,32 +225,35 @@ public class BoardTest {
     @Test
     public void testDeepCopy() {
         System.out.println("deepCopy");
-        Board orig = new Board();
-
-        byte[][] origBoardArray = {
+        
+        // create the board to be copied
+        Board originalBoard = new Board();
+        byte[][] origBoard = {
             {0, 1, 0},
             {0, 1, 0},
             {0, 1, 0}
         };
-        orig.setBoard(origBoardArray);
+        originalBoard.setBoard(origBoard);
+        originalBoard.nextGeneration();
 
-        // create a deep copy of the board
-        Board deepCopy = orig.deepCopy();
+        // create a deep copy of originalBoard.
+        Board deepCopy = originalBoard.deepCopy();
 
-        // change the board of the new board.
-        byte[][] newBoardArray = {
+        // ensure that the deepCopy is identical.
+        assertArrayEquals(originalBoard.getBoard(), deepCopy.getBoard());
+        assertArrayEquals(originalBoard.getChangedCells(), deepCopy.getChangedCells());
+        assertEquals(originalBoard.getGenerationCount(), deepCopy.getGenerationCount());
+        assertEquals(originalBoard.getLivingCellCount(), deepCopy.getLivingCellCount());
+        assertEquals(originalBoard.getNumberOfCells(), deepCopy.getNumberOfCells());
+        
+        // make changes to the deepCopy.
+        byte[][] newBoard = {
             {1, 0, 1},
             {1, 0, 1},
             {1, 0, 1}
         };
-        deepCopy.setBoard(newBoardArray);
-
-        // check that the new board has changed compared to the old one.
-        assertArrayEquals(deepCopy.getBoard(), newBoardArray);
-
-        // check that the original Board object has been left untouched by
-        // changes made to the new, deep copy.
-        assertArrayEquals(orig.getBoard(), origBoardArray);
+        deepCopy.setBoard(newBoard);
+        
     }
 
     @Test
