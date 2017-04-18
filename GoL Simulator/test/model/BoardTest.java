@@ -168,7 +168,6 @@ public class BoardTest {
         instance.setBoard(testBoard);
         instance.toggleCellState(0, 0);
         assertEquals(instance.toString(), "000000000");
-
     }
 
     @Test

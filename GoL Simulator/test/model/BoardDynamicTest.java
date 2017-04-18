@@ -202,7 +202,7 @@ public class BoardDynamicTest {
         };
         instance.setBoard(board);
         instance.nextGeneration();
-        org.junit.Assert.assertEquals(instance.toString(), "000111000");
+        org.junit.Assert.assertEquals("000111000", instance.toString());
 
         // board test nr. 2 of 4
         byte[][] board2 = {
@@ -213,7 +213,7 @@ public class BoardDynamicTest {
         };
         instance.setBoard(board2);
         instance.nextGeneration();
-        assertEquals(instance.toString(), "0000011001100000");
+        assertEquals("0000011001100000", instance.toString());
 
         // board test nr. 3 of 4
         byte[][] board3 = {
@@ -224,7 +224,7 @@ public class BoardDynamicTest {
         };
         instance.setBoard(board3);
         instance.nextGeneration();
-        assertEquals(instance.toString(), "0000000001110000111000000000");
+        assertEquals("0000000001110000111000000000", instance.toString());
 
         // board test nr. 4 of 4
         byte[][] board4 = {
@@ -236,14 +236,14 @@ public class BoardDynamicTest {
         };
         instance.setBoard(board4);
         instance.nextGeneration();
-        assertEquals(instance.toString(), "00000000000000000000000000000000000");
+        assertEquals("00000000000000000000000000000000000", instance.toString());
 
         byte[][] board5 = {
             {1, 1, 1}
         };
         instance.setBoard(board5);
         instance.nextGeneration();
-        assertEquals(instance.toString(), "010");
+        assertEquals("010", instance.toString());
 
         byte[][] board6 = {
             {1},
@@ -252,7 +252,7 @@ public class BoardDynamicTest {
         };
         instance.setBoard(board6);
         instance.nextGeneration();
-        assertEquals(instance.toString(), "010");
+        assertEquals("010", instance.toString());
 
         // test dynamic board nr. 1 of 2
         rules.setDynamic(true);
@@ -266,7 +266,7 @@ public class BoardDynamicTest {
         };
         instance.setBoard(boardDynamic1);
         instance.nextGeneration();
-        assertEquals(instance.toString(), "000000000000111000111000000000000000");
+        assertEquals("000000000000111000111000000000000000", instance.toString());
 
         // test dynamic board nr. 2 of 2
         byte[][] boardDynamic2 = {
@@ -276,45 +276,59 @@ public class BoardDynamicTest {
         };
         instance.setBoard(boardDynamic2);
         instance.nextGeneration();
-        assertEquals(instance.toString(), "000000111000000");
+        assertEquals("000000111000000", instance.toString());
     }
 
     @Test
     public void testToggleCellState() {
         System.out.println("toggleCellState");
-        int row = 0;
-        int col = 0;
         BoardDynamic instance = new BoardDynamic();
-        instance.toggleCellState(row, col);
-        fail("The test case is a prototype.");
+        byte[][] testBoard = {{1, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        instance.setBoard(testBoard);
+        instance.toggleCellState(0, 0);
+        assertEquals("000000000", instance.toString());
     }
 
     @Test
     public void testSetCellStateAlive() {
         System.out.println("setCellStateAlive");
-        int row = 0;
-        int col = 0;
-        BoardDynamic instance = new BoardDynamic();
-        instance.setCellStateAlive(row, col);
-        fail("The test case is a prototype.");
+        Board instance = new Board();
+
+        // test the method against a living cell.
+        byte[][] testBoard = {{1, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        instance.setBoard(testBoard);
+        instance.setCellStateAlive(0, 0);
+        assertEquals("100000000", instance.toString());
+
+        // test the method against a dead cell.
+        byte[][] testBoard2 = {{0, 0, 0}, {0, 0, 0}, {0, 0, 0}};
+        instance.setBoard(testBoard2);
+        instance.setCellStateAlive(0, 0);
+        assertEquals("100000000", instance.toString());
     }
 
     @Test
     public void testResetBoard() {
         System.out.println("resetBoard");
         BoardDynamic instance = new BoardDynamic();
+        byte[][] testBoard = {{0, 1, 0}, {0, 1, 0}, {0, 1, 0}};
+        instance.setBoard(testBoard);
+        instance.nextGeneration();
         instance.resetBoard();
-        fail("The test case is a prototype.");
+        assertEquals("010010010", instance.toString());
     }
 
     @Test
     public void testToString() {
         System.out.println("toString");
         BoardDynamic instance = new BoardDynamic();
-        String expResult = "";
-        String result = instance.toString();
-        assertEquals(expResult, result);
-        fail("The test case is a prototype.");
+        byte[][] testBoard = {
+            {1,0,1},
+            {1,0,1},
+            {1,0,1}
+        };
+        instance.setBoard(testBoard);
+        assertEquals("101101101", instance.toString());
     }
 
 }
