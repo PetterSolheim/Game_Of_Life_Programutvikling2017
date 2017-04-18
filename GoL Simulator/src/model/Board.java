@@ -1,35 +1,41 @@
 package model;
 
 /**
- * This class represents the game board.
+ * This class contains the game board and its mechanics, such as moving the
+ * game board to the next generation. This class has been deprecated and 
+ * replaced by the {@link model.BoardDynamic} class.
+ *
+ * @deprecated use BoardDynamic instead
+ * @see model.BoardDynamic
  */
+@Deprecated
 public class Board {
 
     /**
-     * Represents the game board in its current state. 1 represents live cells,
-     * 0 represents dead cells.
+     * Represents the game board in its current game state. 1 represents live
+     * cells, 0 represents dead cells.
      */
     private byte[][] currentBoard;
-    
+
     /**
      * Used to represent cells which have changed during the last generation
      * shift.
      */
     private byte[][] changedCells;
-    
+
     /**
-     * Used to store the game board as it was before the game starts. Allows
-     * for resetting the game board.
+     * Used to store the game board as it was before the game starts. Allows for
+     * resetting the game board.
      */
     private byte[][] originalBoard;
-    
+
     private int generationCount = 0;
     private int livingCells = 0;
     private Rules rules = Rules.getInstance();
 
     /**
-     * Board no-argument constructor initializes a game board consisting of 
-     * 200 x 200 dead cells.
+     * Board no-argument constructor initializes a game board consisting of 200
+     * x 200 dead cells.
      */
     public Board() {
         currentBoard = new byte[200][200];
@@ -37,8 +43,9 @@ public class Board {
     }
 
     /**
-     * Board constructor. Allows one to define the starting size of the game 
+     * Board constructor. Allows one to define the starting size of the game
      * board.
+     *
      * @param row the number of rows for the starting board.
      * @param col the number of columns for the starting board.
      * @throws IllegalArgumentException in the case that either the number of
@@ -129,7 +136,7 @@ public class Board {
     }
 
     /**
-     * Gets a deep copy of the board object.
+     * Gets a deep copy of this board object.
      *
      * @return a deep copy of the <code>Board</code> object.
      */
@@ -351,10 +358,12 @@ public class Board {
 
     /**
      * Counts the number of living neighbour cells for a specified cell.
+     *
      * @param board the game board containing the cell to have neighbours its
      * counted.
      * @param row the row location of the cell to have its neighbours counted.
-     * @param col the column location of the cell to have its neighbours counted.
+     * @param col the column location of the cell to have its neighbours
+     * counted.
      * @return an <code>int</code> specifying the number of living neighbours.
      */
     private int countNeighbours(byte[][] board, int row, int col) {
@@ -398,8 +407,9 @@ public class Board {
     }
 
     /**
-     * Toggles the state of a specified cell in the current board. Live cell 
+     * Toggles the state of a specified cell in the current board. Live cell
      * becomes dead, dead cell becomes alive.
+     *
      * @param row the row position of the cell to toggle.
      * @param col the column position of the cell to toggle.
      */
@@ -437,7 +447,8 @@ public class Board {
     }
 
     /**
-     * A simple method for copying a 2D byte array.
+     * Gets a copy of the passed game board array.
+     *
      * @param original the board that you want to copy.
      * @return a <code>byte[][]</code> copy.
      */
@@ -452,6 +463,7 @@ public class Board {
 
     /**
      * Provides a string representation of the current board.
+     *
      * @return a <code>String</code> representing the state of the current
      * board.
      */
