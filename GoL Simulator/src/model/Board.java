@@ -41,7 +41,9 @@ public class Board {
         birthRules = new ArrayList<Integer>();
         birthRules.add(3);
     }
-    
+    public Board(byte [][] board){
+        this.currentBoard = duplicateBoard(board);
+    }
     /**
      * Returns the number of cells on the board.
      * @return int

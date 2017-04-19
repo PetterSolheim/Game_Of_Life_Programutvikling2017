@@ -46,17 +46,15 @@ public class ResizableCanvas extends Canvas {
             }
         }
     }
-
+    public void drawEmpty (){
+        
+    }
     /**
      * Resizes the canvas based on the size of the board, and draws the board on
      * the new canvas.
      *
      * @param b a board object.
      */
-    public void redraw(Board b) {
-        resizeCanvas(b);
-        draw(b);
-    }
 
     /**
      * Draws only the changes since the last generation to canvas.

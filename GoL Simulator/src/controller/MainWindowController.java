@@ -14,6 +14,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -34,6 +35,7 @@ import view.ResizableCanvas;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
+import javafx.stage.WindowEvent;
 import view.DialogBoxes;
 
 /**
@@ -135,28 +137,28 @@ public class MainWindowController implements Initializable {
                 canvas.resizeCanvas(board);
                 canvas.draw(board);
             } catch (FileNotFoundException e) {
-                DialogBoxes.ioException("No file found at: "+e.getMessage());
+                DialogBoxes.ioException("No file found at: " + e.getMessage());
             } catch (IOException e) {
-                DialogBoxes.ioException("There was a problem reading the file: "+e.getMessage());
+                DialogBoxes.ioException("There was a problem reading the file: " + e.getMessage());
             } catch (PatternFormatException e) {
-                DialogBoxes.patternFormatException("There was an error parsing the file: "+e.getMessage());
+                DialogBoxes.patternFormatException("There was an error parsing the file: " + e.getMessage());
             }
         }
     }
-    
+
     @FXML
     private void addFromDisk() {
-        
+
     }
-    
+
     @FXML
     private void addFromUrl() {
-        
+
     }
-    
+
     @FXML
     private void showAboutWindow() {
-        
+
     }
 
     private FileChooser createFileChooser() {
@@ -184,13 +186,13 @@ public class MainWindowController implements Initializable {
                 canvas.resizeCanvas(board);
                 canvas.draw(board);
             } catch (MalformedURLException e) {
-                DialogBoxes.ioException("Given String is not a valid URL: "+e.getMessage());
+                DialogBoxes.ioException("Given String is not a valid URL: " + e.getMessage());
             } catch (FileNotFoundException e) {
-                DialogBoxes.ioException("File not found at: "+e.getMessage());
+                DialogBoxes.ioException("File not found at: " + e.getMessage());
             } catch (IOException e) {
-                DialogBoxes.ioException("File not found at: "+e.getMessage());
+                DialogBoxes.ioException("File not found at: " + e.getMessage());
             } catch (PatternFormatException e) {
-                DialogBoxes.patternFormatException("There was an error parsing the file: "+e.getMessage());
+                DialogBoxes.patternFormatException("There was an error parsing the file: " + e.getMessage());
             }
         }
     }
@@ -294,16 +296,17 @@ public class MainWindowController implements Initializable {
         controller.initData(board);
         Stage.show();
     }
-    public void showStatistics () throws IOException {
-        Stage statistics = new Stage ();
+
+    public void showStatistics() throws IOException {
+        Stage statistics = new Stage();
         statistics.setWidth(800);
         statistics.setHeight(800);
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/StatisticsWindow.fxml"));
         FlowPane root = loader.load();
-        
+
         StatisticsWindowController controller = loader.getController();
         controller.setBoard(board.deepCopy());
-        Scene scene = new Scene (root);
+        Scene scene = new Scene(root);
         statistics.setScene(scene);
         statistics.setTitle("Statistics");
         statistics.show();
