@@ -126,7 +126,7 @@ public class MainWindowController implements Initializable {
      * parent node.
      */
     private void resizeCanvas() {
-        canvas.resizeCanvas(canvasAnchor.getHeight(), canvasAnchor.getWidth());
+        canvas.setCanvasSize(canvasAnchor.getHeight(), canvasAnchor.getWidth());
         canvas.drawBoard(board.getBoard());
     }
 
@@ -333,7 +333,16 @@ public class MainWindowController implements Initializable {
     @FXML
     public void createNextGeneration() {
         board.nextGeneration();
-        canvas.drawSpecificCells(board.getChangedCells(), board.getBoard());
+        
+        // only draw cells that changed during last generational shift.
+        for (int row = 0; row < board.getChangedCells().size(); row++) {
+            for (int col = 0; col < board.getChangedCells().get(0).size(); col++) {
+                // cells that have changed are symbolised by the number 1.
+                if (board.getChangedCells().get(row).get(col) == 1) {
+                    canvas.drawCell(board.getBoard(), row, col);
+                }
+            }
+        }
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
     }
