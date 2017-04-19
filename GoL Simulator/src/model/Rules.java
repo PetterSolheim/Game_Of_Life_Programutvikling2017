@@ -6,15 +6,16 @@ import java.util.Arrays;
 /**
  * <p>Game rules are stored and altered through this class. Class is a singleton,
  * and the constructor is therefore private. A reference to the object can be
- * acquired using the static getInstance() method. The following rules are
- * currently supported;</p>
+ * acquired using the static {@link getInstance()} method. The following rules 
+ * are currently supported;</p>
  * <ul>
- * <li><b>survivalRules</b>, defines which living cells should survive.</li>
- * <li><b>birthRules</b>, defines which dead cells should become alive.</li>
+ * <li><b>survival rules</b>, defines which living cells should survive.</li>
+ * <li><b>birth rules</b>, defines which dead cells should become alive.</li>
  * <li><b>dynamic</b>, defines if the board should behave dynamically.</li>
+ * <li><b>max number of cells:</b>, defines the upper limit to how many cells
+ * a dynamic board can have.</li>
  * </ul>
  * 
- * @author aleks
  */
 public class Rules {
 
@@ -51,7 +52,7 @@ public class Rules {
 
     /**
      *
-     * @return a boolean value indicating if the board should behave
+     * @return a <code>boolean</code> value indicating if the board should behave
      * dynamically.
      */
     public boolean isDynamic() {
@@ -60,9 +61,10 @@ public class Rules {
 
     /**
      * Specify if the board should behave dynamically. If so, board size will
-     * increase to acomadate boards that grow.
+     * increase to accomedate boards that grow.
      *
-     * @param dynamic
+     * @param dynamic a<code>boolean</code> specifying if the game rules should
+     * be dynamic or not.
      */
     public void setDynamic(boolean dynamic) {
         this.dynamic = dynamic;
@@ -75,7 +77,8 @@ public class Rules {
      *
      * Existing rules are discarded before new rules are applied.
      *
-     * @param input
+     * @param input one or more <code>int</code> values specifying the new 
+     * values.
      */
     public void setSurviveRules(int... input) {
         Arrays.sort(input);
@@ -94,8 +97,11 @@ public class Rules {
     /**
      * Takes an ArrayList of integers and uses it as the new definition for
      * survival rules.
+     * 
+     * Existing rules are discarded.
      *
-     * @param input
+     * @param input an <code>ArrayList&lt;Integer&gt;</code> containing the
+     * new rule values.
      */
     public void setSurviveRules(ArrayList<Integer> input) {
         survivalRules = input;
@@ -105,7 +111,8 @@ public class Rules {
      * Acquires an ArrayList of integer values which define the number of live
      * neighbours a live cell must have to survive.
      *
-     * @return an ArrayList of Integers.
+     * @return an <code>&lt;ArrayList&lt;Integer&gt;&gt;</code> specifying the
+     * new values.
      */
     public ArrayList<Integer> getSurviveRules() {
         return survivalRules;
@@ -118,7 +125,8 @@ public class Rules {
      *
      * Existing rules are discarded before new rules are applied.
      *
-     * @param input
+     * @param input one or more <code>int</code> values specifying the new 
+     * values.
      */
     public void setBirthRules(int... input) {
         Arrays.sort(input);
@@ -138,7 +146,10 @@ public class Rules {
      * Takes an ArrayList of integers and uses it as the new definition for
      * survival rules.
      *
-     * @param input
+     * Existing rules are discarded before new rules are applied.
+     * 
+     * @param input an <code>ArrayList&lt;Integer&gt;</code> containing the
+     * new rule values.
      */
     public void setBirthRules(ArrayList<Integer> input) {
         birthRules = input;
@@ -148,7 +159,8 @@ public class Rules {
      * Acquires an ArrayList of integer values which define the number of live
      * neighbours a dead cell must have to be born.
      *
-     * @return an ArrayList of Integers.
+     * @return an <code>ArrayList&lt;Integer&gt;</code> specifying the
+     * values for a dead cell to be born.
      */
     public ArrayList<Integer> getBirthRules() {
         return birthRules;

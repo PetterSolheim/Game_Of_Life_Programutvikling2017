@@ -5,7 +5,7 @@ package model;
  * game board to the next generation. This class has been deprecated and 
  * replaced by the {@link model.BoardDynamic} class.
  *
- * @deprecated use BoardDynamic instead
+ * @deprecated use {@link model.BoardDynamic} instead
  * @see model.BoardDynamic
  */
 @Deprecated
