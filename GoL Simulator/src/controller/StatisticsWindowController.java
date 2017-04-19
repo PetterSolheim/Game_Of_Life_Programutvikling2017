@@ -166,7 +166,6 @@ public class StatisticsWindowController {
     }
 
     private void defineChart() {
-        chart.se
         xAxis.setTickUnit(1);
         xAxis.setLowerBound(b.getGenerationCount());
         xAxis.setUpperBound(b.getGenerationCount() + Integer.parseInt(txtIterations.getText()));
