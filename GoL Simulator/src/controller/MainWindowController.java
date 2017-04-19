@@ -227,12 +227,9 @@ public class MainWindowController implements Initializable {
         FileImporter fileImporter = new FileImporter();
         FileChooser fileChooser = createFileChooser();
         File file = fileChooser.showOpenDialog(stage);
-
-        Board tmpBoard = new Board();
         if (file != null && file.exists()) {
             try {
-                tmpBoard = fileImporter.readGameBoardFromDisk(file);
-                board = tmpBoard;
+                board.setBoard(fileImporter.readGameBoardFromDisk(file));
                 centreBoardOnCanvas();
                 canvas.drawBoard(board);
                 updateLivingCellCountLabel();
@@ -262,7 +259,7 @@ public class MainWindowController implements Initializable {
         Optional<String> url = inputDialog.showAndWait();
         if (url.isPresent()) {
             try {
-                board = fileImporter.readGameBoardFromUrl(url.get());
+                board.setBoard(fileImporter.readGameBoardFromUrl(url.get()));
                 canvas.drawBoard(board);
                 updateLivingCellCountLabel();
             } catch (MalformedURLException e) {

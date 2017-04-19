@@ -10,6 +10,7 @@ import java.util.Arrays;
 import org.junit.AfterClass;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -126,16 +127,16 @@ public class BoardTest {
         System.out.println("getBoard");
         Board instance = new Board();
         byte[][] startingBoard = {
-            {0,0,0},
-            {1,1,1},
-            {0,0,0}
+            {0, 0, 0},
+            {1, 1, 1},
+            {0, 0, 0}
         };
         instance.setBoard(startingBoard);
         instance.nextGeneration();
         byte[][] expResult = {
-            {0,1,0},
-            {0,1,0},
-            {0,1,0}
+            {0, 1, 0},
+            {0, 1, 0},
+            {0, 1, 0}
         };
         assertArrayEquals(expResult, instance.getBoard());
     }
@@ -195,7 +196,7 @@ public class BoardTest {
         System.out.println("getGenerationCount");
         Board instance = new Board();
         int expResult = 20;
-        for(int i = 0; i < 20; i++) {
+        for (int i = 0; i < 20; i++) {
             instance.nextGeneration();
         }
         assertEquals(expResult, instance.getGenerationCount());
@@ -225,7 +226,7 @@ public class BoardTest {
     @Test
     public void testDeepCopy() {
         System.out.println("deepCopy");
-        
+
         // create the board to be copied
         Board originalBoard = new Board();
         byte[][] origBoard = {
@@ -245,7 +246,7 @@ public class BoardTest {
         assertEquals(originalBoard.getGenerationCount(), deepCopy.getGenerationCount());
         assertEquals(originalBoard.getLivingCellCount(), deepCopy.getLivingCellCount());
         assertEquals(originalBoard.getNumberOfCells(), deepCopy.getNumberOfCells());
-        
+
         // make changes to the deepCopy.
         byte[][] newBoard = {
             {1, 0, 1},
@@ -253,7 +254,8 @@ public class BoardTest {
             {1, 0, 1}
         };
         deepCopy.setBoard(newBoard);
-        
+        fail("TODO: complete test code.");
+
     }
 
     @Test
@@ -261,18 +263,17 @@ public class BoardTest {
         System.out.println("getNumberOfCells");
         Board instance = new Board();
         assertEquals(40000, instance.getNumberOfCells());
-        
+
         byte[][] testBoard = {
-            {1,0,1},
-            {1,1,1},
-            {0,0,0},
-            {1,0,1}
+            {1, 0, 1},
+            {1, 1, 1},
+            {0, 0, 0},
+            {1, 0, 1}
         };
         instance.setBoard(testBoard);
         assertEquals(12, instance.getNumberOfCells());
     }
 
-    
     @Test
     public void testGetLivingCellCount() {
         System.out.println("getLivingCellCount");

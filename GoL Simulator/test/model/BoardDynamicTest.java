@@ -184,7 +184,7 @@ public class BoardDynamicTest {
         BoardDynamic expResult = null;
         BoardDynamic result = instance.deepCopy();
         assertEquals(expResult, result);
-        fail("The test case is a prototype.");
+        fail("TODO: complete test code.");
     }
 
     @Test
@@ -325,9 +325,9 @@ public class BoardDynamicTest {
         System.out.println("toString");
         BoardDynamic instance = new BoardDynamic();
         byte[][] testBoard = {
-            {1,0,1},
-            {1,0,1},
-            {1,0,1}
+            {1, 0, 1},
+            {1, 0, 1},
+            {1, 0, 1}
         };
         instance.setBoard(testBoard);
         assertEquals("101101101", instance.toString());

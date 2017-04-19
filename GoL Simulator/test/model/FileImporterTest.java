@@ -21,14 +21,14 @@ public class FileImporterTest {
 
         // read the file used for testing
         FileImporter instance = new FileImporter();
-        instance.setPadding(0);
         Path path = Paths.get("test/model/testPatterns/octagon2.rle");
         File f = path.toFile();
-        Board result = instance.readGameBoardFromDisk(f);
+        BoardDynamic result = new BoardDynamic();
+        result.setBoard(instance.readGameBoardFromDisk(f));
 
         // create a board object representing the expected result.
-        Board expResult = new Board();
-        byte[][] board = {
+        BoardDynamic expResult = new BoardDynamic();
+        byte[][] boardPattern = {
             {0, 0, 0, 1, 1, 0, 0, 0},
             {0, 0, 1, 0, 0, 1, 0, 0},
             {0, 1, 0, 0, 0, 0, 1, 0},
@@ -37,7 +37,7 @@ public class FileImporterTest {
             {0, 1, 0, 0, 0, 0, 1, 0},
             {0, 0, 1, 0, 0, 1, 0, 0},
             {0, 0, 0, 1, 1, 0, 0, 0},};
-        expResult.setBoard(board);
+        expResult.setBoard(boardPattern);
 
         // set game rules to the expected result.
         ArrayList<Integer> expSurvivalRules = new ArrayList<>();
@@ -47,7 +47,7 @@ public class FileImporterTest {
         expBirthRules.add(3);
 
         // compare expected result with actual result.
-        assertArrayEquals(expResult.getBoard(), result.getBoard());
+        assertEquals(expResult.getBoard(), result.getBoard());
         assertEquals(expSurvivalRules, rules.getSurviveRules());
         assertEquals(expBirthRules, rules.getBirthRules());
     }
@@ -60,11 +60,11 @@ public class FileImporterTest {
         // read the file used for testing
         String url = "http://www.conwaylife.com/patterns/octagon2.rle";
         FileImporter instance = new FileImporter();
-        instance.setPadding(0);
-        Board result = instance.readGameBoardFromUrl(url);
+        BoardDynamic result = new BoardDynamic();
+        result.setBoard(instance.readGameBoardFromUrl(url));
 
         // create a board object representing the expected result.
-        Board expResult = new Board();
+        BoardDynamic expResult = new BoardDynamic();
         byte[][] board = {
             {0, 0, 0, 1, 1, 0, 0, 0},
             {0, 0, 1, 0, 0, 1, 0, 0},
@@ -84,19 +84,19 @@ public class FileImporterTest {
         expBirthRules.add(3);
 
         // compare expected result with actual result.
-        assertArrayEquals(expResult.getBoard(), result.getBoard());
+        assertEquals(expResult.getBoard(), result.getBoard());
         assertEquals(expSurvivalRules, rules.getSurviveRules());
         assertEquals(expBirthRules, rules.getBirthRules());
 
         // Board Test nr. 2 of 2.
         // read the file used for testing
         FileImporter instance2 = new FileImporter();
-        instance2.setPadding(0);
         String url2 = "http://www.conwaylife.com/patterns/blinker.rle";
-        Board result2 = instance2.readGameBoardFromUrl(url2);
+        BoardDynamic result2 = new BoardDynamic();
+        result2.setBoard(instance2.readGameBoardFromUrl(url2));
 
         // create a board object representing the expected result.
-        Board expResult2 = new Board();
+        BoardDynamic expResult2 = new BoardDynamic();
         byte[][] board2 = {
             {1, 1, 1}
         };
@@ -110,7 +110,7 @@ public class FileImporterTest {
         expBirthRules2.add(3);
 
         // compare expected result with actual result.
-        assertArrayEquals(expResult2.getBoard(), result2.getBoard());
+        assertEquals(expResult2.getBoard(), result2.getBoard());
         assertEquals(expSurvivalRules2, rules.getSurviveRules());
         assertEquals(expBirthRules2, rules.getBirthRules());
     }

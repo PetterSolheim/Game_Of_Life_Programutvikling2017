@@ -30,9 +30,9 @@ public class BoardDynamic {
 
     private int generationCount = 0;
     private int livingCells = 0;
-    private byte dead = 0;
-    private byte alive = 1;
-    private byte changed = 1;
+    private final byte DEAD = 0;
+    private final byte ALLIVE = 1;
+    private final byte CHANGED = 1;
     private Rules rules = Rules.getInstance();
 
     /**
@@ -197,12 +197,12 @@ public class BoardDynamic {
                 int nrOfNeighbours = countNeighbours(testPattern, row, col);
 
                 if (testPattern.get(row).get(col) == 1 && !rules.getSurviveRules().contains(nrOfNeighbours)) {
-                    currentBoard.get(row).set(col, dead);
-                    changedCells.get(row).set(col, changed);
+                    currentBoard.get(row).set(col, DEAD);
+                    changedCells.get(row).set(col, CHANGED);
                     livingCells--;
                 } else if (testPattern.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
-                    currentBoard.get(row).set(col, alive);
-                    changedCells.get(row).set(col, changed);
+                    currentBoard.get(row).set(col, ALLIVE);
+                    changedCells.get(row).set(col, CHANGED);
                     livingCells++;
                 }
             }
@@ -242,7 +242,7 @@ public class BoardDynamic {
             changedCells = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
             for (int row = 0; row < changedCells.size(); row++) {
                 for (int col = 0; col < changedCells.get(0).size(); col++) {
-                    changedCells.get(row).set(col, changed);
+                    changedCells.get(row).set(col, CHANGED);
                 }
             }
         }
@@ -274,7 +274,7 @@ public class BoardDynamic {
     private void expandNorth() {
         currentBoard.add(0, new ArrayList<>());
         for (int i = 0; i < currentBoard.get(1).size(); i++) {
-            currentBoard.get(0).add(dead);
+            currentBoard.get(0).add(DEAD);
         }
     }
 
@@ -304,7 +304,7 @@ public class BoardDynamic {
      */
     private void expandEast() {
         for (int i = 0; i < currentBoard.size(); i++) {
-            currentBoard.get(i).add(0, dead);
+            currentBoard.get(i).add(0, DEAD);
         }
     }
 
@@ -334,7 +334,7 @@ public class BoardDynamic {
     private void expandSouth() {
         currentBoard.add(new ArrayList<>());
         for (int i = 0; i < currentBoard.get(0).size(); i++) {
-            currentBoard.get(currentBoard.size() - 1).add(dead);
+            currentBoard.get(currentBoard.size() - 1).add(DEAD);
         }
     }
 
@@ -364,7 +364,7 @@ public class BoardDynamic {
      */
     private void expandWest() {
         for (int i = 0; i < currentBoard.size(); i++) {
-            currentBoard.get(i).add(dead);
+            currentBoard.get(i).add(DEAD);
         }
     }
 
@@ -428,9 +428,9 @@ public class BoardDynamic {
     public void toggleCellState(int row, int col) {
         if (currentBoard.get(row).get(col) == 1) {
             livingCells--;
-            currentBoard.get(row).set(col, dead);
+            currentBoard.get(row).set(col, DEAD);
         } else {
-            currentBoard.get(row).set(col, alive);
+            currentBoard.get(row).set(col, ALLIVE);
             livingCells++;
         }
     }
@@ -443,7 +443,7 @@ public class BoardDynamic {
      */
     public void setCellStateAlive(int row, int col) {
         if (currentBoard.get(row).get(col) != 1) {
-            currentBoard.get(row).set(col, alive);
+            currentBoard.get(row).set(col, ALLIVE);
             livingCells++;
         }
     }
