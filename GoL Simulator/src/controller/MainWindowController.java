@@ -32,7 +32,6 @@ import model.*;
 import view.GameCanvas;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import view.DialogBoxes;
@@ -68,7 +67,7 @@ public class MainWindowController implements Initializable {
     private ColorPicker backgroundColorPicker;
     @FXML
     private ImageView imgPlayPause;
-    private Board board;
+    private BoardDynamic board;
     private Timer time;
     private boolean isPaused = true;
     private Stage stage;
@@ -83,7 +82,7 @@ public class MainWindowController implements Initializable {
         Platform.runLater(this::defineStage); // allows easy referal to the stage.
         Platform.runLater(this::resizeCanvas); // ensures the parent node is ready before resizing the canvas.
 
-        board = new Board(10, 10);
+        board = new BoardDynamic(10, 10);
         time = new Timer(this);
 
         // set the default value of the color pickers.
@@ -101,7 +100,7 @@ public class MainWindowController implements Initializable {
         // prepare the cellSizeSlider.
         cellSizeSlider.valueProperty().addListener((observable) -> {
             canvas.setCellSize((int) cellSizeSlider.getValue());
-            canvas.drawBoard(board);
+            canvas.drawBoard(board.getBoard());
         });
 
         canvas.setCellSize((int) cellSizeSlider.getValue());
@@ -128,7 +127,7 @@ public class MainWindowController implements Initializable {
      */
     private void resizeCanvas() {
         canvas.resizeCanvas(canvasAnchor.getHeight(), canvasAnchor.getWidth());
-        canvas.drawBoard(board);
+        canvas.drawBoard(board.getBoard());
     }
 
     @FXML
@@ -143,7 +142,7 @@ public class MainWindowController implements Initializable {
     private void reset() {
         pause();
         board.resetBoard();
-        canvas.drawBoard(board);
+        canvas.drawBoard(board.getBoard());
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
     }
@@ -189,8 +188,8 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     private void centreBoardOnCanvas() {
-        double boardWidthCenter = (board.getBoard()[0].length * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
-        double boardHeightCenter = (board.getBoard().length * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
+        double boardWidthCenter = (board.getBoard().get(0).size() * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
+        double boardHeightCenter = (board.getBoard().size() * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
         double canvasWidthCenter = (canvas.getWidth() / 2);
         double canvasHeightCenter = (canvas.getHeight() / 2);
 
@@ -198,7 +197,7 @@ public class MainWindowController implements Initializable {
         double yOffset = canvasHeightCenter - boardHeightCenter;
 
         canvas.setOffset(xOffset, yOffset);
-        canvas.drawBoard(board);
+        canvas.drawBoard(board.getBoard());
     }
 
     /**
@@ -231,7 +230,7 @@ public class MainWindowController implements Initializable {
             try {
                 board.setBoard(fileImporter.readGameBoardFromDisk(file));
                 centreBoardOnCanvas();
-                canvas.drawBoard(board);
+                canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
 
             } catch (FileNotFoundException e) {
@@ -260,7 +259,7 @@ public class MainWindowController implements Initializable {
         if (url.isPresent()) {
             try {
                 board.setBoard(fileImporter.readGameBoardFromUrl(url.get()));
-                canvas.drawBoard(board);
+                canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
             } catch (MalformedURLException e) {
                 DialogBoxes.ioException("Given String is not a valid URL: " + e.getMessage());
@@ -281,7 +280,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private void changeLivingCellColor() {
         canvas.setLivingCellColor(livingCellColorPicker.getValue());
-        canvas.drawBoard(board);
+        canvas.drawBoard(board.getBoard());
     }
 
     /**
@@ -291,7 +290,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private void changeBackgroundColor() {
         canvas.setBackgroundColor(backgroundColorPicker.getValue());
-        canvas.drawBoard(board);
+        canvas.drawBoard(board.getBoard());
     }
 
     /**
@@ -301,7 +300,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private void changeDeadCellColor() {
         canvas.setDeadCellColor(deadCellColorPicker.getValue());
-        canvas.drawBoard(board);
+        canvas.drawBoard(board.getBoard());
     }
 
     /**
@@ -334,7 +333,7 @@ public class MainWindowController implements Initializable {
     @FXML
     public void createNextGeneration() {
         board.nextGeneration();
-        canvas.drawBoardChanges(board);
+        canvas.drawSpecificCells(board.getChangedCells(), board.getBoard());
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
     }
@@ -372,7 +371,9 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    
     public void showStatistics() throws IOException {
+        /*
         Stage stage = new Stage();
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/StatisticsWindow.fxml"));
         FlowPane root = loader.load();
@@ -385,6 +386,7 @@ public class MainWindowController implements Initializable {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Statistics");
         stage.show();
+        */
     }
 
     /**
@@ -401,7 +403,7 @@ public class MainWindowController implements Initializable {
 
             if (isWithinBoard(row, col)) {
                 board.toggleCellState(row, col);
-                canvas.drawCell(board, row, col);
+                canvas.drawCell(board.getBoard(), row, col);
                 board.getLivingCellCount();
                 updateLivingCellCountLabel();
             }
@@ -449,7 +451,7 @@ public class MainWindowController implements Initializable {
         double newXOffset = canvas.getXOffset() + (event.getX() - previousXOffset);
         double newYOffset = canvas.getYOffset() + (event.getY() - previousYOffset);
         canvas.setOffset(newXOffset, newYOffset);
-        canvas.drawBoard(board);
+        canvas.drawBoard(board.getBoard());
         previousXOffset = event.getX();
         previousYOffset = event.getY();
     }
@@ -470,7 +472,7 @@ public class MainWindowController implements Initializable {
         // ensure that the drag event was within the actual board.
         if (isWithinBoard(row, col)) {
             board.setCellStateAlive(row, col);
-            canvas.drawCell(board, row, col);
+            canvas.drawCell(board.getBoard(), row, col);
             board.getLivingCellCount();
             updateLivingCellCountLabel();
         }
@@ -486,7 +488,7 @@ public class MainWindowController implements Initializable {
      * current board.
      */
     private boolean isWithinBoard(int row, int col) {
-        if (row < board.getBoard().length && row >= 0 && col < board.getBoard()[0].length && col >= 0) {
+        if (row < board.getBoard().size() && row >= 0 && col < board.getBoard().get(0).size() && col >= 0) {
             return true;
         } else {
             return false;

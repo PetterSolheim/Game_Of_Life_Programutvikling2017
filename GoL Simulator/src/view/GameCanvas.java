@@ -1,9 +1,11 @@
 package view;
 
+import java.util.ArrayList;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import model.Board;
+import model.BoardDynamic;
 
 /**
  * Resizable canvas object with the necessary methods for drawing, and changing
@@ -92,13 +94,13 @@ public class GameCanvas extends Canvas {
      *
      * @param b Board class containing a two dimensional byte array.
      */
-    public void drawBoard(Board b) {
+    public void drawBoard(ArrayList<ArrayList<Byte>> board) {
         gc.setFill(backgroundColor);
         gc.fillRect(0, 0, this.getWidth(), this.getHeight());
 
-        for (int row = 0; row < b.getBoard().length; row++) {
-            for (int col = 0; col < b.getBoard()[0].length; col++) {
-                drawCell(b, row, col);
+        for (int row = 0; row < board.size(); row++) {
+            for (int col = 0; col < board.get(0).size(); col++) {
+                drawCell(board, row, col);
             }
         }
     }
@@ -108,14 +110,14 @@ public class GameCanvas extends Canvas {
      * the last generation shift, and which is also located within the canvas
      * objects dimensions (and thereby also visible).
      *
-     * @param b the Board object.
+     * @param cellToDraw the Board object.
      */
-    public void drawBoardChanges(Board b) {
-        for (int row = 0; row < b.getChangedCells().length; row++) {
-            for (int col = 0; col < b.getChangedCells()[0].length; col++) {
+    public void drawSpecificCells(ArrayList<ArrayList<Byte>> cellToDraw, ArrayList<ArrayList<Byte>> board) {
+        for (int row = 0; row < cellToDraw.size(); row++) {
+            for (int col = 0; col < cellToDraw.get(0).size(); col++) {
                 // cells that have changed are symbolised by the number 1.
-                if (b.getChangedCells()[row][col] == 1) {
-                    drawCell(b, row, col);
+                if (cellToDraw.get(row).get(col) == 1) {
+                    drawCell(board, row, col);
                 }
             }
         }
@@ -129,7 +131,7 @@ public class GameCanvas extends Canvas {
      * @param row the y position of the cell to be drawn.
      * @param col the x position of the cell to be drawn.
      */
-    public void drawCell(Board b, int row, int col) {
+    public void drawCell(ArrayList<ArrayList<Byte>> b, int row, int col) {
         // calculate the position of the given cell. Use of Math.floor() to
         // avoid pixelbleed due to decimal values.
         double xPosition = Math.floor(xOffset + (col * (cellSize + spaceBetweenCells)));
@@ -138,7 +140,7 @@ public class GameCanvas extends Canvas {
         // determin if the given cells position is within the size of the canvas.
         // If it is, drawBoard that cell. If not, do nothing.
         if (xPosition < this.getWidth() && yPosition < this.getHeight()) {
-            if (b.getBoard()[row][col] == 1) {
+            if (b.get(row).get(col) == 1) {
                 gc.setFill(livingCellColor);
             } else {
                 gc.setFill(deadCellColor);
