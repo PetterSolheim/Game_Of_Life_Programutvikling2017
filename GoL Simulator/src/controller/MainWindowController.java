@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -33,6 +34,7 @@ import view.ResizableCanvas;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
+import javafx.stage.WindowEvent;
 import javafx.stage.Modality;
 import view.DialogBoxes;
 
@@ -265,6 +267,7 @@ public class MainWindowController implements Initializable {
         time.setFps(newTimer);
     }
 
+
     private void displayLivingCellCount() {
         txtShowCellCount.setText(Integer.toString(board.getLivingCellCount()) + " .");
     }
@@ -304,17 +307,20 @@ public class MainWindowController implements Initializable {
     }
 
     public void showStatistics() throws IOException {
-        Stage stage = new Stage();
+
+        Stage statistics = new Stage();
+        statistics.setWidth(800);
+        statistics.setHeight(800);
+
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/StatisticsWindow.fxml"));
         FlowPane root = loader.load();
 
         StatisticsWindowController controller = loader.getController();
         controller.setBoard(board.deepCopy());
         Scene scene = new Scene(root);
-        stage.setScene(scene);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setTitle("Statistics");
-        stage.show();
+        statistics.setScene(scene);
+        statistics.setTitle("Statistics");
+        statistics.show();
     }
 
     /**
