@@ -221,7 +221,6 @@ public class BoardDynamic {
                 }
             }
         }
-        int i = getIndexSum();
         generationCount++;
     }
 
