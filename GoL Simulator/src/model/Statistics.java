@@ -28,7 +28,7 @@ public class Statistics {
     }
 
     private void setLastGeneration() {
-        this.lastGeneration = firstGeneration + iterations;
+        this.lastGeneration = firstGeneration + iterations - 1;
     }
 
     public int getLastGeneration() {
@@ -131,7 +131,25 @@ public class Statistics {
         similarityMeasure.setXValue(generation);
         return similarityMeasure;
     }
-
+    
+    public int findMostSimilar(int generation) {
+        float generationToCompare = floatBoards.get(generation);
+        float highestfloat = 0f;
+        int mostSimilarGeneration = 0;
+        int i = this.firstGeneration + 1;
+        while (i < this.lastGeneration) {
+            if (i != generation) {
+                float newFloat = Float.min(generationToCompare, floatBoards.get(i).floatValue()) / Float.max(generationToCompare, floatBoards.get(i).floatValue());
+                if (newFloat > highestfloat) {
+                    mostSimilarGeneration = i;
+                    highestfloat = newFloat;
+                }
+            }
+            i++;
+        }
+        return mostSimilarGeneration;
+    }
+    
     public BoardDynamic getSelectedIteration(int generation) {
         return generations.get(generation);
     }

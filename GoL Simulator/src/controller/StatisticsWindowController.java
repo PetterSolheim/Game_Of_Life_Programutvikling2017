@@ -29,12 +29,6 @@ public class StatisticsWindowController {
     @FXML
     private VBox dialogWrapper;
     @FXML
-    private VBox leftCanvasGroup;
-    @FXML
-    private VBox rightCanvasGroup;
-    @FXML
-    private HBox findSimilarIteration;
-    @FXML
     private GameCanvas leftCanvas;
     @FXML
     private GameCanvas rightCanvas;
@@ -46,14 +40,13 @@ public class StatisticsWindowController {
     private ComboBox<String> leftCanvasComboBox;
     @FXML
     private ComboBox<String> rightCanvasComboBox;
+
     private BoardDynamic b;
     private Statistics s;
-    private boolean extendStatistics;
 
     public void initialize() {
         root.getChildren().remove(chartWrapper);
         root.getChildren().remove(detailedInformation);
-        extendStatistics = false;
         root.widthProperty().addListener((BindingHelperObserver, oldValue, newValue) -> changeWidth());
     }
 
@@ -83,14 +76,15 @@ public class StatisticsWindowController {
     }
 
     public void populateComboBoxes() {
-        //findSimilarComboBox = new ComboBox<String>();
-        //leftCanvasComboBox = new ComboBox<String>();
-        //rightCanvasComboBox = new ComboBox<String>();
         int i = s.getFirstGeneration();
         while (i < s.getIterations() + s.getFirstGeneration()) {
             String o = Integer.toString(i);
             leftCanvasComboBox.getItems().add(o);
             rightCanvasComboBox.getItems().add(o);
+            if (i == s.getFirstGeneration()) {
+                i++;
+                continue;
+            }
             findSimilarComboBox.getItems().add(o);
             i++;
         }
@@ -108,14 +102,12 @@ public class StatisticsWindowController {
                 -> showSelection(rightCanvasComboBox, rightCanvas)
         );
         findSimilarComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue)
-                -> System.out.println(leftCanvasComboBox.getValue())
+                -> setSimilarCanvas()
         );
         leftCanvasComboBox.setValue(Integer.toString(s.getFirstGeneration()));
         rightCanvasComboBox.setValue(Integer.toString(s.getLastGeneration()));
 
     }
-
-    @FXML
 
     public void getStatistics() {
         s = new Statistics(b, Integer.parseInt(txtIterations.getText()));
@@ -126,6 +118,12 @@ public class StatisticsWindowController {
         }
     }
 
+    public void setSimilarCanvas() {
+        Object o = findSimilarComboBox.getValue();
+        int i = Integer.parseInt(o.toString());
+        leftCanvasComboBox.setValue(findSimilarComboBox.getValue());
+        rightCanvasComboBox.setValue(Integer.toString(s.findMostSimilar(i)));
+    }
 
     public void defineCanvas() {
         leftCanvas.widthProperty().set(root.getWidth() / 2);
@@ -143,7 +141,6 @@ public class StatisticsWindowController {
             defineCanvas();
             getStatistics();
             populateComboBoxes();
-            extendStatistics = true;
         } else {
             chart.getData().clear();
             xAxis.setUpperBound(b.getGenerationCount() + Integer.parseInt(txtIterations.getText()));
