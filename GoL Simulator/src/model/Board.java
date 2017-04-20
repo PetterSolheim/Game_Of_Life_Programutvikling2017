@@ -8,7 +8,6 @@ import java.util.Arrays;
  * iterating to the next generation. Rules are located in the Rules class.
  */
 public class Board {
-    
     private byte[][] currentBoard;
     private byte[][] changedCells;
     private byte[][] originalBoard;
@@ -44,33 +43,58 @@ public class Board {
     public Board(byte [][] board){
         this.currentBoard = duplicateBoard(board);
     }
+
     /**
      * Returns the number of cells on the board.
+     *
      * @return int
      */
     public long numberOfCells() {
         return currentBoard.length * currentBoard[0].length;
     }
-    public Board deepCopy (){ // not a deep copy?
+
+    /**
+     * Creates a deep copy of the board.
+     *
+     * @return board
+     */
+    public Board deepCopy() {
         Board b = new Board();
         b.currentBoard = duplicateBoard(this.currentBoard);
         b.originalBoard = duplicateBoard(this.originalBoard);
-        b.survivalRules = this.survivalRules;
-        b.birthRules = this.birthRules;
+        
+        ArrayList<Integer> survivalRulesCopy = new ArrayList<Integer>();
+        for(int i = 0; i < survivalRules.size(); i++) {
+            survivalRulesCopy.add(survivalRules.get(i));
+        }
+        b.setSurviveRules(survivalRulesCopy);
+        
+        ArrayList<Integer> birthRulesCopy = new ArrayList<Integer>();
+        for(int i = 0; i < birthRules.size(); i++) {
+            birthRulesCopy.add(birthRules.get(i));
+        }
+        b.setBirthRules(birthRulesCopy);
+        
         b.generationCount = this.generationCount;
         b.countLivingCells();
-        System.out.println("Living Cell Count" + b.livingCells);
         return b;
     }
-    private void countLivingCells (){
-        for(int col = 0; col < currentBoard.length; col++){
-            for(int row = 0 ; row < currentBoard.length; row++){
-                if(currentBoard[row][col]==1){
+
+    /**
+     * Updates the board cellCount variable to reflect the current number of
+     * living cells.
+     */
+    private void countLivingCells() {
+        livingCells = 0;
+        for (int col = 0; col < currentBoard.length; col++) {
+            for (int row = 0; row < currentBoard.length; row++) {
+                if (currentBoard[row][col] == 1) {
                     livingCells++;
                 }
             }
         }
     }
+
     public int getIndexSum (){
         int sum = indexSum;
         indexSum = 0;
@@ -97,6 +121,10 @@ public class Board {
         }
         survivalRules = inputWithoutDuplicates;
     }
+    
+    public void setSurviveRules(ArrayList<Integer> input) {
+        survivalRules = input;
+    }
 
     /**
      * Sets the birth values for the game rules. New values can be passed as
@@ -119,6 +147,10 @@ public class Board {
         birthRules = inputWithoutDuplicates;
     }
     
+    public void setBirthRules(ArrayList<Integer> input) {
+        birthRules = input;
+    }
+
     /**
      * Acquires an ArrayList of integer values which define the number of live
      * neighbours a dead cell must have to be born.
@@ -166,6 +198,7 @@ public class Board {
     public void setBoard(byte[][] newBoard) {
         originalBoard = duplicateBoard(newBoard);
         currentBoard = duplicateBoard(newBoard);
+        countLivingCells();
     }
 
     /**
@@ -278,11 +311,12 @@ public class Board {
      * @param col x position of the cell to make alive.
      */
     public void setCellStateAlive(int row, int col) {
-        if(currentBoard[row][col] != 1){
+        if (currentBoard[row][col] != 1) {
             currentBoard[row][col] = 1;
             livingCells++;
         }
     }
+
     /**
      *
      * @return The current generation count.
@@ -290,20 +324,26 @@ public class Board {
     public int getGenerationCount() {
         return generationCount;
     }
-    public int getLivingCells (){
+
+    /**
+     * Return the number of living cells on the current board.
+     * @return 
+     */
+    public int getLivingCellCount() {
         return livingCells;
     }
+
     /**
      * Reverts the current board back to its original state.
      */
     public void resetBoard() {
         currentBoard = duplicateBoard(originalBoard);
         generationCount = 0;
-        livingCells = 0;
+        countLivingCells();
     }
 
     /**
-     * A string representation of the board. Exists soley for use with JUnit.
+     * A string representation of the board. Exists solely for use with JUnit.
      *
      * @return
      */
@@ -321,7 +361,7 @@ public class Board {
     }
 
     /**
-     * A simple method for copying a 2D array.
+     * A simple method for copying a 2D byte array.
      *
      * @param original The board that you want to copy.
      * @return A reference to the new copy of the array.

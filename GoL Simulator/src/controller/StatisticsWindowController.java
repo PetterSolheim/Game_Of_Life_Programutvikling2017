@@ -125,19 +125,23 @@ public class StatisticsWindowController {
     }
 
     @FXML
+
     public void getStatistics() {
         s = new Statistics(b, Integer.parseInt(txtIterations.getText()));
         XYChart.Series[] series = s.getStatistics();
         for (XYChart.Series se : series) {
             chart.getData().add(se);
+
         }
     }
+
 
     public void defineCanvas() {
         leftCanvas.widthProperty().set(root.getWidth() / 2);
         rightCanvas.widthProperty().set(root.getWidth() / 2);
         leftCanvas.heightProperty().set(300);
         rightCanvas.heightProperty().set(300);
+
     }
 
     @FXML

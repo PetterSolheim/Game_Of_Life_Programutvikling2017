@@ -2,26 +2,73 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="vBox" prefHeight="173.0" prefWidth="400" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameRulesWindowController">
+<VBox fx:id="vBox" prefHeight="339.0" prefWidth="400" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameRulesWindowController">
     <children>
       <Label text="Game Rules">
          <font>
-            <Font name="System Bold" size="12.0" />
+            <Font name="System Bold" size="13.0" />
          </font>
       </Label>
-      <Label text="This is where you define the rules that the game will follow. S is the number of live neighbours a live cell must have to survive. B is the number of live neighbours a dead cell must have to be born." wrapText="true" />
+      <Label prefHeight="106.0" prefWidth="380.0" text="This is where you define the rules that the game will follow. In the Game of Life, each cell has eight neighbours. The number of live neighbours each cell has, defines its behaviour during a change in generation. The behaviour of the cell is defined by two rules. The number of living neighbours a living cell must have to survive, and the number of living neighbours a dead cell must have to be born." wrapText="true" />
         <HBox spacing="5.0">
          <children>
-            <Label text="S:" />
-            <TextField fx:id = "txtS"/>
-            <Label text="/ B:" />
-            <TextField fx:id = "txtB"/>
+            <VBox prefHeight="131.0" prefWidth="383.0">
+               <children>
+                  <Label text="Survival">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <Label text="The number of living neighbours a cell must have to survive." />
+                  <HBox prefHeight="18.0" prefWidth="380.0" spacing="15.0">
+                     <children>
+                        <CheckBox fx:id="s0" mnemonicParsing="false" text="0" />
+                        <CheckBox fx:id="s1" mnemonicParsing="false" text="1" />
+                        <CheckBox fx:id="s2" mnemonicParsing="false" text="2" />
+                        <CheckBox fx:id="s3" mnemonicParsing="false" text="3" />
+                        <CheckBox fx:id="s4" mnemonicParsing="false" text="4" />
+                        <CheckBox fx:id="s5" mnemonicParsing="false" text="5" />
+                        <CheckBox fx:id="s6" mnemonicParsing="false" text="6" />
+                        <CheckBox fx:id="s7" mnemonicParsing="false" text="7" />
+                        <CheckBox fx:id="s8" mnemonicParsing="false" text="8" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Label text="Birth">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets top="5.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label text="The number of living neighbours a dead cell must have to be born." />
+                  <HBox prefHeight="18.0" prefWidth="380.0" spacing="15.0">
+                     <children>
+                        <CheckBox fx:id="b0" mnemonicParsing="false" text="0" />
+                        <CheckBox fx:id="b1" mnemonicParsing="false" text="1" />
+                        <CheckBox fx:id="b2" mnemonicParsing="false" text="2" />
+                        <CheckBox fx:id="b3" mnemonicParsing="false" text="3" />
+                        <CheckBox fx:id="b4" mnemonicParsing="false" text="4" />
+                        <CheckBox fx:id="b5" mnemonicParsing="false" text="5" />
+                        <CheckBox fx:id="b6" mnemonicParsing="false" text="6" />
+                        <CheckBox fx:id="b7" mnemonicParsing="false" text="7" />
+                        <CheckBox fx:id="b8" mnemonicParsing="false" text="8" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="5.0" top="5.0" />
+                     </VBox.margin>
+                  </HBox>
+               </children>
+            </VBox>
          </children>
         </HBox>
         <HBox id="buttonRow" alignment="TOP_RIGHT" spacing="5">
