@@ -8,7 +8,6 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -28,8 +27,8 @@ import model.*;
 import view.GameCanvas;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
-import javafx.stage.WindowEvent;
 import javafx.stage.Modality;
 import view.DialogBoxes;
 
@@ -372,8 +371,26 @@ public class MainWindowController implements Initializable {
 
     public void showStatistics() throws IOException {
         Stage statistics = new Stage();
+
         statistics.setWidth(800);
+
         statistics.setHeight(800);
+
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/StatisticsWindow.fxml"));
+
+        FlowPane root = loader.load();
+
+        StatisticsWindowController controller = loader.getController();
+
+        controller.setBoard(board.deepCopy());
+
+        Scene scene = new Scene(root);
+
+        statistics.setScene(scene);
+
+        statistics.setTitle("Statistics");
+
+        statistics.show();
     }
 
     /**

@@ -10,7 +10,7 @@
 <?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.text.Text?>
 <?import javafx.scene.control.ComboBox?>
-<?import view.ResizableCanvas?>
+<?import view.GameCanvas?>
 
 <FlowPane fx:id="root" maxHeight="Infinity" maxWidth="Infinity" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.StatisticsWindowController">    
     <children>
@@ -39,13 +39,13 @@
                         <VBox fx:id="leftCanvasGroup">
                             <children>
                                 <ComboBox fx:id="leftCanvasComboBox"/>
-                                <ResizableCanvas fx:id="leftCanvas"></ResizableCanvas>
+                                <GameCanvas fx:id="leftCanvas"></GameCanvas>
                             </children>
                         </VBox>
                         <VBox fx:id="rightCanvasGroup">
                             <children>
                                 <ComboBox fx:id="rightCanvasComboBox"/>
-                                <ResizableCanvas fx:id="rightCanvas"></ResizableCanvas>
+                                <GameCanvas fx:id="rightCanvas"></GameCanvas>
                             </children>
                         </VBox>
                     </children>
