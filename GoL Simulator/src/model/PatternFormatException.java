@@ -1,13 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package model;
 
 /**
- *
- * @author aleks
+ * Used by FileImporter.java to throw exceptions when encountering patterns
+ * in files such as RLE that do not match the FileImporters expectations.
  */
 public class PatternFormatException extends Exception {
     public PatternFormatException(){}

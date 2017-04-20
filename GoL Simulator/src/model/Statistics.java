@@ -9,21 +9,21 @@ import javafx.scene.chart.XYChart;
  */
 public class Statistics {
 
-    private Board b;
+    private BoardDynamic b;
     private int iterations;
     private int firstGeneration;
     private int lastGeneration;
     private HashMap<Integer, Float> floatBoards;
     private HashMap<Integer, Integer> livingCellsPerGeneration;
-    private HashMap<Integer, Board> generations;
+    private HashMap<Integer, BoardDynamic> generations;
 
-    public Statistics(Board b, int iterations) {
+    public Statistics(BoardDynamic b, int iterations) {
         this.b = b;
         firstGeneration = b.getGenerationCount();
         this.iterations = iterations;
         livingCellsPerGeneration = new HashMap<Integer, Integer>();
         floatBoards = new HashMap<Integer, Float>();
-        generations = new HashMap<Integer, Board>();
+        generations = new HashMap<Integer, BoardDynamic>();
         setLastGeneration();
     }
     private void setLastGeneration (){
@@ -45,7 +45,7 @@ public class Statistics {
     public XYChart.Series[] getStatistics() {
         //Define series to be returned
         XYChart.Series livingCells = new XYChart.Series();
-        livingCells.getData().add(new XYChart.Data(b.getGenerationCount(), b.getLivingCells()));
+        livingCells.getData().add(new XYChart.Data(b.getGenerationCount(), b.getLivingCellCount()));
         livingCells.setName("Living Cells");
 
         XYChart.Series popluationChange = new XYChart.Series();
@@ -56,14 +56,14 @@ public class Statistics {
         similiarityMeasure.setName("Similarity Measure");
         
         //Needs initial generation data.
-        livingCellsPerGeneration.put(b.getGenerationCount(), b.getLivingCells());
-        generations.put(b.getGenerationCount(), new Board(b.getBoard()));
+        livingCellsPerGeneration.put(b.getGenerationCount(), b.getLivingCellCount());
+        generations.put(b.getGenerationCount(), new BoardDynamic(b.getBoard()));
         //Populate living Cells and populationChange
         while (b.getGenerationCount() < lastGeneration) {
-            int prevPopulation = b.getLivingCells();
+            int prevPopulation = b.getLivingCellCount();
             b.nextGeneration();
-            generations.put(b.getGenerationCount(), new Board(b.getBoard()));
-            livingCellsPerGeneration.put(b.getGenerationCount(), b.getLivingCells());
+            generations.put(b.getGenerationCount(), new BoardDynamic(b.getBoard()));
+            livingCellsPerGeneration.put(b.getGenerationCount(), b.getLivingCellCount());
             livingCells.getData().add(getLivingCells());
             popluationChange.getData().add(getPopulationChange(prevPopulation));
             floatBoards.put(b.getGenerationCount(), convertBoardToFloat(b.getGenerationCount()));
@@ -85,19 +85,19 @@ public class Statistics {
     }
 
     private XYChart.Data getLivingCells() {
-        return new XYChart.Data(b.getGenerationCount(), b.getLivingCells());
+        return new XYChart.Data(b.getGenerationCount(), b.getLivingCellCount());
     }
 
     private XYChart.Data getPopulationChange(int prevPopulation) {
-        int diff = b.getLivingCells() - prevPopulation;
+        int diff = b.getLivingCellCount() - prevPopulation;
         XYChart.Data populationChange = new XYChart.Data(b.getGenerationCount(), diff);
         return populationChange;
     }
 
     private float convertBoardToFloat(int currentGeneration) {
         float a = 0.5f, be = 0.95f, y = 0.25f;
-        float af = a * b.getLivingCells();
-        float bf = be * (b.getLivingCells() - livingCellsPerGeneration.get(currentGeneration - 1));
+        float af = a * b.getLivingCellCount();
+        float bf = be * (b.getLivingCellCount() - livingCellsPerGeneration.get(currentGeneration - 1));
         System.out.println("bf" + bf);
         float yg = y * b.getIndexSum();
         float board = af + bf + yg;
@@ -125,7 +125,7 @@ public class Statistics {
         similarityMeasure.setXValue(generation);
         return similarityMeasure;
     }
-    public Board getSelectedIteration(int generation){
+    public BoardDynamic getSelectedIteration(int generation){
         return generations.get(generation);
     }
 }

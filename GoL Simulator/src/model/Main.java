@@ -2,12 +2,14 @@ package model;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-public class GoLSimulator extends Application {
+/**
+ * Main classes only role is to load the MainWindow and its controller.
+ */
+public class Main extends Application {
     
     @Override
     public void start(Stage stage) throws Exception {
@@ -16,6 +18,7 @@ public class GoLSimulator extends Application {
         stage.setScene(scene);
         stage.setMinHeight(400);
         stage.setMinWidth(700);
+        stage.setTitle("Game of Life Simulator");
         stage.show();
     }
 

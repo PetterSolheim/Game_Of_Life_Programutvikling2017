@@ -1,27 +1,18 @@
 package controller;
 
-import com.sun.javafx.binding.BindingHelperObserver;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import javafx.fxml.FXML;
-import javafx.scene.chart.Axis;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
-import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.stage.Stage;
-import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
-import model.Board;
+import model.BoardDynamic;
 import model.Statistics;
-import view.ResizableCanvas;
+import view.GameCanvas;
 
 public class StatisticsWindowController {
 
@@ -44,9 +35,9 @@ public class StatisticsWindowController {
     @FXML
     private HBox findSimilarIteration;
     @FXML
-    private ResizableCanvas leftCanvas;
+    private GameCanvas leftCanvas;
     @FXML
-    private ResizableCanvas rightCanvas;
+    private GameCanvas rightCanvas;
     @FXML
     private VBox detailedInformation;
     @FXML
@@ -55,7 +46,7 @@ public class StatisticsWindowController {
     private ComboBox<String> leftCanvasComboBox;
     @FXML
     private ComboBox<String> rightCanvasComboBox;
-    private Board b;
+    private BoardDynamic b;
     private Statistics s;
     private boolean extendStatistics;
 
@@ -76,19 +67,19 @@ public class StatisticsWindowController {
         }
     }
 
-    public void showSelection(ComboBox selection, ResizableCanvas c) {
+    public void showSelection(ComboBox selection, GameCanvas c) {
         Object o = selection.getValue();
         int i = Integer.parseInt(o.toString());
-        c.draw(s.getSelectedIteration(i));
+        c.drawBoard(s.getSelectedIteration(i).getBoard());
     }
 
     public void refreshCanvas() {
         Object o = leftCanvasComboBox.getValue();
         int i = Integer.parseInt(o.toString());
-        leftCanvas.draw(s.getSelectedIteration(i));
+        leftCanvas.drawBoard(s.getSelectedIteration(i).getBoard());
         o = rightCanvasComboBox.getValue();
         i = Integer.parseInt(o.toString());
-        rightCanvas.draw(s.getSelectedIteration(i));
+        rightCanvas.drawBoard(s.getSelectedIteration(i).getBoard());
     }
 
     public void populateComboBoxes() {
@@ -180,7 +171,7 @@ public class StatisticsWindowController {
          */
     }
 
-    public void setBoard(Board b) {
+    public void setBoard(BoardDynamic b) {
         this.b = b;
     }
 }

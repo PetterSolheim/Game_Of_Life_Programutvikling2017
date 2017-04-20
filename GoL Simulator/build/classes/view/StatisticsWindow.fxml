@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.ComboBox?>
+<?import view.ResizableCanvas?>
+
+<FlowPane fx:id="root" maxHeight="Infinity" maxWidth="Infinity" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.StatisticsWindowController">    
+    <children>
+        <HBox fx:id="chartWrapper">
+            <children>
+                <LineChart fx:id="chart" title="Statistics">
+                    <xAxis>
+                        <NumberAxis fx:id="xAxis" label="Generation" side="BOTTOM" />
+                    </xAxis>
+                    <yAxis>
+                        <NumberAxis label="Cells" side="LEFT" />
+                    </yAxis>
+                </LineChart>
+            </children>
+        </HBox>
+        <VBox fx:id="detailedInformation">
+            <children>
+                <HBox fx:id="findSimilarIteration">
+                    <children>
+                        <Text text="Below you can select an iteration and display the most simillar iteration."></Text>
+                        <ComboBox fx:id="findSimilarComboBox"/>
+                    </children>
+                </HBox>
+                <HBox>
+                    <children>
+                        <VBox fx:id="leftCanvasGroup">
+                            <children>
+                                <ComboBox fx:id="leftCanvasComboBox"/>
+                                <ResizableCanvas fx:id="leftCanvas"></ResizableCanvas>
+                            </children>
+                        </VBox>
+                        <VBox fx:id="rightCanvasGroup">
+                            <children>
+                                <ComboBox fx:id="rightCanvasComboBox"/>
+                                <ResizableCanvas fx:id="rightCanvas"></ResizableCanvas>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+        <VBox fx:id="dialogWrapper">
+            <children>
+                <Text text="Statistics"/>
+                <HBox>
+                    <children>
+                        <Text text="Enter amount of generations: " />
+                        <TextField fx:id="txtIterations" prefWidth="50" />
+                        <Button fx:id="btnConfirm" onAction="#showInformation">Confirm</Button>
+                    </children>           
+                </HBox>
+            </children>
+        </VBox>
+    </children>
+</FlowPane>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" fx:id="anchorPane" prefHeight="453.0" prefWidth="634.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fileinfo2.FXMLDocumentController">
+   <children>
+      <Button fx:id="btnOpen" layoutX="254.0" layoutY="161.0" mnemonicParsing="false" onAction="#open" text="Open" AnchorPane.bottomAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+      <Canvas fx:id="canvas" height="389.0" layoutX="14.0" layoutY="14.0" width="608.0" />
+      <Button layoutX="496.0" layoutY="414.0" mnemonicParsing="false" onAction="#openUrl" text="URL" />
+   </children>
+</AnchorPane>

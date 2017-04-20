@@ -1,21 +1,17 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package view;
 
 import javafx.scene.control.Alert;
 
 /**
- * A class containing simple dialog boxes that can be called statically.
- * @author aleks
+ * A class containing simple dialog boxes that can be called statically. Allows
+ * dialog boxes to be easily reused throughout the program.
  */
 public class DialogBoxes {
 
     /**
      * A simple dialog box for displaying IOException messages.
-     * @param message The message to display in the dialog box. 
+     * @param message a <code>String</code> specifying the message to be
+     * displayed.
      */
     public static void ioException(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -26,7 +22,8 @@ public class DialogBoxes {
 
     /**
      * A simple dialog box for displaying PatternFormatException messages.
-     * @param message The message to display in the dialog box.
+     * @param message a <code>String</code> specifying the message to be
+     * displayed.
      */
     public static void patternFormatException(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

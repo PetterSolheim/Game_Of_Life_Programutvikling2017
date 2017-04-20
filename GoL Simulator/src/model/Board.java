@@ -1,93 +1,110 @@
 package model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 /**
- * Class for the game board. Contains the actual board and the methods for
- * iterating to the next generation. Rules are located in the Rules class.
+ * This class contains the game board and its mechanics, such as moving the
+ * game board to the next generation. This class has been deprecated and 
+ * replaced by the {@link model.BoardDynamic} class.
+ *
+ * @deprecated use {@link model.BoardDynamic} instead
+ * @see model.BoardDynamic
  */
+@Deprecated
 public class Board {
-    private byte[][] currentBoard;
-    private byte[][] changedCells;
-    private byte[][] originalBoard;
-    private int generationCount = 0;
-    private int livingCells = 0;    
-    private int indexSum = 0;
-    private ArrayList<Integer> survivalRules;
-    private ArrayList<Integer> birthRules;
 
+    /**
+     * Represents the game board in its current game state. 1 represents live
+     * cells, 0 represents dead cells.
+     */
+    private byte[][] currentBoard;
+
+    /**
+     * Used to represent cells which have changed during the last generation
+     * shift.
+     */
+    private byte[][] changedCells;
+
+    /**
+     * Used to store the game board as it was before the game starts. Allows for
+     * resetting the game board.
+     */
+    private byte[][] originalBoard;
+
+    private int generationCount = 0;
+    private int livingCells = 0;
+    private int indexSum = 0;
+    private Rules rules = Rules.getInstance();
+
+    /**
+     * Board no-argument constructor initializes a game board consisting of 200
+     * x 200 dead cells.
+     */
     public Board() {
         currentBoard = new byte[200][200];
         originalBoard = duplicateBoard(currentBoard);
-
-        // apply Conway Rules (23/3) by default
-        survivalRules = new ArrayList<Integer>();
-        survivalRules.add(2);
-        survivalRules.add(3);
-        birthRules = new ArrayList<Integer>();
-        birthRules.add(3);
+        changedCells = new byte[200][200];
     }
 
+    /**
+     * Board constructor. Allows one to define the starting size of the game
+     * board.
+     *
+     * @param row the number of rows for the starting board.
+     * @param col the number of columns for the starting board.
+     * @throws IllegalArgumentException in the case that either the number of
+     * rows of columns are defined to be bellow 1.
+     */
     public Board(int row, int col) {
+        if (row < 1 || col < 1) {
+            throw new IllegalArgumentException("Number of rows and columns must"
+                    + "be higher than 0!");
+        }
         currentBoard = new byte[row][col];
         originalBoard = duplicateBoard(currentBoard);
+        changedCells = new byte[row][col];
+    }
 
-        // apply Conway Rules (23/3) by default
-        survivalRules = new ArrayList<Integer>();
-        survivalRules.add(2);
-        survivalRules.add(3);
-        birthRules = new ArrayList<Integer>();
-        birthRules.add(3);
+    /**
+     * Sets a new game board.
+     *
+     * @param newBoard the new game board.
+     */
+    public void setBoard(byte[][] newBoard) {
+        originalBoard = duplicateBoard(newBoard);
+        currentBoard = duplicateBoard(newBoard);
+        countLivingCells();
     }
     public Board(byte [][] board){
         this.currentBoard = duplicateBoard(board);
     }
 
     /**
-     * Returns the number of cells on the board.
+     * Gets the current board.
      *
-     * @return int
+     * @return a <code>byte[][]</code> representing the current game board.
      */
-    public long numberOfCells() {
-        return currentBoard.length * currentBoard[0].length;
+    public byte[][] getBoard() {
+        return currentBoard;
     }
 
     /**
-     * Creates a deep copy of the board.
+     * Gets a list of all the cells which changed their state during the last
+     * generation shift.
      *
-     * @return board
+     * @return a <code>byte[][]</code> representing the cells which have changed
+     * where 1 means changed and 0 means no change.
      */
-    public Board deepCopy() {
-        Board b = new Board();
-        b.currentBoard = duplicateBoard(this.currentBoard);
-        b.originalBoard = duplicateBoard(this.originalBoard);
-        
-        ArrayList<Integer> survivalRulesCopy = new ArrayList<Integer>();
-        for(int i = 0; i < survivalRules.size(); i++) {
-            survivalRulesCopy.add(survivalRules.get(i));
-        }
-        b.setSurviveRules(survivalRulesCopy);
-        
-        ArrayList<Integer> birthRulesCopy = new ArrayList<Integer>();
-        for(int i = 0; i < birthRules.size(); i++) {
-            birthRulesCopy.add(birthRules.get(i));
-        }
-        b.setBirthRules(birthRulesCopy);
-        
-        b.generationCount = this.generationCount;
-        b.countLivingCells();
-        return b;
+    public byte[][] getChangedCells() {
+        return changedCells;
     }
 
     /**
-     * Updates the board cellCount variable to reflect the current number of
-     * living cells.
+     * Updates the livingCells variable to reflect the number of living cells on
+     * the current board.
      */
     private void countLivingCells() {
         livingCells = 0;
-        for (int col = 0; col < currentBoard.length; col++) {
-            for (int row = 0; row < currentBoard.length; row++) {
+        for (int row = 0; row < currentBoard.length; row++) {
+            for (int col = 0; col < currentBoard[0].length; col++) {
                 if (currentBoard[row][col] == 1) {
                     livingCells++;
                 }
@@ -102,131 +119,80 @@ public class Board {
     }
     
     /**
-     * Sets the survival values for the game rules. New values can be passed as
-     * either a number of integers, or an array of integers. If duplicate values
-     * are passed, they will be removed, i.e. 2,3,3,4 will be stored as 2,3,4.
+     * Gets the number of cells on the current board, both living and dead.
      *
-     * @param input
+     * @return an <code>int</code> specifying the number of cells, both living
+     * and dead, on the current board.
      */
-    public void setSurviveRules(int... input) {
-        Arrays.sort(input);
-        ArrayList<Integer> inputWithoutDuplicates = new ArrayList<Integer>();
-
-        for (int i = 0; i < input.length; i++) {
-            if (i == 0) {
-                inputWithoutDuplicates.add(input[i]);
-            } else if (input[i] != input[i - 1]) {
-                inputWithoutDuplicates.add(input[i]);
-            }
-        }
-        survivalRules = inputWithoutDuplicates;
-    }
-    
-    public void setSurviveRules(ArrayList<Integer> input) {
-        survivalRules = input;
+    public int getNumberOfCells() {
+        return currentBoard.length * currentBoard[0].length;
     }
 
     /**
-     * Sets the birth values for the game rules. New values can be passed as
-     * either a number of integers, or an array of integers. If duplicate values
-     * are passed, they will be removed, i.e. 2,3,3,4 will be stored as 2,3,4.
+     * Gets the number of living cells on the current board.
      *
-     * @param input
+     * @return an <code>int</code> specifying the number of living cells on the
+     * current board.
      */
-    public void setBirthRules(int... input) {
-        Arrays.sort(input);
-        ArrayList<Integer> inputWithoutDuplicates = new ArrayList<Integer>();
-
-        for (int i = 0; i < input.length; i++) {
-            if (i == 0) {
-                inputWithoutDuplicates.add(input[i]);
-            } else if (input[i] != input[i - 1]) {
-                inputWithoutDuplicates.add(input[i]);
-            }
-        }
-        birthRules = inputWithoutDuplicates;
-    }
-    
-    public void setBirthRules(ArrayList<Integer> input) {
-        birthRules = input;
+    public int getLivingCellCount() {
+        return livingCells;
     }
 
     /**
-     * Acquires an ArrayList of integer values which define the number of live
-     * neighbours a dead cell must have to be born.
+     * Gets the current generation count for the game.
      *
-     * @return an ArrayList of Integers.
+     * @return an <code>int</code> specifying the current generation count.
      */
-    public ArrayList<Integer> getBirthRules() {
-        return birthRules;
+    public int getGenerationCount() {
+        return generationCount;
     }
 
     /**
-     * Acquires an ArrayList of integer values which define the number of live
-     * neighbours a live cell must have to survive.
+     * Gets a deep copy of this board object.
      *
-     * @return an ArrayList of Integers.
+     * @return a deep copy of the <code>Board</code> object.
      */
-    public ArrayList<Integer> getSurviveRules() {
-        return survivalRules;
+    public Board deepCopy() {
+        Board b = new Board();
+        b.currentBoard = duplicateBoard(this.currentBoard);
+        b.originalBoard = duplicateBoard(this.originalBoard);
+        b.changedCells = duplicateBoard(this.changedCells);
+        b.livingCells = this.livingCells;
+        b.generationCount = this.generationCount;
+        return b;
     }
 
     /**
-     * Gets the current Board.
+     * Iterates the current board to its next generation, playing by the rules
+     * defined in the Rules class object.
      *
-     * @return byte[][] array.
-     */
-    public byte[][] getBoard() {
-        return currentBoard;
-    }
-
-    /**
-     * Gets a byte[][] array representing which cells were changed during the
-     * last generation iteration.
-     *
-     * @return byte[][] array.
-     */
-    public byte[][] getBoardChanges() {
-        return changedCells;
-    }
-
-    /**
-     * Sets a new board.
-     *
-     * @param newBoard The new board to use in the game.
-     */
-    public void setBoard(byte[][] newBoard) {
-        originalBoard = duplicateBoard(newBoard);
-        currentBoard = duplicateBoard(newBoard);
-        countLivingCells();
-    }
-
-    /**
-     * Iterates the board to the next generation.
+     * @see model.Rules
      */
     public void nextGeneration() {
+        // reset list of changed cells.
+        changedCells = new byte[currentBoard.length][currentBoard[0].length];
+
+        if (rules.isDynamic()) {
+            expandBoardIfNeeded();
+        }
+
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.GE
         byte[][] testPattern = duplicateBoard(currentBoard);
-        changedCells = new byte[currentBoard.length][currentBoard[0].length];
 
-        // iterates through the board cells, count number of neighbours for each
+        // iterate through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
         for (int row = 0; row < testPattern.length; row++) {
             for (int col = 0; col < testPattern[0].length; col++) {
                 int neighbours = countNeighbours(testPattern, row, col);
 
-                if (testPattern[row][col] == 1 && (!survivalRules.contains(neighbours))) {
+                if (testPattern[row][col] == 1 && (!rules.getSurviveRules().contains(neighbours))) {
                     currentBoard[row][col] = 0;
                     changedCells[row][col] = 1;
                     livingCells--;
-                    
-                } else if (testPattern[row][col] == 1 && (survivalRules.contains(neighbours))) {
-                    //System.out.println("Sum of indexes " + (col + row));
                     indexSum += (row + col);
-                    //System.out.println("Current indexSum " + indexSum);
-                }
-                else if (testPattern[row][col] == 0 && birthRules.contains(neighbours)) {
+
+                } else if (testPattern[row][col] == 0 && rules.getBirthRules().contains(neighbours)) {
                     currentBoard[row][col] = 1;
                     changedCells[row][col] = 1;
                     livingCells++;
@@ -234,65 +200,234 @@ public class Board {
             }
         }
         int i = getIndexSum();
-        //System.out.println("Final index sum for this generation: " + i + "\n");
         generationCount++;
     }
 
     /**
-     * Counts the number of neighbours for a given cell. Method is private, and
-     * used by the nextGeneration() method.
-     *
-     * @param cell The game board.
-     * @param x The first index of the cell to have neighbours counted.
-     * @param y The second index of the cell to have neighbours counted.
-     * @return The number of neighbours.
+     * Checks the current board to see if it should be expanded. Requirement for
+     * expansion is if a living cells is touching one of the current boards
+     * borders.
      */
-    private int countNeighbours(byte[][] cell, int x, int y) {
+    private void expandBoardIfNeeded() {
+        boolean boardExpanded = false;
+        if (shouldExpandNorth()) {
+            expandNorth();
+            boardExpanded = true;
+        }
+        if (shouldExpandEast()) {
+            expandEast();
+            boardExpanded = true;
+        }
+        if (shouldExpandSouth()) {
+            expandSouth();
+            boardExpanded = true;
+        }
+        if (shouldExpandWest()) {
+            expandWest();
+            boardExpanded = true;
+        }
+        if (boardExpanded) {
+            // if board expanded, all cells will have shifted, and thereby
+            // changed.
+            changedCells = new byte[currentBoard.length][currentBoard[0].length];
+            for (int row = 0; row < changedCells.length; row++) {
+                for (int col = 0; col < changedCells[0].length; col++) {
+                    changedCells[row][col] = 1;
+                }
+            }
+        }
+    }
+
+    /**
+     * Check the game board to see if it meets requirements for expansion on the
+     * top of the board. Requirement for this is that there is currently a live
+     * cell in the top row.
+     *
+     * @return a <code>boolean</code> specifying weather the board meets the
+     * requirements for expansion.
+     */
+    private boolean shouldExpandNorth() {
+        int numberOfLiveCells = 0;
+        for (int col = 0; col < currentBoard[0].length; col++) {
+            numberOfLiveCells += currentBoard[0][col];
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Expand the board with a row of dead cells at the top of the board.
+     */
+    private void expandNorth() {
+        byte[][] newBoard = new byte[currentBoard.length + 1][currentBoard[0].length];
+        for (int row = 0; row < currentBoard.length; row++) {
+            for (int col = 0; col < currentBoard[0].length; col++) {
+                newBoard[row + 1][col] = currentBoard[row][col];
+            }
+        }
+        currentBoard = newBoard;
+    }
+
+    /**
+     * Check the game board to see if it meets requirements for expansion on the
+     * right side of the board. Requirement for this is that there is a living
+     * cell on the right most column of the game board.
+     *
+     * @return a <code>boolean</code> specifying weather the board meets the
+     * requirements for expansion.
+     */
+    private boolean shouldExpandEast() {
+        int numberOfLiveCells = 0;
+        for (int row = 0; row < currentBoard.length; row++) {
+            numberOfLiveCells += currentBoard[row][currentBoard[0].length - 1];
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Expand the board with a column of dead cells on the right most side of
+     * the board.
+     */
+    private void expandEast() {
+        byte[][] newBoard = new byte[currentBoard.length][currentBoard[0].length + 1];
+        for (int row = 0; row < currentBoard.length; row++) {
+            for (int col = 0; col < currentBoard[0].length; col++) {
+                newBoard[row][col] = currentBoard[row][col];
+            }
+        }
+        currentBoard = newBoard;
+    }
+
+    /**
+     * Check the game board to see if it meets requirements for expansion at the
+     * bottom of the board. Requirement for this is that there is a living cell
+     * in the bottom row of the board.
+     *
+     * @return a <code>boolean</code> specifying weather the board meets the
+     * requirements for expansion.
+     */
+    private boolean shouldExpandSouth() {
+        int numberOfLiveCells = 0;
+        for (int col = 0; col < currentBoard[0].length; col++) {
+            numberOfLiveCells += currentBoard[currentBoard.length - 1][col];
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Expand the board with a row of dead cells at the bottom of the board.
+     */
+    private void expandSouth() {
+        byte[][] newBoard = new byte[currentBoard.length + 1][currentBoard[0].length];
+        for (int row = 0; row < currentBoard.length; row++) {
+            for (int col = 0; col < currentBoard[0].length; col++) {
+                newBoard[row][col] = currentBoard[row][col];
+            }
+        }
+        currentBoard = newBoard;
+    }
+
+    /**
+     * Check the game board to see if it meets requirements for expansion on the
+     * left most column of the board. Requirement for this is that there is a
+     * living cell in right most column.
+     *
+     * @return a <code>boolean</code> specifying weather the board meets the
+     * requirements for expansion.
+     */
+    private boolean shouldExpandWest() {
+        int numberOfLiveCells = 0;
+        for (int row = 0; row < currentBoard.length; row++) {
+            numberOfLiveCells += currentBoard[row][0];
+        }
+        if (numberOfLiveCells > 0) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Expand the board with a column of dead cells on the right side of the
+     * board.
+     */
+    private void expandWest() {
+        byte[][] newBoard = new byte[currentBoard.length][currentBoard[0].length + 1];
+        for (int row = 0; row < currentBoard.length; row++) {
+            for (int col = 0; col < currentBoard[0].length; col++) {
+                newBoard[row][col + 1] = currentBoard[row][col];
+            }
+        }
+        currentBoard = newBoard;
+    }
+
+    /**
+     * Counts the number of living neighbour cells for a specified cell.
+     *
+     * @param board the game board containing the cell to have neighbours its
+     * counted.
+     * @param row the row location of the cell to have its neighbours counted.
+     * @param col the column location of the cell to have its neighbours
+     * counted.
+     * @return an <code>int</code> specifying the number of living neighbours.
+     */
+    private int countNeighbours(byte[][] board, int row, int col) {
         int neighbours = 0;
-        int rowLastIndex = cell.length - 1;
-        int colLastIndex = cell[0].length - 1;
+        int rowLastIndex = board.length - 1;
+        int colLastIndex = board[0].length - 1;
 
-        if (y + 1 <= colLastIndex) {
-            neighbours += cell[x][y + 1];
+        if (col + 1 <= colLastIndex) {
+            neighbours += board[row][col + 1];
         }
 
-        if (x - 1 >= 0 && y + 1 <= colLastIndex) {
-            neighbours += cell[x - 1][y + 1];
+        if (row - 1 >= 0 && col + 1 <= colLastIndex) {
+            neighbours += board[row - 1][col + 1];
         }
 
-        if (x - 1 >= 0) {
-            neighbours += cell[x - 1][y];
+        if (row - 1 >= 0) {
+            neighbours += board[row - 1][col];
         }
 
-        if (x - 1 >= 0 && y - 1 >= 0) {
-            neighbours += cell[x - 1][y - 1];
+        if (row - 1 >= 0 && col - 1 >= 0) {
+            neighbours += board[row - 1][col - 1];
         }
 
-        if (y - 1 >= 0) {
-            neighbours += cell[x][y - 1];
+        if (col - 1 >= 0) {
+            neighbours += board[row][col - 1];
         }
 
-        if (x + 1 <= rowLastIndex && y - 1 >= 0) {
-            neighbours += cell[x + 1][y - 1];
+        if (row + 1 <= rowLastIndex && col - 1 >= 0) {
+            neighbours += board[row + 1][col - 1];
         }
 
-        if (x + 1 <= rowLastIndex) {
-            neighbours += cell[x + 1][y];
+        if (row + 1 <= rowLastIndex) {
+            neighbours += board[row + 1][col];
         }
 
-        if (x + 1 <= rowLastIndex && y + 1 <= colLastIndex) {
-            neighbours += cell[x + 1][y + 1];
+        if (row + 1 <= rowLastIndex && col + 1 <= colLastIndex) {
+            neighbours += board[row + 1][col + 1];
         }
 
         return neighbours;
     }
 
     /**
-     * Toggles the state of a give cell. Live cell becomes dead, dead cell
-     * becomes alive.
+     * Toggles the state of a specified cell in the current board. Live cell
+     * becomes dead, dead cell becomes alive.
      *
-     * @param row y position of the cell to toggle.
-     * @param col x position of the cell to toggle.
+     * @param row the row position of the cell to toggle.
+     * @param col the column position of the cell to toggle.
      */
     public void toggleCellState(int row, int col) {
         if (currentBoard[row][col] == 1) {
@@ -305,10 +440,10 @@ public class Board {
     }
 
     /**
-     * Makes a spesific cell alive.
+     * Sets the state of a specified cell on the current board to alive.
      *
-     * @param row y position of the cell to make alive.
-     * @param col x position of the cell to make alive.
+     * @param row the row position of the cell to make alive.
+     * @param col the column position of the cell to make alive.
      */
     public void setCellStateAlive(int row, int col) {
         if (currentBoard[row][col] != 1) {
@@ -318,23 +453,8 @@ public class Board {
     }
 
     /**
-     *
-     * @return The current generation count.
-     */
-    public int getGenerationCount() {
-        return generationCount;
-    }
-
-    /**
-     * Return the number of living cells on the current board.
-     * @return 
-     */
-    public int getLivingCellCount() {
-        return livingCells;
-    }
-
-    /**
-     * Reverts the current board back to its original state.
+     * Reverts the current board back to its starting state. Also resets the
+     * generation count and living cell count.
      */
     public void resetBoard() {
         currentBoard = duplicateBoard(originalBoard);
@@ -343,35 +463,36 @@ public class Board {
     }
 
     /**
-     * A string representation of the board. Exists solely for use with JUnit.
+     * Gets a copy of the passed game board array.
      *
-     * @return
-     */
-    @Override
-    public String toString() {
-        StringBuilder tempReturnValue = new StringBuilder();
-        for (int row = 0; row < currentBoard.length; row++) {
-            for (int col = 0; col < currentBoard[row].length; col++) {
-                tempReturnValue.append(currentBoard[row][col]);
-            }
-        }
-
-        String finalReturnValue = tempReturnValue.toString();
-        return finalReturnValue;
-    }
-
-    /**
-     * A simple method for copying a 2D byte array.
-     *
-     * @param original The board that you want to copy.
-     * @return A reference to the new copy of the array.
+     * @param original the board that you want to copy.
+     * @return a <code>byte[][]</code> copy.
      */
     private byte[][] duplicateBoard(byte[][] original) {
         byte[][] boardCopy = new byte[original.length][original[0].length];
 
-        for (int i = 0; i < original.length; i++) {
-            System.arraycopy(original[i], 0, boardCopy[i], 0, original[0].length);
+        for(int row = 0; row < original.length; row++) {
+            for(int col = 0; col < original[0].length; col++) {
+                boardCopy[row][col] = original[row][col];
+            }
         }
         return boardCopy;
+    }
+
+    /**
+     * Provides a string representation of the current board.
+     *
+     * @return a <code>String</code> representing the state of the current
+     * board.
+     */
+    @Override
+    public String toString() {
+        StringBuilder returnValue = new StringBuilder();
+        for (int row = 0; row < currentBoard.length; row++) {
+            for (int col = 0; col < currentBoard[row].length; col++) {
+                returnValue.append(currentBoard[row][col]);
+            }
+        }
+        return returnValue.toString();
     }
 }

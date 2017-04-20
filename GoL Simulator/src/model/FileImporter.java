@@ -11,92 +11,82 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import view.DialogBoxes;
 
 /**
- * Class for translating external files, such as RLE files, to a board object.
- * Class has been created so as to be easily extended to support new formats.
- * @author aleks
+ * Class for converting external Game of Life pattern files to a byte[][] array
+ * and loading of game rules. Class currently supports reading of RLE files, but
+ * has been written so as to be easily extendable to support additional formats.
  */
 public class FileImporter {
 
-    private Board board;
     private byte[][] boardArray;
-    private int row;
-    private int col;
-    private int padding = 100;
-    private int[] survivalRules;
-    private int[] birthRules;
+    private Rules rules = Rules.getInstance();
 
     /**
-     * File importers constructor.
+     * Reads a pattern file from disk and parses it. Returns a byte[][] array 
+     * containing the pattern, and sets the rules specified by the pattern file.
+     *
+     * @param f the file object containing the pattern to be read.
+     * @return a <code>byte[][]</code> containing the parsed pattern.
+     * @throws IOException if there are errors reading the file.
+     * @throws PatternFormatException if pattern could not be parsed.
      */
-    public FileImporter() {
-        board = new Board();
-    }
-
-    /**
-     * Parses a file from disk, and returns a Board object based on this.
-     * @param f
-     * @return finished Board object.
-     * @throws IOException
-     * @throws PatternFormatException 
-     */
-    public Board readGameBoardFromDisk(File f) throws IOException, PatternFormatException {
+    public byte[][] readGameBoardFromDisk(File f) throws IOException, PatternFormatException {
         String fileExtension = getFileExtension(f); // determine the filetype
-        readGameBoard(new FileReader(f), fileExtension); // parse the input file
-        return board;
+        readGameBoard(new FileReader(f), fileExtension);
+        return boardArray;
     }
 
     /**
-     * Parses a file from a given URL, and returns a Board object based on this.
-     * @param url A Stream representing an URL.
-     * @return finished Board object
-     * @throws IOException
-     * @throws PatternFormatException 
+     * Reads a pattern file from an URL and parses it. Returns a byte[][] array
+     * containing the pattern, and sets the rules specified by the pattern file.
+     * @param url a <code>String</code> containing the URL of the pattern file.
+     * @return a <code>byte[][]</code> containing the parsed pattern.
+     * @throws IOException if there are errors reading the file.
+     * @throws PatternFormatException if the pattern could not be parsed. 
      */
-    public Board readGameBoardFromUrl(String url) throws IOException, PatternFormatException {
-        String fileExtension = getFileExtension(url);
+    public byte[][] readGameBoardFromUrl(String url) throws IOException, PatternFormatException {
+        String fileExtension = getFileExtension(url); // determin the filetype
         URL destination = new URL(url);
         URLConnection conn = destination.openConnection();
         readGameBoard(new InputStreamReader(conn.getInputStream()), fileExtension);
-        return board;
+        return boardArray;
     }
 
     /**
-     * Helper method. Passes the file to the correct parses based on file type,
-     * and builds the actual board.
+     * Pass the pattern file to the appropriate parser based on file type
+     * extension.
      * @param r
-     * @param fileExtension
-     * @throws PatternFormatException 
+     * @param fileExtension the extension of the pattern file (for instance RLE)
+     * @throws IOException if there are errors reading the file.
+     * @throws PatternFormatException if the pattern could not be parsed. 
      */
     private void readGameBoard(Reader r, String fileExtension) throws PatternFormatException, IOException {
-            switch (fileExtension) {
-                case "rle":
-                    rleReader(r);
-                    break;
-                case "life":
-                    throw new PatternFormatException("Unsuported file type");
-                case "lif":
-                    throw new PatternFormatException("Unsuported file type");
-                case "cells":
-                    throw new PatternFormatException("Unsuported file type");
-                default:
-                    throw new PatternFormatException("Unsuported file type");
+        switch (fileExtension) {
+            case "rle":
+                rleReader(r);
+                break;
+            case "life":
+                throw new PatternFormatException("LIFE files are not currently"
+                        + "supported.");
+            case "lif":
+                throw new PatternFormatException("LIF files are not currently"
+                        + "supported.");
+            case "cells":
+                throw new PatternFormatException("MCELL files are not currently"
+                        + "supported.");
+            default:
+                throw new PatternFormatException("Unrecognized file type.");
         }
 
-            // build the board.
-            boardArray = addPadding(boardArray);
-            board.setBoard(boardArray);
-            board.setBirthRules(birthRules);
-            board.setSurviveRules(survivalRules);
     }
 
     /**
-     * Parser for RLE files.
+     * RLE file parser.
+     *
      * @param r
-     * @throws IOException
-     * @throws PatternFormatException 
+     * @throws IOException if there are errors reading the file.
+     * @throws PatternFormatException if the pattern could not be parsed. 
      */
     private void rleReader(Reader r) throws IOException, PatternFormatException {
         BufferedReader br = new BufferedReader(r);
@@ -118,9 +108,10 @@ public class FileImporter {
     }
 
     /**
-     * Helper method for parsing comments in RLE file. Currently, they are 
-     * merely discarded.
-     * @param lineList 
+     * Extracts the comments from an RLE file. Comments are not currently used
+     * for anything.
+     *
+     * @param lineList
      */
     private void readRleComments(ArrayList<String> lineList) {
         Matcher m;
@@ -145,16 +136,18 @@ public class FileImporter {
     }
 
     /**
-     * Helper method to detect the board size in an RLE file.
+     * Extracts the size of the board being parsed.
+     *
      * @param lineList
-     * @throws PatternFormatException 
+     * @throws PatternFormatException if board dimensions are not defined, or 
+     * if parser is unable to interpret the size.
      */
     private void readRleBoardSize(ArrayList<String> lineList) throws PatternFormatException {
         Matcher m;
         Pattern colPattern = Pattern.compile("(?:x|X)\\s=\\s*(\\d+)");
         Pattern rowPattern = Pattern.compile("(?:y|Y)\\s=\\s*(\\d+)");
-        boolean boardRowsSet = false;
-        boolean boardColumnsSet = false;
+        int row = 0;
+        int col = 0;
 
         // determin board size
         for (int i = 0; i < lineList.size(); i++) {
@@ -163,7 +156,6 @@ public class FileImporter {
                 if (m.find()) {
                     if (!m.group(1).isEmpty()) {
                         col = Integer.parseInt(m.group(1));
-                        boardColumnsSet = true;
                     }
                 }
 
@@ -171,16 +163,15 @@ public class FileImporter {
                 if (m.find()) {
                     if (!m.group(1).isEmpty()) {
                         row = Integer.parseInt(m.group(1));
-                        boardRowsSet = true;
                     }
                 }
             }
         }
-        if (!boardColumnsSet && !boardRowsSet) {
+        if (col < 1 && row < 1) {
             throw new PatternFormatException("No dimensions defined by RLE-file.");
-        } else if (!boardColumnsSet) {
+        } else if (col < 1) {
             throw new PatternFormatException("No width defined by RLE-file.");
-        } else if (!boardRowsSet) {
+        } else if (row < 1) {
             throw new PatternFormatException("No height defined by RLE-file.");
         }
 
@@ -189,9 +180,10 @@ public class FileImporter {
     }
 
     /**
-     * Helper method for detecting game rules in RLE file.
+     * Extracts the rules defined for the pattern.
+     *
      * @param lineList
-     * @throws PatternFormatException 
+     * @throws PatternFormatException if no rules are defined.
      */
     private void readRleRules(ArrayList<String> lineList) throws PatternFormatException {
         Matcher m;
@@ -230,16 +222,22 @@ public class FileImporter {
                 }
 
                 String[] surviveStringArray = survive.split("");
+                int[] survivalRules;
                 survivalRules = new int[surviveStringArray.length];
                 for (int j = 0; j < surviveStringArray.length; j++) {
                     survivalRules[j] = Integer.parseInt(surviveStringArray[j]);
                 }
 
+                rules.setSurviveRules(survivalRules);
+
                 String[] birthStringArray = birth.split("");
+                int[] birthRules;
                 birthRules = new int[birthStringArray.length];
                 for (int j = 0; j < birthStringArray.length; j++) {
                     birthRules[j] = Integer.parseInt(birthStringArray[j]);
                 }
+
+                rules.setBirthRules(birthRules);
             }
         }
 
@@ -249,12 +247,14 @@ public class FileImporter {
     }
 
     /**
-     * Helper method for parsing the board from RLE file.
+     * Creates a byte[][] array containing the defined board.
+     *
      * @param lineList
-     * @throws IOException
-     * @throws PatternFormatException 
+     * @throws PatternFormatException if; unrecognized character in pattern,
+     * no end of file indicator found or the pattern size does not match the 
+     * size defined by the pattern file.
      */
-    private void readRleBoard(ArrayList<String> lineList) throws IOException, PatternFormatException {
+    private void readRleBoard(ArrayList<String> lineList) throws PatternFormatException {
         Matcher m;
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < lineList.size(); i++) {
@@ -265,12 +265,12 @@ public class FileImporter {
             }
         }
         String readString = stringBuilder.toString().trim();
-        
+
         //ensure file contains end of file indicator.
-        if(!readString.contains("!")) {
+        if (!readString.contains("!")) {
             throw new PatternFormatException("No end of file character (!) found.");
         }
-            
+
         String[] boardStringArray = readString.split("\\$");
 
         int rowOffsett = 0;
@@ -278,7 +278,7 @@ public class FileImporter {
 
         for (int i = 0; i < boardStringArray.length; i++) {
             int cellPosition = 0;
-            Pattern boardRowPattern = Pattern.compile("(\\d*)(b|o){1}");
+            Pattern boardRowPattern = Pattern.compile("(\\d*)(b|o|!){1}");
             m = boardRowPattern.matcher(boardStringArray[i]);
             m.find();
 
@@ -294,19 +294,23 @@ public class FileImporter {
                     for (int j = cellPosition; j < cellPosition + numberOfCells; j++) {
                         if (m.group(2).equals("o")) {
                             boardArray[i + rowOffsett][j] = 1;
-                        } else {
+                        } else if (m.group(2).equals("b")) {
                             boardArray[i + rowOffsett][j] = 0;
+                        } else {
+                            i = (boardStringArray.length - 1); // end of file reached. Break out of loop.
                         }
 
                     }
                 } catch (ArrayIndexOutOfBoundsException e) {
-                    throw new PatternFormatException("Defined board size does not"
-                            + " match the board definition!");
+                    throw new PatternFormatException("Board size defined by the"
+                            + "RLE file is to small to accomodate the board"
+                            + "described by the RLE file.");
                 }
                 cellPosition += numberOfCells;
                 m.find();
             }
 
+            // Handle blank lines
             Pattern blankLinesPattern = Pattern.compile("(\\d)*\\s*(?!.)");
             m = blankLinesPattern.matcher(boardStringArray[i]);
             m.find();
@@ -327,9 +331,10 @@ public class FileImporter {
     }
 
     /**
-     * Helper method for determining the file extension of a File object.
-     * @param f
-     * @return 
+     * Takes a File object and determines its filet type extension.
+     *
+     * @param f the file for which one want to determine the extensions type.
+     * @return a <code>String</code> specifying the file extension type.
      */
     private String getFileExtension(File f) {
         int i = f.getName().lastIndexOf(".");
@@ -340,33 +345,13 @@ public class FileImporter {
     /**
      * Helper method for determining the file extension of a file acquired from
      * an URL.
-     * @param s
-     * @return 
+     *
+     * @param s the file for which one wants to determine the extension type.
+     * @return a <code>String</code> specifying the file extension type.
      */
     private String getFileExtension(String s) {
         int i = s.lastIndexOf(".");
         String fileExtension = s.substring(i + 1);
         return fileExtension;
     }
-
-    /**
-     * Helper method which adds padding round a opened Board to give the board
-     * "room to breath".
-     * @param input
-     * @return 
-     */
-    private byte[][] addPadding(byte[][] input) {
-        byte[][] paddedBoard = new byte[input.length + padding*2][input[0].length + padding*2];
-        for (int i = 0; i < input.length; i++) {
-            for (int j = 0; j < input[i].length; j++) {
-                paddedBoard[i + (padding)][j + (padding)] = input[i][j];
-            }
-        }
-        return paddedBoard;
-    }
-    
-    public void setPadding(int padding) {
-        this.padding = padding;
-    }
-
 }
