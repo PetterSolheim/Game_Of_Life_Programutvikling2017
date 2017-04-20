@@ -9,11 +9,10 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.stage.Stage;
-import model.Board;
 import model.Rules;
 
 /**
- * Controller for the game rules window.
+ * FXML controller for the game rules window.
  */
 public class GameRulesWindowController implements Initializable {
 
@@ -23,10 +22,18 @@ public class GameRulesWindowController implements Initializable {
     private CheckBox b0, b1, b2, b3, b4, b5, b6, b7, b8;
     @FXML
     private RadioButton rbtnStatic, rbtnDynamic;
-    
+
     private Rules rules = Rules.getInstance();
     private Stage stage;
-    private Board board;
+
+    /**
+     * Initializes the controller class.
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
+        Platform.runLater(this::defineStage); // makes the stage available.
+        Platform.runLater(this::loadRules); // set checkbox values based on current rules.
+    }
 
     /**
      * Closes the window without applying any changes.
@@ -37,7 +44,7 @@ public class GameRulesWindowController implements Initializable {
     }
 
     /**
-     * Set "Static" as selected option for radio buttons.
+     * Sets "Static" as selected option for radio buttons.
      */
     @FXML
     private void rbtnStaticClicked() {
@@ -46,7 +53,7 @@ public class GameRulesWindowController implements Initializable {
     }
 
     /**
-     * Set "Dynamic" as selected option for radio buttons.
+     * Sets "Dynamic" as selected option for radio buttons.
      */
     @FXML
     private void rbtnDynamicClicked() {
@@ -55,7 +62,8 @@ public class GameRulesWindowController implements Initializable {
     }
 
     /**
-     * Apply the user selected rules to the game.
+     * Runs through the settings on the screen, and applies them to the games
+     * rules.
      */
     @FXML
     private void save() {
@@ -79,6 +87,8 @@ public class GameRulesWindowController implements Initializable {
                 birthRules.add(i);
             }
         }
+        rules.setSurviveRules(survivalRules);
+        rules.setBirthRules(birthRules);
 
         // set the new rules, and close the window.
         if (rbtnStatic.isSelected()) {
@@ -86,8 +96,7 @@ public class GameRulesWindowController implements Initializable {
         } else {
             rules.setDynamic(true);
         }
-        rules.setSurviveRules(survivalRules);
-        rules.setBirthRules(birthRules);
+
         stage.close();
     }
 
@@ -99,19 +108,11 @@ public class GameRulesWindowController implements Initializable {
         stage = (Stage) s0.getScene().getWindow();
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        Platform.runLater(this::defineStage); // makes the stage available.
-        Platform.runLater(this::loadRules); // set checkbox values based on current rules.
-    }
-
     /**
-     * After the Stage and Scene (with all its nodes) have been created, this
-     * method runs, to load the current rules from the Rules singleton object,
-     * and applies its values to this windows checkboxes.
+     * Loads the rules from the Rules class object, and sets the state of the
+     * various JavaFX nodes to reflect those rules.
      */
     private void loadRules() {
-
         // create an array of the checkboxes to allow easy iteration of their
         // values.
         CheckBox[] survivalCheckBoxes = {s0, s1, s2, s3, s4, s5, s6, s7, s8};

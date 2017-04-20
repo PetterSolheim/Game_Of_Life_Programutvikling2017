@@ -4,13 +4,14 @@ import javafx.scene.control.Alert;
 
 /**
  * A class containing simple dialog boxes that can be called statically. Allows
- * one to display dialog boxes with fewer lines of code.
+ * dialog boxes to be easily reused throughout the program.
  */
 public class DialogBoxes {
 
     /**
      * A simple dialog box for displaying IOException messages.
-     * @param message The message to display in the dialog box. 
+     * @param message a <code>String</code> specifying the message to be
+     * displayed.
      */
     public static void ioException(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -21,7 +22,8 @@ public class DialogBoxes {
 
     /**
      * A simple dialog box for displaying PatternFormatException messages.
-     * @param message The message to display in the dialog box.
+     * @param message a <code>String</code> specifying the message to be
+     * displayed.
      */
     public static void patternFormatException(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

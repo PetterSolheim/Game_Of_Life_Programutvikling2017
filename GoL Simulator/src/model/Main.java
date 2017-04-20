@@ -2,11 +2,13 @@ package model;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Group;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+/**
+ * Main classes only role is to load the MainWindow and its controller.
+ */
 public class Main extends Application {
     
     @Override

@@ -55,7 +55,7 @@ public class GameCanvas extends Canvas {
     /**
      * Gets the y-axis offset.
      *
-     * @return a <cpde>double</code> specifying the y-axis offset.
+     * @return a <code>double</code> specifying the y-axis offset.
      */
     public double getYOffset() {
         return yOffset;
@@ -93,10 +93,11 @@ public class GameCanvas extends Canvas {
 
     /**
      * Draws the game board based on an
-     * <code>ArrayList&lt;ArrayList&ltByte&gt;&gt;</code> where 1 symbolises a
-     * living cell, and 0 symbolises a dead cell.
+     * <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code> where 1 symbolises a
+     * living cell, and 0 symbolises a dead cell. Only visible parts of the
+     * game board are actually drawn.
      *
-     * @param board an <code>ArrayList&lt;ArrayList&ltByte&gt;&gt;</code>
+     * @param board an <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>
      * specifying the state of the games cells.
      */
     public void drawBoard(ArrayList<ArrayList<Byte>> board) {
@@ -114,7 +115,7 @@ public class GameCanvas extends Canvas {
      * Draws the state of a single cell if, and only if, that cell is actually
      * within the visible area of the game board.
      *
-     * @param b <code>ArrayList&lt;ArrayList&ltByte&gt;&gt;</code> representing
+     * @param b <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code> representing
      * the game board.
      * @param row an <code>int</code> specifying the row location of the cell to
      * draw.

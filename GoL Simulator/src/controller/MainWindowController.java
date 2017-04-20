@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package controller;
 
 import java.io.File;
@@ -37,11 +32,8 @@ import javafx.stage.Modality;
 import view.DialogBoxes;
 
 /**
- * FXML Controller class for the main window. The main window consists of two
- * toolbars, one at the top and one at the bottom. In the middle is the canvas
- * which is the visual representation of the cells/Board.
+ * FXML Controller class for the main window.
  *
- * @author peven
  */
 public class MainWindowController implements Initializable {
 
@@ -83,7 +75,7 @@ public class MainWindowController implements Initializable {
         Platform.runLater(this::resizeCanvas); // ensures the parent node is ready before resizing the canvas.
 
         board = new BoardDynamic(10, 10);
-        time = new Timer(this);
+        time = new Timer(this); // used for animation timing.
 
         // set the default value of the color pickers.
         livingCellColorPicker.setValue(canvas.getLivingCellColor());
@@ -130,6 +122,9 @@ public class MainWindowController implements Initializable {
         canvas.drawBoard(board.getBoard());
     }
 
+    /**
+     * Creates a new empty board of a user defined size.
+     */
     @FXML
     private void newBoard() {
 
@@ -201,9 +196,10 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Creates a file chooser for use with methods that open files from disk.
+     * Creates a file chooser window for use with methods that open files from
+     * disk.
      *
-     * @return a FileChooser object.
+     * @return a <code>FileChooser</code> object.
      */
     private FileChooser createFileChooser() {
         FileChooser fileChooser = new FileChooser();
@@ -274,7 +270,7 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Changes the color of living cells based on the current value of the
+     * Changes the colour of living cells based on the current value of the
      * livingCellColorPicker.
      */
     @FXML
@@ -284,8 +280,8 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Changes the color of the background (and the border as they share color)
-     * based on the current value of the backgroundColorPicker.
+     * Changes the colour of the background (and the border as they share
+     * colour) based on the current value of the backgroundColorPicker.
      */
     @FXML
     private void changeBackgroundColor() {
@@ -294,7 +290,7 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Changes the color of dead cells based on the current value of the
+     * Changes the colour of dead cells based on the current value of the
      * deadCellColorPicker.
      */
     @FXML
@@ -333,7 +329,7 @@ public class MainWindowController implements Initializable {
     @FXML
     public void createNextGeneration() {
         board.nextGeneration();
-        
+
         // only draw cells that changed during last generational shift.
         for (int row = 0; row < board.getChangedCells().size(); row++) {
             for (int col = 0; col < board.getChangedCells().get(0).size(); col++) {
@@ -348,17 +344,9 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Shuts down the application.
-     */
-    @FXML
-    private void quit() {
-        Platform.exit();
-    }
-
-    /**
      * Displays the game rules window where the user can alter the rules which
      * the game plays by.
-     * 
+     *
      * Game rules window has Modality.APPLICATION_MODAL to prevent changes to
      * the Board object while game rules window is open.
      */
@@ -380,7 +368,6 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    
     public void showStatistics() throws IOException {
         /*
         Stage stage = new Stage();
@@ -395,7 +382,7 @@ public class MainWindowController implements Initializable {
         stage.initModality(Modality.APPLICATION_MODAL);
         stage.setTitle("Statistics");
         stage.show();
-        */
+         */
     }
 
     /**
@@ -445,14 +432,14 @@ public class MainWindowController implements Initializable {
      * @param event the mouse event that triggered the drag.
      */
     private void prepareForCanvasMovement(MouseEvent event) {
-        canvas.getScene().setCursor(Cursor.MOVE); 
+        canvas.getScene().setCursor(Cursor.MOVE);
         previousXOffset = event.getX();
         previousYOffset = event.getY();
     }
 
     /**
-     * Moves the visible area of the board in the canvas 
-     * based on the direction of the mouse movement. 
+     * Moves the visible area of the board in the canvas based on the direction
+     * of the mouse movement.
      *
      * @param event the mouse event that triggered the drag.
      */
@@ -510,7 +497,14 @@ public class MainWindowController implements Initializable {
     @FXML
     private void canvasDragEnded() {
         canvas.getScene().setCursor(Cursor.DEFAULT);
+    }
 
+    /**
+     * Shuts down the application.
+     */
+    @FXML
+    private void quit() {
+        Platform.exit();
     }
 
     /**
