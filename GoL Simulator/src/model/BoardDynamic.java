@@ -45,7 +45,7 @@ public class BoardDynamic {
         currentBoard = duplicateBoard(originalBoard);
         changedCells = createEmptyBoard(200, 200);
     }
-    
+
     public BoardDynamic(ArrayList<ArrayList<Byte>> board) {
         originalBoard = duplicateBoard(board);
         currentBoard = duplicateBoard(board);
@@ -134,6 +134,23 @@ public class BoardDynamic {
                 }
             }
         }
+    }
+
+    public void moveBoardWithArrowKeys(int xAxis, int yAxis) {
+        ArrayList<ArrayList<Byte>> newBoard = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
+        for (int row = 0; row < currentBoard.size(); row++) {
+            for (int col = 0; col < currentBoard.get(row).size(); col++) {
+                if (currentBoard.get(row).get(col) == 1) {
+                    //check if new coordinates is within the bounds of the board
+                    if ((row + yAxis < currentBoard.size()) && (row + yAxis > - 1) && (col + xAxis >  - 1) && (col + xAxis < currentBoard.get(row).size())) {
+                        newBoard.get(row + yAxis).set(col + xAxis, ALLIVE);
+                    } else {
+                        return;
+                    }
+                }
+            }
+        }
+        currentBoard = duplicateBoard(newBoard);
     }
 
     /**

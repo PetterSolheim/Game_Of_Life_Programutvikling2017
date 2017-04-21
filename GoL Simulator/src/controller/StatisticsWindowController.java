@@ -158,6 +158,7 @@ public class StatisticsWindowController {
     }
 
     private void defineChart() {
+        chart.setPrefWidth(root.getWidth());
         xAxis.setTickUnit(1);
         xAxis.setLowerBound(b.getGenerationCount());
         xAxis.setUpperBound(b.getGenerationCount() + Integer.parseInt(txtIterations.getText()));
@@ -167,7 +168,6 @@ public class StatisticsWindowController {
          * NumberAxis x = (NumberAxis)chart.getXAxis();
          */
     }
-
     public void setBoard(BoardDynamic b) {
         this.b = b;
     }
