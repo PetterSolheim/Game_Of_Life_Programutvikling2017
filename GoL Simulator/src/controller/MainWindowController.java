@@ -8,6 +8,8 @@ import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -26,6 +28,8 @@ import javafx.stage.Stage;
 import model.*;
 import view.GameCanvas;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
@@ -64,6 +68,7 @@ public class MainWindowController implements Initializable {
     private Timer time;
     private boolean isPaused = true;
     private Stage stage;
+    private Stage mainStage;
     private double previousXOffset;
     private double previousYOffset;
 
@@ -74,7 +79,7 @@ public class MainWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         Platform.runLater(this::defineStage); // allows easy referal to the stage.
         Platform.runLater(this::resizeCanvas); // ensures the parent node is ready before resizing the canvas.
-
+        Platform.runLater(this::setArrowKeyEventListener); // Eventhandler for arrowkeys after stage is loaded
         board = new BoardDynamic(10, 10);
         time = new Timer(this); // used for animation timing.
 
@@ -107,11 +112,9 @@ public class MainWindowController implements Initializable {
         canvasAnchor.widthProperty().addListener((observable) -> {
             resizeCanvas();
         });
-
         // update the labels for the living cell count and generation count.
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
-
     }
 
     /**
@@ -153,6 +156,35 @@ public class MainWindowController implements Initializable {
         } else {
             pause();
         }
+    }
+
+    private void setArrowKeyEventListener() {
+        stage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
+            public void handle(KeyEvent ke) {
+                KeyCode k = ke.getCode();
+                if (k == KeyCode.LEFT || k == KeyCode.RIGHT || k == KeyCode.DOWN || k == KeyCode.UP) {
+
+                    ke.consume(); // <-- stops passing the event to next node
+                }
+                switch (k) {
+                    case LEFT:
+                        board.moveBoardWithArrowKeys(-1, 0);
+                        break;
+                    case RIGHT:
+                        board.moveBoardWithArrowKeys(1, 0);
+                        break;
+                    case UP:
+                        board.moveBoardWithArrowKeys(0, -1);
+                        break;
+                    case DOWN:
+                        board.moveBoardWithArrowKeys(0, 1);
+                        break;
+                    default:
+                        break;
+                }
+                canvas.drawBoard(board.getBoard());
+            }
+        });
     }
 
     /**
@@ -313,7 +345,7 @@ public class MainWindowController implements Initializable {
      * current board.
      */
     private void updateLivingCellCountLabel() {
-        txtShowCellCount.setText(Integer.toString(board.getLivingCellCount()) + " .");
+        txtShowCellCount.setText(Integer.toString(board.getLivingCellCount()) + "");
     }
 
     /**
@@ -513,6 +545,10 @@ public class MainWindowController implements Initializable {
     @FXML
     private void quit() {
         Platform.exit();
+    }
+
+    public void setMainStage(Stage s) {
+        this.mainStage = s;
     }
 
     /**
