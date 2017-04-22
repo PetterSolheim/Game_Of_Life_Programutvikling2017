@@ -33,10 +33,13 @@
                         </Menu>
                     </items>
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Settings" />
+                        <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Board Settings" />
                     </items>
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="Statistics" />
+                    </items>
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showAudioSettingsWindow" text="Audio Settings" />
                     </items>
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#quit" text="Exit" />

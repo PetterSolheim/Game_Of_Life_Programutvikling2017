@@ -32,6 +32,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import view.DialogBoxes;
@@ -41,7 +42,7 @@ import view.DialogBoxes;
  *
  */
 public class MainWindowController implements Initializable {
-
+    
     @FXML
     private GameCanvas canvas;
     @FXML
@@ -100,14 +101,14 @@ public class MainWindowController implements Initializable {
             canvas.setCellSize((int) cellSizeSlider.getValue());
             canvas.drawBoard(board.getBoard());
         });
-
+        
         canvas.setCellSize((int) cellSizeSlider.getValue());
 
         // prepare the canvas, and add a listener to its parent node so that
         // the canvas will resize to fill the available space.
         canvasAnchor.heightProperty().addListener((observable) -> {
             resizeCanvas();
-
+            
         });
         canvasAnchor.widthProperty().addListener((observable) -> {
             resizeCanvas();
@@ -131,7 +132,7 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     private void newBoard() {
-
+        
     }
 
     /**
@@ -157,13 +158,13 @@ public class MainWindowController implements Initializable {
             pause();
         }
     }
-
+    
     private void setArrowKeyEventListener() {
         stage.addEventFilter(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
             public void handle(KeyEvent ke) {
                 KeyCode k = ke.getCode();
                 if (k == KeyCode.LEFT || k == KeyCode.RIGHT || k == KeyCode.DOWN || k == KeyCode.UP) {
-
+                    
                     ke.consume(); // <-- stops passing the event to next node
                 }
                 switch (k) {
@@ -220,10 +221,10 @@ public class MainWindowController implements Initializable {
         double boardHeightCenter = (board.getBoard().size() * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
         double canvasWidthCenter = (canvas.getWidth() / 2);
         double canvasHeightCenter = (canvas.getHeight() / 2);
-
+        
         double xOffset = canvasWidthCenter - boardWidthCenter;
         double yOffset = canvasHeightCenter - boardHeightCenter;
-
+        
         canvas.setOffset(xOffset, yOffset);
         canvas.drawBoard(board.getBoard());
     }
@@ -260,8 +261,7 @@ public class MainWindowController implements Initializable {
                 board.setBoard(fileImporter.readGameBoardFromDisk(file));
                 centreBoardOnCanvas();
                 canvas.drawBoard(board.getBoard());
-                updateLivingCellCountLabel();
-
+                updateLivingCellCountLabel();                
             } catch (FileNotFoundException e) {
                 DialogBoxes.ioException("No file found at: " + e.getMessage());
             } catch (IOException e) {
@@ -283,7 +283,7 @@ public class MainWindowController implements Initializable {
         TextInputDialog inputDialog = new TextInputDialog();
         inputDialog.setTitle("Open URL");
         inputDialog.setContentText("Please enter URL for the file you wish to open");
-
+        
         Optional<String> url = inputDialog.showAndWait();
         if (url.isPresent()) {
             try {
@@ -400,29 +400,47 @@ public class MainWindowController implements Initializable {
             DialogBoxes.ioException("There was an error displaying the game rules window!");
         }
     }
-
-    public void showStatistics() throws IOException {
-        Stage statistics = new Stage();
-
-        statistics.setWidth(800);
-
-        statistics.setHeight(800);
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/StatisticsWindow.fxml"));
-
-        FlowPane root = loader.load();
-
-        StatisticsWindowController controller = loader.getController();
-
-        controller.setBoard(board.deepCopy());
-
-        Scene scene = new Scene(root);
-
-        statistics.setScene(scene);
-
-        statistics.setTitle("Statistics");
-
-        statistics.show();
+    /**
+     * Displays the statistics window where the user can see information on future generations 
+     * of the <bold>active</bold> board.
+     */
+    public void showStatistics() {
+        try {
+            Stage statistics = new Stage();          
+            statistics.setWidth(800);            
+            statistics.setHeight(800);           
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/StatisticsWindow.fxml"));            
+            FlowPane root = loader.load();            
+            StatisticsWindowController controller = loader.getController();           
+            controller.setBoard(board.deepCopy());            
+            Scene scene = new Scene(root);           
+            statistics.setScene(scene);           
+            statistics.setTitle("Statistics");    
+            statistics.initModality(Modality.APPLICATION_MODAL);
+            statistics.show();
+        } catch (IOException exception) {
+            DialogBoxes.ioException(exception.getMessage());
+        }
+    }
+    /**
+     * Displays the audio settings window where the user can see information on future generations 
+     * of the <bold>active</bold> board.
+     */
+    public void showAudioSettingsWindow() {
+        try {
+            Stage soundSettings = new Stage();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AudioSettingsWindow.fxml"));
+            VBox root = loader.load();
+            AudioSettingsWindowController c = loader.getController();
+            c.setThisStage(soundSettings);
+            Scene scene = new Scene(root);
+            soundSettings.setScene(scene);
+            soundSettings.setTitle("Audio Settings");
+            soundSettings.initModality(Modality.APPLICATION_MODAL);
+            soundSettings.show();
+        } catch (IOException exception) {
+            DialogBoxes.ioException(exception.getMessage());
+        }
     }
 
     /**
@@ -436,7 +454,7 @@ public class MainWindowController implements Initializable {
         if (event.getButton() == MouseButton.PRIMARY && !event.isDragDetect()) { // single click registered
             int row = (int) ((event.getY() - canvas.getYOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
             int col = (int) ((event.getX() - canvas.getXOffset()) / (canvas.getCellSize() + canvas.getSpaceBetweenCells()));
-
+            
             if (isWithinBoard(row, col)) {
                 board.toggleCellState(row, col);
                 canvas.drawCell(board.getBoard(), row, col);
@@ -546,7 +564,7 @@ public class MainWindowController implements Initializable {
     private void quit() {
         Platform.exit();
     }
-
+    
     public void setMainStage(Stage s) {
         this.mainStage = s;
     }
