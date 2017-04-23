@@ -562,6 +562,7 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     private void quit() {
+        AudioManager.getSingelton().closeLines();
         Platform.exit();
     }
     
