@@ -42,6 +42,18 @@ public class GameCanvas extends Canvas {
         this.xOffset = xOffset;
         this.yOffset = yOffset;
     }
+    
+    /**
+     * Adjust the offset by adding a value to increase the offset with.
+     * @param xOffset an <code>int</code> specifying the amount to increase the
+     * xOffset.
+     * @param yOffset an <code>int</code> specifying the amount to increase the
+     * yOffset.
+     */
+    public void adjustOffset(int xOffset, int yOffset) {
+        this.xOffset += xOffset;
+        this.yOffset += yOffset;
+    }
 
     /**
      * Gets the x-axis offset.

@@ -86,7 +86,7 @@ public class MainWindowController implements Initializable {
         Platform.runLater(this::resizeCanvas); // ensures the parent node is ready before resizing the canvas.
         Platform.runLater(this::setArrowKeyEventListener); // Eventhandler for arrowkeys after stage is loaded
         Platform.runLater(this::centreBoardOnCanvas);
-        board = new BoardDynamic(10, 10);
+        board = new BoardDynamic(20, 20);
         time = new Timer(this); // used for animation timing.
 
         // set the default value of the color pickers.
@@ -103,8 +103,15 @@ public class MainWindowController implements Initializable {
 
         // prepare the cellSizeSlider.
         cellSizeSlider.valueProperty().addListener((observable) -> {
+            int oldValue = canvas.getCellSize() + canvas.getSpaceBetweenCells();
             canvas.setCellSize((int) cellSizeSlider.getValue());
+            int newValue = canvas.getCellSize() + canvas.getSpaceBetweenCells();
+            int xOffsetAdjust = ((oldValue - newValue) * board.getRows()) / 2;
+            int yOffsetAdjust = ((oldValue - newValue) * board.getCols()) / 2;
+            canvas.adjustOffset(xOffsetAdjust, yOffsetAdjust);
+
             canvas.drawBoard(board.getBoard());
+
         });
 
         canvas.setCellSize((int) cellSizeSlider.getValue());
@@ -133,7 +140,8 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Creates a new empty board of a user defined size.
+     * Creates a new blank board of a user defined size. User is presented with
+     * a dialog box asking for board size.
      */
     @FXML
     private void newBoard() {
