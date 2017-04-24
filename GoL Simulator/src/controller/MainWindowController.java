@@ -5,7 +5,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -16,12 +15,8 @@ import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
@@ -33,10 +28,8 @@ import view.GameCanvas;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
-import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.util.Pair;
 import view.DialogBoxes;
 
 /**
@@ -81,7 +74,6 @@ public class MainWindowController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         Platform.runLater(this::defineStage); // allows easy referal to the stage.
         Platform.runLater(this::resizeCanvas); // ensures the parent node is ready before resizing the canvas.
-        Platform.runLater(this::centreBoardOnCanvas); // centres the blank starting board
 
         board = new BoardDynamic(10, 10);
         time = new Timer(this); // used for animation timing.
@@ -136,50 +128,7 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     private void newBoard() {
-        Dialog dialog = new Dialog<>();
-        dialog.setTitle("New Board");
-        GridPane grid = new GridPane();
-        
-        Label lblRow = new Label("Rows: ");
-        grid.add(lblRow, 0, 0);
-        TextField txtRow = new TextField();
-        txtRow.setPromptText("Enter number of rows");
-        grid.add(txtRow, 1, 0);
-        
-        Label lblCol = new Label("Columns: ");
-        grid.add(lblCol, 0, 1);
-        TextField txtCol = new TextField();
-        txtCol.setPromptText("Enter number of columns");
-        grid.add(txtCol, 1, 1);
-        
-        dialog.getDialogPane().setContent(grid);
-        
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == ButtonType.OK){
-                ArrayList<String> values = new ArrayList<>();
-                values.add(txtRow.getText());
-                values.add(txtCol.getText());
-                return values;
-            } else {
-                return null;
-            }
-        });
-        
-        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
-        Optional<ArrayList<String>> result = dialog.showAndWait();
-        
-        result.ifPresent(consumer -> {
-            try {
-                int row = Integer.parseInt(consumer.get(0));
-                int col = Integer.parseInt(consumer.get(1));
-                BoardDynamic newBoard = new BoardDynamic(row, col);
-                board = newBoard;
-                centreBoardOnCanvas();
-                canvas.drawBoard(board.getBoard());
-            } catch (IllegalArgumentException e) {
-                DialogBoxes.ioException("Entered value is not a number!");
-            }
-        });
+
     }
 
     /**
@@ -309,7 +258,6 @@ public class MainWindowController implements Initializable {
                 board.setBoard(fileImporter.readGameBoardFromUrl(url.get()));
                 canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
-                centreBoardOnCanvas();
             } catch (MalformedURLException e) {
                 DialogBoxes.ioException("Given String is not a valid URL: " + e.getMessage());
             } catch (FileNotFoundException e) {
