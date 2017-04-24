@@ -26,22 +26,28 @@ public class Statistics {
         generations = new HashMap<Integer, BoardDynamic>();
         setLastGeneration();
     }
-    private void setLastGeneration (){
-        this.lastGeneration = firstGeneration + iterations;
+
+    private void setLastGeneration() {
+        this.lastGeneration = firstGeneration + iterations - 1;
     }
-    public int getLastGeneration (){
+
+    public int getLastGeneration() {
         return this.lastGeneration;
     }
+
     public void setIterations(int i) {
         this.iterations = i;
         setLastGeneration();
     }
-    public int getIterations (){
+
+    public int getIterations() {
         return this.iterations;
     }
-    public int getFirstGeneration (){
+
+    public int getFirstGeneration() {
         return this.firstGeneration;
     }
+
     public XYChart.Series[] getStatistics() {
         //Define series to be returned
         XYChart.Series livingCells = new XYChart.Series();
@@ -54,7 +60,7 @@ public class Statistics {
 
         XYChart.Series similiarityMeasure = new XYChart.Series();
         similiarityMeasure.setName("Similarity Measure");
-        
+
         //Needs initial generation data.
         livingCellsPerGeneration.put(b.getGenerationCount(), b.getLivingCellCount());
         generations.put(b.getGenerationCount(), new BoardDynamic(b.getBoard()));
@@ -68,14 +74,14 @@ public class Statistics {
             popluationChange.getData().add(getPopulationChange(prevPopulation));
             floatBoards.put(b.getGenerationCount(), convertBoardToFloat(b.getGenerationCount()));
         }
-        
+
         //Populate similarity measure
         int generationCount = firstGeneration + 1;
         while (generationCount <= lastGeneration) {
             similiarityMeasure.getData().add(getSimilarityMeasure(generationCount, floatBoards));
             generationCount++;
         }
-        
+
         //Return series.
         XYChart.Series[] series = new XYChart.Series[3];
         series[0] = livingCells;
@@ -125,7 +131,26 @@ public class Statistics {
         similarityMeasure.setXValue(generation);
         return similarityMeasure;
     }
-    public BoardDynamic getSelectedIteration(int generation){
+    
+    public int findMostSimilar(int generation) {
+        float generationToCompare = floatBoards.get(generation);
+        float highestfloat = 0f;
+        int mostSimilarGeneration = 0;
+        int i = this.firstGeneration + 1;
+        while (i < this.lastGeneration) {
+            if (i != generation) {
+                float newFloat = Float.min(generationToCompare, floatBoards.get(i).floatValue()) / Float.max(generationToCompare, floatBoards.get(i).floatValue());
+                if (newFloat > highestfloat) {
+                    mostSimilarGeneration = i;
+                    highestfloat = newFloat;
+                }
+            }
+            i++;
+        }
+        return mostSimilarGeneration;
+    }
+    
+    public BoardDynamic getSelectedIteration(int generation) {
         return generations.get(generation);
     }
 }
