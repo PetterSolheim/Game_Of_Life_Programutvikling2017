@@ -1,5 +1,6 @@
 package controller;
 
+import com.sun.javaws.exceptions.InvalidArgumentException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
@@ -8,8 +9,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import model.Rules;
+import view.DialogBoxes;
 
 /**
  * FXML controller for the game rules window.
@@ -22,6 +25,8 @@ public class GameRulesWindowController implements Initializable {
     private CheckBox b0, b1, b2, b3, b4, b5, b6, b7, b8;
     @FXML
     private RadioButton rbtnStatic, rbtnDynamic;
+    @FXML
+    private TextField txtMaxCells;
 
     private Rules rules = Rules.getInstance();
     private Stage stage;
@@ -50,6 +55,7 @@ public class GameRulesWindowController implements Initializable {
     private void rbtnStaticClicked() {
         rbtnStatic.setSelected(true);
         rbtnDynamic.setSelected(false);
+        txtMaxCells.setDisable(true);
     }
 
     /**
@@ -59,6 +65,7 @@ public class GameRulesWindowController implements Initializable {
     private void rbtnDynamicClicked() {
         rbtnDynamic.setSelected(true);
         rbtnStatic.setSelected(false);
+        txtMaxCells.setDisable(false);
     }
 
     /**
@@ -95,6 +102,14 @@ public class GameRulesWindowController implements Initializable {
             rules.setDynamic(false);
         } else {
             rules.setDynamic(true);
+        }
+        
+        // set the new max number of cells
+        try {
+            rules.setMaxNumberOfCells(Integer.parseInt(txtMaxCells.getText()));
+        } catch (IllegalArgumentException e) {
+            DialogBoxes.ioException("Value for max number of cells is not a "
+                    + "number.");
         }
 
         stage.close();
@@ -139,11 +154,16 @@ public class GameRulesWindowController implements Initializable {
         // load and display dynamic rules
         if (rules.isDynamic()) {
             rbtnStatic.setSelected(false);
+            txtMaxCells.setDisable(false);
             rbtnDynamic.setSelected(true);
         } else {
             rbtnStatic.setSelected(true);
+            txtMaxCells.setDisable(true);
             rbtnDynamic.setSelected(false);
         }
+
+        // load and display max number of cells
+        txtMaxCells.setText("" + rules.getMaxNumberOfCells());
     }
 
 }

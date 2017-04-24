@@ -85,7 +85,6 @@ public class MainWindowController implements Initializable {
         Platform.runLater(this::defineStage); // allows easy referal to the stage.
         Platform.runLater(this::resizeCanvas); // ensures the parent node is ready before resizing the canvas.
         Platform.runLater(this::setArrowKeyEventListener); // Eventhandler for arrowkeys after stage is loaded
-        Platform.runLater(this::centreBoardOnCanvas);
         board = new BoardDynamic(20, 20);
         time = new Timer(this); // used for animation timing.
 
@@ -106,8 +105,8 @@ public class MainWindowController implements Initializable {
             int oldValue = canvas.getCellSize() + canvas.getSpaceBetweenCells();
             canvas.setCellSize((int) cellSizeSlider.getValue());
             int newValue = canvas.getCellSize() + canvas.getSpaceBetweenCells();
-            int xOffsetAdjust = ((oldValue - newValue) * board.getRows()) / 2;
-            int yOffsetAdjust = ((oldValue - newValue) * board.getCols()) / 2;
+            int yOffsetAdjust = ((oldValue - newValue) * board.getRows()) / 2;
+            int xOffsetAdjust = ((oldValue - newValue) * board.getCols()) / 2;
             canvas.adjustOffset(xOffsetAdjust, yOffsetAdjust);
 
             canvas.drawBoard(board.getBoard());
@@ -128,6 +127,7 @@ public class MainWindowController implements Initializable {
         // update the labels for the living cell count and generation count.
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
+        Platform.runLater(this::centreBoardOnCanvas);
     }
 
     /**

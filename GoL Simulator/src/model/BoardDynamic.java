@@ -230,7 +230,7 @@ public class BoardDynamic {
         // reset list of changed cells.
         changedCells = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
 
-        if (rules.isDynamic()) {
+        if (rules.isDynamic() && getNumberOfCells() < rules.getMaxNumberOfCells()) {
             expandBoardIfNeeded();
         }
 
