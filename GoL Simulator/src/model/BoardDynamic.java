@@ -322,13 +322,12 @@ public class BoardDynamic {
         testPattern = duplicateBoard(currentBoard);
 
         // create threads and assign them their task.
-        ExecutorService executorService = Executors.newFixedThreadPool(numWorkers);
         createNextGenerationWorkers();
 
         // if a thread gets interupted during execution, roll back changes made 
         // during this generational shift.
         try {
-        runNextGenerationWorkers(executorService);
+        runNextGenerationWorkers();
         } catch (InterruptedException e) {
             currentBoard = duplicateBoard(backup);
         }
@@ -347,13 +346,13 @@ public class BoardDynamic {
         }
     }
 
-    private void runNextGenerationWorkers(ExecutorService ex) throws InterruptedException {
+    private void runNextGenerationWorkers() throws InterruptedException {
         for (Thread t : workers) {
-            ex.submit(t);
+            t.start();
         }
-        
-        ex.shutdown();
-        ex.awaitTermination(2, TimeUnit.SECONDS);
+        for (Thread t : workers) {
+            t.join();
+        }
 
     }
 
