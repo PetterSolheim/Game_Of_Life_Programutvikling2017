@@ -438,6 +438,7 @@ public class MainWindowController implements Initializable {
     @FXML
     private void testPerformance() {
         board.nextGenerationPrintPerformance(20);
+        board.resetBoard();
         board.nextGenerationConcurrentPrintPerformance(20);
     }
 

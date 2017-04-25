@@ -1,6 +1,9 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This class contains the game board and its mechanics, such as moving a game
@@ -319,15 +322,17 @@ public class BoardDynamic {
         testPattern = duplicateBoard(currentBoard);
 
         // create threads and assign them their task.
+        ExecutorService executorService = Executors.newFixedThreadPool(numWorkers);
         createNextGenerationWorkers();
 
         // if a thread gets interupted during execution, roll back changes made 
         // during this generational shift.
         try {
-            runNextGenerationWorkers();
+        runNextGenerationWorkers(executorService);
         } catch (InterruptedException e) {
             currentBoard = duplicateBoard(backup);
         }
+
         workers.clear(); // clear workers
 
         generationCount++;
@@ -342,14 +347,13 @@ public class BoardDynamic {
         }
     }
 
-    private void runNextGenerationWorkers() throws InterruptedException {
+    private void runNextGenerationWorkers(ExecutorService ex) throws InterruptedException {
         for (Thread t : workers) {
-            t.start();
+            ex.submit(t);
         }
-
-        for (Thread t : workers) {
-            t.join();
-        }
+        
+        ex.shutdown();
+        ex.awaitTermination(2, TimeUnit.SECONDS);
 
     }
 
