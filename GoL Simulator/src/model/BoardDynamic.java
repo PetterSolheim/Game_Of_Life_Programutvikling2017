@@ -28,6 +28,8 @@ public class BoardDynamic {
      */
     private ArrayList<ArrayList<Byte>> originalBoard;
 
+    private ArrayList<ArrayList<Byte>> testPattern;
+
     private int generationCount = 0;
     private int livingCells = 0;
     private final byte DEAD = 0;
@@ -35,6 +37,9 @@ public class BoardDynamic {
     private final byte CHANGED = 1;
     private int indexSum = 0;
     private Rules rules = Rules.getInstance();
+
+    private int numWorkers = Runtime.getRuntime().availableProcessors();
+    private ArrayList<Thread> workers = new ArrayList<Thread>();
 
     /**
      * Board no-argument constructor initializes a game board consisting of 200
@@ -70,18 +75,20 @@ public class BoardDynamic {
         currentBoard = duplicateBoard(originalBoard);
         changedCells = createEmptyBoard(row, col);
     }
-    
+
     /**
      * Gets the the number of rows on the current board.
+     *
      * @return an <code>int</code> specifying the number of rows on the current
      * board.
      */
     public int getRows() {
         return currentBoard.size();
     }
-    
+
     /**
      * Gets the number of columns on the current board.
+     *
      * @return an <code>int</code> specifying the number of columns on the
      * current board.
      */
@@ -160,7 +167,7 @@ public class BoardDynamic {
             for (int col = 0; col < currentBoard.get(row).size(); col++) {
                 if (currentBoard.get(row).get(col) == 1) {
                     //check if new coordinates is within the bounds of the board
-                    if ((row + yAxis < currentBoard.size()) && (row + yAxis > - 1) && (col + xAxis >  - 1) && (col + xAxis < currentBoard.get(row).size())) {
+                    if ((row + yAxis < currentBoard.size()) && (row + yAxis > - 1) && (col + xAxis > - 1) && (col + xAxis < currentBoard.get(row).size())) {
                         newBoard.get(row + yAxis).set(col + xAxis, ALLIVE);
                     } else {
                         return;
@@ -221,6 +228,17 @@ public class BoardDynamic {
     }
 
     /**
+     * Determines the time it takes to take a board to its next generation, and
+     * prints it to the screen.
+     */
+    public void nextGenerationPrintPerformance() {
+        long start = System.currentTimeMillis();
+        nextGeneration();
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("Time to perform nextGeneration: " + elapsed);
+    }
+
+    /**
      * Iterates the current board to its next generation, playing by the rules
      * defined in the Rules class object.
      *
@@ -236,7 +254,7 @@ public class BoardDynamic {
 
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.
-        ArrayList<ArrayList<Byte>> testPattern = duplicateBoard(currentBoard);
+        testPattern = duplicateBoard(currentBoard);
 
         // iterate through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
@@ -257,6 +275,102 @@ public class BoardDynamic {
             }
         }
         generationCount++;
+    }
+
+    /**
+     * Determines the time it takes to take a board to its next generation using
+     * the thread optimized nextGenerationConcurrent().
+     */
+    public void nextGenerationConcurrentPrintPerformance() {
+        long start = System.currentTimeMillis();
+        nextGenerationConcurrent();
+        long elapsed = System.currentTimeMillis() - start;
+        System.out.println("Time to perform nextGenerationConcurrent: " + elapsed);
+    }
+
+    /**
+     * Iterates the current board to its next generation, playing by the rules
+     * defined in the Rules class object. This method uses threads to improve
+     * performance.
+     *
+     * @see model.Rules
+     */
+    public void nextGenerationConcurrent() {
+        // reset list of changed cells.
+        changedCells = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
+
+        if (rules.isDynamic() && getNumberOfCells() < rules.getMaxNumberOfCells()) {
+            expandBoardIfNeeded();
+        }
+
+        // a copy of the board is used to test the rules, while changes are
+        // applied to the actual board.
+        testPattern = duplicateBoard(currentBoard);
+
+        // run a threaded version of nextGeneration
+        createNextGenerationWorkers();
+        runNextGenerationWorkers();
+        workers.clear(); // destorys the workers.
+
+        generationCount++;
+    }
+
+    private void createNextGenerationWorkers() {
+        for (int i = 0; i < numWorkers; i++) {
+            int workerNr = i;
+            workers.add(new Thread(() -> {
+                partialNextGeneration(workerNr);
+            }));
+        }
+    }
+
+    private void runNextGenerationWorkers() {
+        for (Thread t : workers) {
+            t.start();
+        }
+        try {
+            for (Thread t : workers) {
+                t.join();
+            }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void partialNextGeneration(int workerNr) {
+        int startCol = (testPattern.get(0).size() / numWorkers) * workerNr;
+        int endCol;
+        if (workerNr + 1 == numWorkers) {
+            endCol = testPattern.get(0).size() - 1;
+        } else {
+            endCol = ((testPattern.get(0).size() / numWorkers) * (workerNr + 1)) - 1;
+        }
+        System.out.println("Worker: " + workerNr + ", Start Col: " + startCol + ", End Col: " + endCol);
+        for (int row = 0; row < testPattern.size(); row++) {
+            for (int col = startCol; col <= endCol; col++) {
+                int nrOfNeighbours = countNeighbours(testPattern, row, col);
+
+                if (testPattern.get(row).get(col) == 1 && !rules.getSurviveRules().contains(nrOfNeighbours)) {
+                    currentBoard.get(row).set(col, DEAD);
+                    changedCells.get(row).set(col, CHANGED);
+                    addToLivingCells(-1);
+                } else if (testPattern.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
+                    currentBoard.get(row).set(col, ALLIVE);
+                    changedCells.get(row).set(col, CHANGED);
+                    addToLivingCells(+1);
+                }
+            }
+        }
+    }
+
+    /**
+     * Allows for increasing of the number of living cells. Pass negative values
+     * to decrease. Method is synchronized and therefore safe to threaded use.
+     *
+     * @param i
+     */
+    private synchronized void addToLivingCells(int i) {
+        livingCells += i;
     }
 
     /**

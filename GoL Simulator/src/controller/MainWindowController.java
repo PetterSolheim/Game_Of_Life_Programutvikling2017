@@ -441,8 +441,10 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     public void createNextGeneration() {
-        board.nextGeneration();
-
+        board.nextGenerationConcurrentPrintPerformance();
+        canvas.drawBoard(board.getBoard());
+        
+        /*
         // only draw cells that changed during last generational shift.
         for (int row = 0; row < board.getChangedCells().size(); row++) {
             for (int col = 0; col < board.getChangedCells().get(0).size(); col++) {
@@ -451,7 +453,8 @@ public class MainWindowController implements Initializable {
                     canvas.drawCell(board.getBoard(), row, col);
                 }
             }
-        }
+        }*/
+        
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
     }
