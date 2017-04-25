@@ -1,6 +1,8 @@
 package view;
 
+import java.util.Optional;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ButtonType;
 
 /**
  * A class containing simple dialog boxes that can be called statically. Allows
@@ -30,6 +32,25 @@ public class DialogBoxes {
         alert.setHeaderText("Error reading file");
         alert.setContentText(message);
         alert.showAndWait();
+    }
+    
+    public static void inputError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setHeaderText("Invalid input");
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+    
+    public static boolean confirm(String message) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setHeaderText("Warning");
+        alert.setContentText(message);
+        Optional<ButtonType> result = alert.showAndWait();
+        if(result.get() == ButtonType.OK) {
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }
