@@ -452,6 +452,7 @@ public class MainWindowController implements Initializable {
                 }
             }
         }
+        canvas.drawBoard(board.getBoard());
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
     }

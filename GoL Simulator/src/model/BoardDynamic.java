@@ -1,6 +1,13 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Set;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * This class contains the game board and its mechanics, such as moving a game
@@ -35,6 +42,8 @@ public class BoardDynamic {
     private final byte CHANGED = 1;
     private int indexSum = 0;
     private Rules rules = Rules.getInstance();
+    private ExecutorService executor;
+    private int Threads = Runtime.getRuntime().availableProcessors();
 
     /**
      * Board no-argument constructor initializes a game board consisting of 200
@@ -66,22 +75,25 @@ public class BoardDynamic {
             throw new IllegalArgumentException("Number of rows and columns must"
                     + "be higher than 0!");
         }
+        executor = Executors.newCachedThreadPool();
         originalBoard = createEmptyBoard(row, col);
         currentBoard = duplicateBoard(originalBoard);
         changedCells = createEmptyBoard(row, col);
     }
-    
+
     /**
      * Gets the the number of rows on the current board.
+     *
      * @return an <code>int</code> specifying the number of rows on the current
      * board.
      */
     public int getRows() {
         return currentBoard.size();
     }
-    
+
     /**
      * Gets the number of columns on the current board.
+     *
      * @return an <code>int</code> specifying the number of columns on the
      * current board.
      */
@@ -160,7 +172,7 @@ public class BoardDynamic {
             for (int col = 0; col < currentBoard.get(row).size(); col++) {
                 if (currentBoard.get(row).get(col) == 1) {
                     //check if new coordinates is within the bounds of the board
-                    if ((row + yAxis < currentBoard.size()) && (row + yAxis > - 1) && (col + xAxis >  - 1) && (col + xAxis < currentBoard.get(row).size())) {
+                    if ((row + yAxis < currentBoard.size()) && (row + yAxis > - 1) && (col + xAxis > - 1) && (col + xAxis < currentBoard.get(row).size())) {
                         newBoard.get(row + yAxis).set(col + xAxis, ALLIVE);
                     } else {
                         return;
@@ -237,9 +249,27 @@ public class BoardDynamic {
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.
         ArrayList<ArrayList<Byte>> testPattern = duplicateBoard(currentBoard);
-
+        int colsPerThread = currentBoard.get(0).size() / Threads;
+        for (int i = 0; i < Threads; i++) {
+            int start = colsPerThread * i;
+            int end = (colsPerThread * i) + colsPerThread;
+            executor.submit(new RunnableBoard(start, end, testPattern, currentBoard, changedCells, this));
+        }
+        executor.shutdown();
+        try {
+            executor.awaitTermination(5, TimeUnit.SECONDS);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(BoardDynamic.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
+        Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
+        for( Thread t : threadArray){
+            System.out.println("Tråd id" + t.getId());
+        }
+        generationCount++;
         // iterate through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
+        /**
         for (int row = 0; row < testPattern.size(); row++) {
             for (int col = 0; col < testPattern.get(0).size(); col++) {
                 int nrOfNeighbours = countNeighbours(testPattern, row, col);
@@ -256,7 +286,7 @@ public class BoardDynamic {
                 }
             }
         }
-        generationCount++;
+        **/
     }
 
     /**
