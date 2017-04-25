@@ -249,23 +249,35 @@ public class BoardDynamic {
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.
         ArrayList<ArrayList<Byte>> testPattern = duplicateBoard(currentBoard);
+        System.out.println(Threads + " tråder");
         int colsPerThread = currentBoard.get(0).size() / Threads;
         for (int i = 0; i < Threads; i++) {
-            int start = colsPerThread * i;
+            int start;
+            if (i == 0) {
+                start = colsPerThread * i;
+            } else {
+                start = colsPerThread * i;
+                start++;
+            }
             int end = (colsPerThread * i) + colsPerThread;
-            executor.submit(new RunnableBoard(start, end, testPattern, currentBoard, changedCells, this));
+            if (i == Threads -1 ) {
+                executor.submit(new RunnableBoard(start, end + (currentBoard.get(0).size() - end), testPattern, currentBoard, changedCells, this));
+            } else {
+                executor.submit(new RunnableBoard(start, end, testPattern, currentBoard, changedCells, this));
+            }
+
         }
-        /***executor.shutdown();
-        try {
-            executor.awaitTermination(5, TimeUnit.SECONDS);
-        } catch (InterruptedException ex) {
-            Logger.getLogger(BoardDynamic.class.getName()).log(Level.SEVERE, null, ex);
-        }**/
+        /**
+         * *executor.shutdown(); try { executor.awaitTermination(5,
+         * TimeUnit.SECONDS); } catch (InterruptedException ex) {
+         * Logger.getLogger(BoardDynamic.class.getName()).log(Level.SEVERE,
+         * null, ex); }*
+         */
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
         int i = 0;
         for (Thread t : threadArray) {
-            i ++;
+            i++;
         }
         System.out.println("antall tråder" + i);
         /*for (int row = 0; row < testPattern.size(); row++) {
