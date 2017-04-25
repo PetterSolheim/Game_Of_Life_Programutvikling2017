@@ -25,6 +25,9 @@
                         <MenuItem mnemonicParsing="false" onAction="#newBoard" text="New" />
                     </items>
                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#testPerformance" text="Test Performance" />
+                    </items>
+                    <items>
                         <Menu mnemonicParsing="false" text="Open">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#openFromDisk" text="from disk" />

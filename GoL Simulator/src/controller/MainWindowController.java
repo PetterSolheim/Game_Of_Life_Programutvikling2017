@@ -187,7 +187,7 @@ public class MainWindowController implements Initializable {
                 int row = Integer.parseInt(consumer.get(0));
                 int col = Integer.parseInt(consumer.get(1));
                 boolean isOk = true;
-                
+
                 // check that the user defined size is within reasonable limits.
                 // Warn them if it is not, and give them the chance to change
                 // their mind.
@@ -196,7 +196,7 @@ public class MainWindowController implements Initializable {
                             + " to slow performance. Are you sure you wish to"
                             + " continue?");
                 }
-                
+
                 // if all is ok, create and display the new board.
                 if (isOk) {
                     BoardDynamic newBoard = new BoardDynamic(row, col);
@@ -435,16 +435,19 @@ public class MainWindowController implements Initializable {
         txtShowGen.setText(Integer.toString(board.getGenerationCount()) + " ");
     }
 
+    @FXML
+    private void testPerformance() {
+        board.nextGenerationPrintPerformance(20);
+        board.nextGenerationConcurrentPrintPerformance(20);
+    }
+
     /**
      * Iterates the board to the next generation, draws the new board on canvas,
      * and updates the GUIs labels for living cell count, and generation count.
      */
     @FXML
     public void createNextGeneration() {
-        board.nextGenerationConcurrentPrintPerformance();
-        canvas.drawBoard(board.getBoard());
-        
-        /*
+        board.nextGenerationConcurrent();
         // only draw cells that changed during last generational shift.
         for (int row = 0; row < board.getChangedCells().size(); row++) {
             for (int col = 0; col < board.getChangedCells().get(0).size(); col++) {
@@ -453,8 +456,7 @@ public class MainWindowController implements Initializable {
                     canvas.drawCell(board.getBoard(), row, col);
                 }
             }
-        }*/
-        
+        }
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
     }

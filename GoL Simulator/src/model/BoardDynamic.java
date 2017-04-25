@@ -231,11 +231,15 @@ public class BoardDynamic {
      * Determines the time it takes to take a board to its next generation, and
      * prints it to the screen.
      */
-    public void nextGenerationPrintPerformance() {
-        long start = System.currentTimeMillis();
-        nextGeneration();
-        long elapsed = System.currentTimeMillis() - start;
-        System.out.println("Time to perform nextGeneration: " + elapsed);
+    public void nextGenerationPrintPerformance(int iterations) {
+        long totaltime = 0;
+        for (int i = 0; i < iterations; i++) {
+            long start = System.currentTimeMillis();
+            nextGeneration();
+            totaltime += System.currentTimeMillis() - start;
+        }
+
+        System.out.println("Single Thread: time to perform " + iterations + " iterations: " + totaltime);
     }
 
     /**
@@ -281,11 +285,15 @@ public class BoardDynamic {
      * Determines the time it takes to take a board to its next generation using
      * the thread optimized nextGenerationConcurrent().
      */
-    public void nextGenerationConcurrentPrintPerformance() {
-        long start = System.currentTimeMillis();
-        nextGenerationConcurrent();
-        long elapsed = System.currentTimeMillis() - start;
-        System.out.println("Time to perform nextGenerationConcurrent: " + elapsed);
+    public void nextGenerationConcurrentPrintPerformance(int iterations) {
+        long totaltime = 0;
+        for (int i = 0; i < iterations; i++) {
+            long start = System.currentTimeMillis();
+            nextGenerationConcurrent();
+            totaltime += System.currentTimeMillis() - start;
+        }
+
+        System.out.println("Multi-Threaded: Time to perform " + iterations + " iterations: " + totaltime);
     }
 
     /**
@@ -298,7 +306,10 @@ public class BoardDynamic {
     public void nextGenerationConcurrent() {
         // reset list of changed cells.
         changedCells = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
+        // backup of board incase thread gets interupted during execution
+        ArrayList<ArrayList<Byte>> backup = duplicateBoard(currentBoard);
 
+        // determin if board should expand
         if (rules.isDynamic() && getNumberOfCells() < rules.getMaxNumberOfCells()) {
             expandBoardIfNeeded();
         }
@@ -307,10 +318,17 @@ public class BoardDynamic {
         // applied to the actual board.
         testPattern = duplicateBoard(currentBoard);
 
-        // run a threaded version of nextGeneration
+        // create threads and assign them their task.
         createNextGenerationWorkers();
-        runNextGenerationWorkers();
-        workers.clear(); // destorys the workers.
+
+        // if a thread gets interupted during execution, roll back changes made 
+        // during this generational shift.
+        try {
+            runNextGenerationWorkers();
+        } catch (InterruptedException e) {
+            currentBoard = duplicateBoard(backup);
+        }
+        workers.clear(); // clear workers
 
         generationCount++;
     }
@@ -324,17 +342,15 @@ public class BoardDynamic {
         }
     }
 
-    private void runNextGenerationWorkers() {
+    private void runNextGenerationWorkers() throws InterruptedException {
         for (Thread t : workers) {
             t.start();
         }
-        try {
-            for (Thread t : workers) {
-                t.join();
-            }
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+        for (Thread t : workers) {
+            t.join();
         }
+
     }
 
     private void partialNextGeneration(int workerNr) {
@@ -345,7 +361,7 @@ public class BoardDynamic {
         } else {
             endCol = ((testPattern.get(0).size() / numWorkers) * (workerNr + 1)) - 1;
         }
-        System.out.println("Worker: " + workerNr + ", Start Col: " + startCol + ", End Col: " + endCol);
+
         for (int row = 0; row < testPattern.size(); row++) {
             for (int col = startCol; col <= endCol; col++) {
                 int nrOfNeighbours = countNeighbours(testPattern, row, col);
