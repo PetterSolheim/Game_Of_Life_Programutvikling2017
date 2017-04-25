@@ -7,8 +7,10 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -31,7 +33,8 @@ public class AudioSettingsWindowController implements Initializable {
     private ImageView imgPlayPause;
     @FXML
     private Slider volumeSlider;
-    @FXML private RadioButton rbtnEntireGeneration, rbtnSingleCell;
+    @FXML
+    private CheckBox generationAudio, cellAudio;
 
     /**
      * Initializes the controller class.
@@ -58,7 +61,10 @@ public class AudioSettingsWindowController implements Initializable {
             }
         }
     }
-
+    @FXML 
+    public void playBoardAudio (){
+        
+    }
     public void setThisStage(Stage stage) {
         this.thisStage = null;
     }
@@ -75,16 +81,6 @@ public class AudioSettingsWindowController implements Initializable {
                 showPlayIcon();
                 audioManager.playPause();
             }
-    }
-    @FXML
-    private void rbtnEntireGenerationClicked (){
-        rbtnEntireGeneration.setSelected(true);
-        rbtnSingleCell.setSelected(false);
-    }
-    @FXML 
-    private void rbtnSingleCellClicked (){
-        rbtnEntireGeneration.setSelected(false);
-        rbtnSingleCell.setSelected(true);
     }
     private void showPauseIcon() {
         Image pause = new Image("/img/pause.png");

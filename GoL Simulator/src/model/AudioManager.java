@@ -28,6 +28,16 @@ public class AudioManager {
     static Synthesizer synt;
     static Sequencer sequencer;
     private Clip activeSong; // High level interface that uses L
+    private boolean generationSound;
+    private boolean cellSound;
+
+    public void setGenerationSound(boolean generationSound) {
+        this.generationSound = generationSound;
+    }
+
+    public void setCellSound(boolean cellSound) {
+        this.cellSound = cellSound;
+    }
 
     private AudioManager() {
         instance = this;
@@ -94,7 +104,7 @@ public class AudioManager {
             activeSong.stop();
         } else {
             activeSong.start();
-            if(activeSong.getFramePosition() == activeSong.getFrameLength()){
+            if (activeSong.getFramePosition() == activeSong.getFrameLength()) {
                 resetSong();
                 activeSong.start();
             }
@@ -105,4 +115,5 @@ public class AudioManager {
         activeSong.close();
         synt.close();
     }
+
 }
