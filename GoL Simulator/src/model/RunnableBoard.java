@@ -39,6 +39,7 @@ public class RunnableBoard implements Runnable {
                 }
             }
             //System.out.println();
+
         }
     }
 
