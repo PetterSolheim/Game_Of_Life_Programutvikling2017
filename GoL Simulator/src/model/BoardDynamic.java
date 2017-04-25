@@ -255,38 +255,51 @@ public class BoardDynamic {
             int end = (colsPerThread * i) + colsPerThread;
             executor.submit(new RunnableBoard(start, end, testPattern, currentBoard, changedCells, this));
         }
-        executor.shutdown();
+        /***executor.shutdown();
         try {
             executor.awaitTermination(5, TimeUnit.SECONDS);
         } catch (InterruptedException ex) {
             Logger.getLogger(BoardDynamic.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        }**/
         Set<Thread> threadSet = Thread.getAllStackTraces().keySet();
         Thread[] threadArray = threadSet.toArray(new Thread[threadSet.size()]);
-        for( Thread t : threadArray){
-            System.out.println("Tråd id" + t.getId());
+        int i = 0;
+        for (Thread t : threadArray) {
+            i ++;
         }
+        System.out.println("antall tråder" + i);
+        /*for (int row = 0; row < testPattern.size(); row++) {
+            //System.out.println("Inni rad" + row);
+            //System.out.println("Inni col ");
+            for (int col = 0; col < testPattern.get(0).size(); col++) {
+                if (testPattern.get(row).get(col) == 1) {
+                    System.out.print(1 + " ");
+                } else {
+                    System.out.print(0 + " ");
+                }
+                //System.out.println();
+
+            }
+            System.out.println("");
+        }**/
         generationCount++;
         // iterate through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
         /**
-        for (int row = 0; row < testPattern.size(); row++) {
-            for (int col = 0; col < testPattern.get(0).size(); col++) {
-                int nrOfNeighbours = countNeighbours(testPattern, row, col);
-
-                if (testPattern.get(row).get(col) == 1 && !rules.getSurviveRules().contains(nrOfNeighbours)) {
-                    currentBoard.get(row).set(col, DEAD);
-                    changedCells.get(row).set(col, CHANGED);
-                    livingCells--;
-                    indexSum += (row + col);
-                } else if (testPattern.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
-                    currentBoard.get(row).set(col, ALLIVE);
-                    changedCells.get(row).set(col, CHANGED);
-                    livingCells++;
-                }
-            }
-        }
-        **/
+         * for (int row = 0; row < testPattern.size(); row++) { for (int col =
+         * 0; col < testPattern.get(0).size(); col++) { int nrOfNeighbours =
+         * countNeighbours(testPattern, row, col);
+         *
+         * if (testPattern.get(row).get(col) == 1 &&
+         * !rules.getSurviveRules().contains(nrOfNeighbours)) {
+         * currentBoard.get(row).set(col, DEAD); changedCells.get(row).set(col,
+         * CHANGED); livingCells--; indexSum += (row + col); } else if
+         * (testPattern.get(row).get(col) == 0 &&
+         * rules.getBirthRules().contains(nrOfNeighbours)) {
+         * currentBoard.get(row).set(col, ALLIVE);
+         * changedCells.get(row).set(col, CHANGED); livingCells++; } } }
+         *
+         */
     }
 
     /**

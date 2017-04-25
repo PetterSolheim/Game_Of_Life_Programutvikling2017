@@ -7,7 +7,7 @@ import java.util.ArrayList;
  * @author peven
  */
 public class RunnableBoard implements Runnable {
-
+    
     private final byte DEAD = 0;
     private final byte ALLIVE = 1;
     private final byte CHANGED = 1;
@@ -18,18 +18,18 @@ public class RunnableBoard implements Runnable {
     private Rules rules = Rules.getInstance();
     private int startCol;
     private int endCol;
-
+    
     @Override
     public void run() {
         System.err.println("Inni run\n");
-
+        
         for (int row = 0; row < testPattern.size(); row++) {
             //System.out.println("Inni rad" + row);
             //System.out.println("Inni col ");
             for (int col = startCol; col < endCol; col++) {
                 //System.out.print(col);
                 int nrOfNeighbours = countNeighbours(testPattern, row, col);
-
+                
                 if (testPattern.get(row).get(col) == 1 && !rules.getSurviveRules().contains(nrOfNeighbours)) {
                     currentBoard.get(row).set(col, DEAD);
                     changedCells.get(row).set(col, CHANGED);
@@ -46,39 +46,38 @@ public class RunnableBoard implements Runnable {
         int neighbours = 0;
         int rowLastIndex = board.size() - 1;
         int colLastIndex = board.get(0).size() - 1;
-
+        
         if (col + 1 <= colLastIndex) {
             neighbours += board.get(row).get(col + 1);
         }
-
+        
         if (row - 1 >= 0 && col + 1 <= colLastIndex) {
             neighbours += board.get(row - 1).get(col + 1);
         }
-
+        
         if (row - 1 >= 0) {
             neighbours += board.get(row - 1).get(col);
         }
-
+        
         if (row - 1 >= 0 && col - 1 >= 0) {
             neighbours += board.get(row - 1).get(col - 1);
         }
-
+        
         if (col - 1 >= 0) {
             neighbours += board.get(row).get(col - 1);
         }
-
+        
         if (row + 1 <= rowLastIndex && col - 1 >= 0) {
             neighbours += board.get(row + 1).get(col - 1);
         }
-
+        
         if (row + 1 <= rowLastIndex) {
             neighbours += board.get(row + 1).get(col);
         }
-
+        
         if (row + 1 <= rowLastIndex && col + 1 <= colLastIndex) {
             neighbours += board.get(row + 1).get(col + 1);
         }
-
         return neighbours;
     }
 
@@ -88,6 +87,5 @@ public class RunnableBoard implements Runnable {
         this.testPattern = testPattern;
         this.currentBoard = currentBoard;
         this.changedCells = changedCells;
-
     }
 }
