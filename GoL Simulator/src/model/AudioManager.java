@@ -59,7 +59,12 @@ public class AudioManager {
             activeSongGain.setValue(convertGainToVolume(activeSongGain.getMinimum(), activeSongGain.getMaximum(), volume));
         }
     }
-
+    public void cellAudio (){
+        
+    }
+    public void generationAudio (){
+        
+    }
     private float convertGainToVolume(float minGain, float maxGain, float desiredVolume) {
         Float range = maxGain - minGain;
         float gainUnitperVolumeUnit = range / 100;

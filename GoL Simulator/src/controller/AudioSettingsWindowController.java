@@ -96,7 +96,7 @@ public class AudioSettingsWindowController implements Initializable {
         audioManager.volume((float) volumeSlider.getValue());
     }
 
-    public void togglePlayState() {
+    public void toggleMusicPlayState() {
         if (audioManager.getActiveSong().isActive()) { // pause song
             showPauseIcon();
             audioManager.playPause();
@@ -105,7 +105,9 @@ public class AudioSettingsWindowController implements Initializable {
             audioManager.playPause();
         }
     }
-
+    public void toggleAudioBoardPlayState (){
+        
+    }
     private void showPauseIcon() {
         Image pause = new Image("/img/pause.png");
         imgPlayPause.setImage(pause);
