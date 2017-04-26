@@ -5,6 +5,8 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
@@ -18,6 +20,8 @@ import javafx.stage.Stage;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import model.AudioManager;
+import model.BoardDynamic;
+import model.BoardSound;
 import view.DialogBoxes;
 
 /**
@@ -27,6 +31,7 @@ import view.DialogBoxes;
  */
 public class AudioSettingsWindowController implements Initializable {
 
+    private BoardSound board;
     private AudioManager audioManager;
     private Stage thisStage;
     @FXML
@@ -45,14 +50,31 @@ public class AudioSettingsWindowController implements Initializable {
         volumeSlider.valueProperty().addListener((observable) -> {
             changeVolume();
         });
+        generationAudio.selectedProperty().addListener((observable) -> {
+            toggleGenerationAudio();
+        });
+        cellAudio.selectedProperty().addListener((observable) -> {
+            toggleCellAudio();
+        });
     }
-
+    private void toggleGenerationAudio (){
+        board.toggleGenerationAudio();
+    }
+    private void toggleCellAudio (){
+        board.toggleCellAudio();
+    }
+    public void setBoardSound (BoardDynamic board){
+        this.board = new BoardSound(board);
+    }
+    public AudioManager getAudioManager (){
+        return this.audioManager;
+    }
     public void getAudioFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Audio File");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Supported Formats", "*.wav"));
-        File f = fileChooser.showOpenDialog(thisStage); // why can this be null ¯\_(ツ)_/¯ see setThisStage
+        File f = fileChooser.showOpenDialog(thisStage); // why can thisStage be null ¯\_(ツ)_/¯ see setThisStage
         if (f != null) {
             try {
                 audioManager.loadAudiofile(f.getAbsoluteFile());
@@ -61,27 +83,29 @@ public class AudioSettingsWindowController implements Initializable {
             }
         }
     }
-    @FXML 
-    public void playBoardAudio (){
-        
+    @FXML
+    public void playBoardAudio() {
+
     }
+
     public void setThisStage(Stage stage) {
         this.thisStage = null;
     }
 
     public void changeVolume() {
-        audioManager.volume((float)volumeSlider.getValue());   
+        audioManager.volume((float) volumeSlider.getValue());
     }
 
     public void togglePlayState() {
-            if (audioManager.getActiveSong().isActive()) { // pause song
-                showPauseIcon();
-                audioManager.playPause();
-            } else { // play song
-                showPlayIcon();
-                audioManager.playPause();
-            }
+        if (audioManager.getActiveSong().isActive()) { // pause song
+            showPauseIcon();
+            audioManager.playPause();
+        } else { // play song
+            showPlayIcon();
+            audioManager.playPause();
+        }
     }
+
     private void showPauseIcon() {
         Image pause = new Image("/img/pause.png");
         imgPlayPause.setImage(pause);
@@ -93,6 +117,6 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     public void resetSong() {
-            audioManager.resetSong();
+        audioManager.resetSong();
     }
 }

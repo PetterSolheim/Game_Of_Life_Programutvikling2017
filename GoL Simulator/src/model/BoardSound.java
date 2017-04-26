@@ -47,4 +47,11 @@ public class BoardSound extends BoardDynamic {
             // make noise
         }
     }
+    
+    public void toggleGenerationAudio (){
+        this.generationAudio = !generationAudio;
+    }
+    public void toggleCellAudio (){
+        this.cellAudio = !cellAudio;
+    }
 }

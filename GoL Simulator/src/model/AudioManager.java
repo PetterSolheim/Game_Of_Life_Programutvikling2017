@@ -24,21 +24,15 @@ import view.DialogBoxes;
 public class AudioManager {
 
     static AudioManager instance;
-
+    
     static Synthesizer synt;
     static Sequencer sequencer;
     private Clip activeSong; // High level interface that uses L
-    private boolean generationSound;
-    private boolean cellSound;
+    private BoardSound board;
 
-    public void setGenerationSound(boolean generationSound) {
-        this.generationSound = generationSound;
+    public void setBoardSound (BoardDynamic board){
+        this.board = new BoardSound(board);
     }
-
-    public void setCellSound(boolean cellSound) {
-        this.cellSound = cellSound;
-    }
-
     private AudioManager() {
         instance = this;
         try {
@@ -82,7 +76,7 @@ public class AudioManager {
         } catch (IOException ex) {
             DialogBoxes.genericErrorMessage("Failed to load audio file", ex.getMessage());
         } catch (IllegalStateException ex) {
-            DialogBoxes.genericErrorMessage("This audio file is already loaded", "Try a different audio file.");
+            DialogBoxes.genericErrorMessage("This audio file is already loaded", "It is possible that the file is already loaded \n Try a different audio file.");
         }
         playPause();
     }
