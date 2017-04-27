@@ -6,7 +6,15 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.concurrent.Delayed;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.midi.Instrument;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Synthesizer;
+import view.DialogBoxes;
 
 /**
  *
@@ -18,11 +26,22 @@ public class BoardSound extends BoardDynamic implements Runnable {
     private boolean generationAudio;
     private boolean isActive;
     private boolean createNextGeneration;
-    private boolean playCellAudio;
     private int nrOfCells;
-    private AudioManager audioManager = AudioManager.getSingelton();
+    private Synthesizer synthesizer;
+    static MidiChannel midiChannels[];
+    static Instrument instruments[];
+    private long audioLength;
 
     public BoardSound(BoardDynamic b) {
+        isActive = true;
+        try {
+            synthesizer = MidiSystem.getSynthesizer();
+            midiChannels = synthesizer.getChannels();
+            synthesizer.open();
+            instruments = synthesizer.getAvailableInstruments();
+        } catch (MidiUnavailableException exception) {
+            DialogBoxes.genericErrorMessage("No midi devices available", "Representing the board with sound is not supported on this device.\n" + exception.getMessage());
+        }
         cellAudio = false;
         this.currentBoard = duplicateBoard(b.getBoard());
         this.originalBoard = duplicateBoard(originalBoard);
@@ -33,11 +52,7 @@ public class BoardSound extends BoardDynamic implements Runnable {
 
     @Override
     public void run() {
-        while (isActive) {
-            if (createNextGeneration) {
-                nextGeneration();
-            }
-        }
+        nextGeneration();
     }
 
     public enum CellState {
@@ -54,49 +69,46 @@ public class BoardSound extends BoardDynamic implements Runnable {
         // cell, and apply changes based on the ruleset.
         for (int row = 0; row < testPattern.size(); row++) {
             for (int col = 0; col < testPattern.get(0).size(); col++) {
-                if (!isActive) {
-                    return;
-                }
-                int nrOfNeighbours = countNeighbours(testPattern, row, col);
-                if (testPattern.get(row).get(col) == 1) {
-                    if (!rules.getSurviveRules().contains(nrOfNeighbours)) {
-                        if (cellAudio) {
-                            while (!playCellAudio) {
-                                System.out.println("Waiting ");
+                try {
+                    if (!isActive) {
+                        return;
+                    }
+                    int nrOfNeighbours = countNeighbours(testPattern, row, col);
+                    if (testPattern.get(row).get(col) == 1) {
+                        if (!rules.getSurviveRules().contains(nrOfNeighbours)) {
+                            if (cellAudio) {
+                                cellAudio(CellState.DEAD);
+                                currentBoard.get(row).set(col, DEAD);
+                                livingCells--;
                             }
-                            audioManager.cellAudio(CellState.DEAD);
-                            currentBoard.get(row).set(col, DEAD);
-                            livingCells--;
-                            playCellAudio = false;
+                        } else {
+                            if (cellAudio) {
+                                cellAudio(CellState.ALIVE);
+                            }
                         }
-                    } else {
-                        if (cellAudio) {
-                            audioManager.cellAudio(CellState.ALIVE);
+                        currentBoard.get(row).set(col, DEAD);
+                        livingCells--;
+                    } else if (testPattern.get(row).get(col) == 0) {
+                        if (rules.getBirthRules().contains(nrOfNeighbours)) {
+                            if (cellAudio) {
+                                cellAudio(CellState.ALIVE);
+                            }
+                            currentBoard.get(row).set(col, ALLIVE);
+                            livingCells++;
+                        } else {
+                            if (cellAudio) {
+                                cellAudio(CellState.DEAD);
+                            }
                         }
                     }
-                    currentBoard.get(row).set(col, DEAD);
-                    livingCells--;
-                } else if (testPattern.get(row).get(col) == 0) {
-                    if (rules.getBirthRules().contains(nrOfNeighbours)) {
-                        if (cellAudio) {
-                            audioManager.cellAudio(CellState.ALIVE);
-                        }
-                        currentBoard.get(row).set(col, ALLIVE);
-                        livingCells++;
-                    } else {
-                        if (cellAudio) {
-                            while(!controller.pl){
-                            
-                            }
-                            audioManager.cellAudio(CellState.DEAD);
-                            playCellAudio = false;
-                        }
-                    }
+                    Thread.sleep(100);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(BoardSound.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
         }
         if (generationAudio) {
-            audioManager.generationAudio();
+            generationAudio();
         }
     }
 
@@ -116,9 +128,8 @@ public class BoardSound extends BoardDynamic implements Runnable {
         this.isActive = isActive;
     }
 
-    public void setPlayCellAudio(boolean playCellAudio) {
-        this.playCellAudio = playCellAudio;
-        System.out.println("Play cell audio changed in board");
+    public void setAudioLength(long audioLength) {
+        this.audioLength = audioLength / 1000000;
     }
 
     private void setNumbeOfCells() {
@@ -128,6 +139,47 @@ public class BoardSound extends BoardDynamic implements Runnable {
         }
         this.nrOfCells = cells;
         System.out.println("Number of cells " + nrOfCells);
+    }
+
+    public void cellAudio(BoardSound.CellState state) {
+        switch (state) {
+            case DEAD:
+                for (MidiChannel m : midiChannels) {
+                    if (m != null) { // channel is open
+                        try {
+                            m.noteOn(60, 10);
+                            Thread.sleep(audioLength);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(AudioManager.class.getName()).log(Level.SEVERE, null, ex);
+                        } finally {
+                            m.noteOff(60);
+                        }
+                        return;
+                    }
+                }
+            case ALIVE:
+                for (MidiChannel m : midiChannels) {
+                    if (m != null) { // channel is open
+                        try {
+                            m.noteOn(60, 200);
+                            m.noteOn(72, 200);
+                            m.noteOn(76, 200);
+                            Thread.sleep(audioLength);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(AudioManager.class.getName()).log(Level.SEVERE, null, ex);
+                        } finally {
+                            m.noteOff(60);
+                            m.noteOff(72);
+                            m.noteOff(76);
+                        }
+                        return;
+                    }
+                }
+        }
+    }
+
+    public void generationAudio() {
+
     }
 
     public int getNrOfCells() {

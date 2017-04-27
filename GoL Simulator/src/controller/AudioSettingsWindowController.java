@@ -3,6 +3,7 @@ package controller;
 import java.io.File;
 import java.net.URL;
 import java.util.ResourceBundle;
+import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
@@ -38,8 +39,6 @@ public class AudioSettingsWindowController implements Initializable {
     private AudioTimer timer;
     private Stage thisStage;
     private boolean isPlaying;
-    public boolean playCellAudio;
-    private Thread boardThread;
     @FXML
     private ImageView imgPlayPause;
     @FXML
@@ -92,23 +91,22 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     public void createNextGeneration() {
-        board.nextGeneration();
+        Thread newThread = new Thread(board);
+        newThread.run();
+        
     }
-
-    public void initializeBoardSoundAndThread(BoardDynamic board) {
+    
+    public void initializeBoardSound(BoardDynamic board) {
         BoardSound b = new BoardSound(board);
         this.board = b;
-        b.setIsActive(true);
-        boardThread = new Thread(b);
-        timer.setTimeBetweenCellAudioTimer(b.getNrOfCells());
+        timer.stop();
     }
 
     public AudioManager getAudioManager() {
         return this.audioManager;
     }
-    public void setBoardPlayNewCellAudio (boolean b){
-        board.setPlayCellAudio(b);
-        this.playCellAudio = b;
+    public void setBoardAudioLength (long audioLength){
+        board.setAudioLength(audioLength);
     }
     public void getAudioFile() {
         FileChooser fileChooser = new FileChooser();
@@ -170,7 +168,7 @@ public class AudioSettingsWindowController implements Initializable {
         long newTimer = (long) (1000000000 / audioBoardSlider.getValue());
         timer.setFps(newTimer);
         timer.setTimeBetweenCellAudioTimer(board.getNrOfCells());
-        audioManager.setAudioDuration(timer.getTimeBetweenCellAudioTimer());
+        board.setAudioLength(timer.getTimeBetweenCellAudioTimer());
     }
 
     public void resetSong() {

@@ -33,19 +33,11 @@ import view.DialogBoxes;
 public class AudioManager {
 
     static AudioManager instance;
-
     static Synthesizer synthesizer;
     static MidiChannel midiChannels[];
     static Instrument instruments[];
     static Sequencer sequencer;
     private Clip activeSong;
-    private long audioDuration;
-    public bool playCellAudio;
-
-    public void setAudioDuration(long audioDuration) {
-        this.audioDuration = audioDuration;
-    }
-    ExecutorService executorService = Executors.newCachedThreadPool();
     
     private AudioManager() {
         instance = this;
@@ -78,56 +70,6 @@ public class AudioManager {
             activeSongGain.setValue(convertGainToVolume(activeSongGain.getMinimum(), activeSongGain.getMaximum(), volume));
         }
     }
-
-    public void cellAudio(BoardSound.CellState state) {
-        switch (state) {
-            case DEAD:
-                for (MidiChannel m : midiChannels) {
-                    if (m != null) { // channel is open
-                        Runnable note = () -> { // plays a single note, c4.
-                            try {
-                                m.noteOn(60, 50);
-                                Thread.sleep(audioDuration);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(AudioManager.class.getName()).log(Level.SEVERE, null, ex);
-                            } finally {
-                                m.noteOff(60);
-                            }
-                        };
-                        executorService.submit(note);
-                        return;
-                    }
-                }
-                break;
-            case ALIVE:
-                for (MidiChannel m : midiChannels) {
-                    if (m != null) { // channel is open
-                        Runnable chord = () -> { // plays a c major chord
-                            try {
-                                m.noteOn(60, 200);
-                                m.noteOn(72, 200);
-                                m.noteOn(76, 200);
-                                Thread.sleep(audioDuration);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(AudioManager.class.getName()).log(Level.SEVERE, null, ex);
-                            } finally {
-                                m.noteOff(60);
-                                m.noteOff(72);
-                                m.noteOff(76);
-                            }
-                        };
-                        executorService.submit(chord);
-                        return;
-                    }
-                }
-                break;
-        }
-    }
-
-    public void generationAudio() {
-        System.out.println("Generation audo called");
-    }
-
     private float convertGainToVolume(float minGain, float maxGain, float desiredVolume) {
         Float range = maxGain - minGain;
         float gainUnitperVolumeUnit = range / 100;

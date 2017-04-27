@@ -436,7 +436,7 @@ public class MainWindowController implements Initializable {
             VBox root = loader.load();
             AudioSettingsWindowController c = loader.getController();
             c.setThisStage(soundSettings);
-            c.initializeBoardSoundAndThread(board);
+            c.initializeBoardSound(board);
             Scene scene = new Scene(root);
             soundSettings.setScene(scene);
             soundSettings.setTitle("Audio Settings");

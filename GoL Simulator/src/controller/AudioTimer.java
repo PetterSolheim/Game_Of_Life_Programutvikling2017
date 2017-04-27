@@ -29,7 +29,6 @@ public class AudioTimer extends AnimationTimer {
         }
         if(cellAudioTimer < currentTime){
             cellAudioTimer = currentTime + timeBetweenCellAudio;
-            controller.setBoardPlayNewCellAudio(true);
         }
     } 
     public AudioTimer (AudioSettingsWindowController controller){
