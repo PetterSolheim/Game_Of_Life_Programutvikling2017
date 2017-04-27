@@ -5,10 +5,12 @@ import java.net.URL;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
@@ -33,13 +35,19 @@ public class AudioSettingsWindowController implements Initializable {
 
     private BoardSound board;
     private AudioManager audioManager;
+    private AudioTimer timer;
     private Stage thisStage;
+    private boolean isPlaying;
+    public boolean playCellAudio;
+    private Thread boardThread;
     @FXML
     private ImageView imgPlayPause;
     @FXML
-    private Slider volumeSlider;
+    private Slider volumeSlider, audioBoardSlider;
     @FXML
     private CheckBox generationAudio, cellAudio;
+    @FXML
+    private Button btnPlayBoard;
 
     /**
      * Initializes the controller class.
@@ -47,8 +55,12 @@ public class AudioSettingsWindowController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         audioManager = AudioManager.getSingelton();
+        timer = new AudioTimer(this);
         volumeSlider.valueProperty().addListener((observable) -> {
             changeVolume();
+        });
+        audioBoardSlider.valueProperty().addListener(observalbe -> {
+            setFpsAndCellTimer();
         });
         generationAudio.selectedProperty().addListener((observable) -> {
             toggleGenerationAudio();
@@ -56,18 +68,47 @@ public class AudioSettingsWindowController implements Initializable {
         cellAudio.selectedProperty().addListener((observable) -> {
             toggleCellAudio();
         });
+        Platform.runLater(this::setFpsAndCellTimer);
     }
-    private void toggleGenerationAudio (){
-        board.toggleGenerationAudio();
+
+    public void resetBoard() {
+        board.resetBoard();
     }
-    private void toggleCellAudio (){
-        board.toggleCellAudio();
+
+    private void toggleGenerationAudio() {
+        if(generationAudio.isSelected()){
+            board.setGenerationAudio(true);
+        } else {
+            board.setGenerationAudio(false);
+        }
     }
-    public void setBoardSound (BoardDynamic board){
-        this.board = new BoardSound(board);
+
+    private void toggleCellAudio() {
+        if(cellAudio.isSelected()){
+            board.setCellAudio(true);
+        }else {
+            board.setCellAudio(false);
+        }
     }
-    public AudioManager getAudioManager (){
+
+    public void createNextGeneration() {
+        board.nextGeneration();
+    }
+
+    public void initializeBoardSoundAndThread(BoardDynamic board) {
+        BoardSound b = new BoardSound(board);
+        this.board = b;
+        b.setIsActive(true);
+        boardThread = new Thread(b);
+        timer.setTimeBetweenCellAudioTimer(b.getNrOfCells());
+    }
+
+    public AudioManager getAudioManager() {
         return this.audioManager;
+    }
+    public void setBoardPlayNewCellAudio (boolean b){
+        board.setPlayCellAudio(b);
+        this.playCellAudio = b;
     }
     public void getAudioFile() {
         FileChooser fileChooser = new FileChooser();
@@ -83,13 +124,9 @@ public class AudioSettingsWindowController implements Initializable {
             }
         }
     }
-    @FXML
-    public void playBoardAudio() {
-
-    }
 
     public void setThisStage(Stage stage) {
-        this.thisStage = null;
+        this.thisStage = stage;
     }
 
     public void changeVolume() {
@@ -99,14 +136,25 @@ public class AudioSettingsWindowController implements Initializable {
     public void toggleMusicPlayState() {
         if (audioManager.getActiveSong().isActive()) { // pause song
             showPauseIcon();
-            audioManager.playPause();
+            audioManager.playPauseMusicPlayer();
         } else { // play song
             showPlayIcon();
-            audioManager.playPause();
+            audioManager.playPauseMusicPlayer();
         }
     }
-    public void toggleAudioBoardPlayState (){
-        
+    public void setIsPlaying (boolean isPlaying){
+        this.isPlaying = isPlaying;
+    }
+    public void toggleAudioBoardPlayState() {
+        if (isPlaying) { // pause
+            isPlaying = !isPlaying;
+            btnPlayBoard.setText("Play");
+            timer.stop();
+        } else { // play
+            isPlaying = !isPlaying;
+            btnPlayBoard.setText("Pause");
+            timer.start();
+        }
     }
     private void showPauseIcon() {
         Image pause = new Image("/img/pause.png");
@@ -118,7 +166,17 @@ public class AudioSettingsWindowController implements Initializable {
         imgPlayPause.setImage(play);
     }
 
+    private void setFpsAndCellTimer() {
+        long newTimer = (long) (1000000000 / audioBoardSlider.getValue());
+        timer.setFps(newTimer);
+        timer.setTimeBetweenCellAudioTimer(board.getNrOfCells());
+        audioManager.setAudioDuration(timer.getTimeBetweenCellAudioTimer());
+    }
+
     public void resetSong() {
         audioManager.resetSong();
+    }
+    public void setBoardIsActive (boolean isActive){
+        board.setIsActive(isActive);
     }
 }

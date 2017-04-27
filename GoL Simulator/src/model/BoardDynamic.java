@@ -26,7 +26,7 @@ public class BoardDynamic {
      * Used to store the game board as it was before the game started. Allows
      * for resetting the game board.
      */
-    private ArrayList<ArrayList<Byte>> originalBoard;
+    protected ArrayList<ArrayList<Byte>> originalBoard;
 
     private int generationCount = 0;
     protected int livingCells = 0;
