@@ -13,6 +13,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TreeItem;
@@ -47,7 +48,8 @@ public class AudioSettingsWindowController implements Initializable {
     private CheckBox generationAudio, cellAudio;
     @FXML
     private Button btnPlayBoard;
-
+    @FXML
+    private ListView songList;
     /**
      * Initializes the controller class.
      */
@@ -112,7 +114,8 @@ public class AudioSettingsWindowController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Audio File");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Supported Formats", "*.wav"));
+                new FileChooser.ExtensionFilter("Supported Formats", "*.wav", "*.wave"),
+                new FileChooser.ExtensionFilter("Wave / .wav", "*.wav", ".wave"));
         File f = fileChooser.showOpenDialog(thisStage); // why can thisStage be null ¯\_(ツ)_/¯ see setThisStage
         if (f != null) {
             try {
