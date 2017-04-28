@@ -20,6 +20,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -66,6 +67,8 @@ public class MainWindowController implements Initializable {
     private ColorPicker backgroundColorPicker;
     @FXML
     private ImageView imgPlayPause;
+    @FXML
+    private ToolBar toolbar;
     private BoardDynamic board;
     private Timer time;
     private boolean isPaused = true;
@@ -154,10 +157,19 @@ public class MainWindowController implements Initializable {
     @FXML
     private void togglePlayPause() {
         if (isPaused) {
+            board.preserveBoard();
             play();
         } else {
             pause();
         }
+    }
+
+    @FXML
+    private void delete() {
+        board.deleteBoard();
+        canvas.drawBoard(board.getBoard());
+        updateLivingCellCountLabel();
+        updateGenerationCountLabel();
     }
 
     private void setArrowKeyEventListener() {
@@ -165,7 +177,6 @@ public class MainWindowController implements Initializable {
             public void handle(KeyEvent ke) {
                 KeyCode k = ke.getCode();
                 if (k == KeyCode.LEFT || k == KeyCode.RIGHT || k == KeyCode.DOWN || k == KeyCode.UP) {
-
                     ke.consume(); // <-- stops passing the event to next node
                 }
                 switch (k) {
@@ -197,7 +208,7 @@ public class MainWindowController implements Initializable {
         Image imgPause = new Image("/img/pause.png");
         isPaused = false;
         imgPlayPause.setImage(imgPause);
-        btnPlay.setText("Pause");
+        //btnPlay.setText("Pause");
         time.start();
     }
 
@@ -209,7 +220,7 @@ public class MainWindowController implements Initializable {
         Image imgPlay = new Image("/img/play.png");
         isPaused = true;
         imgPlayPause.setImage(imgPlay);
-        btnPlay.setText("Play");
+        //btnPlay.setText("Play");
         time.stop();
     }
 
@@ -363,7 +374,6 @@ public class MainWindowController implements Initializable {
     @FXML
     public void createNextGeneration() {
         board.nextGeneration();
-
         // only draw cells that changed during last generational shift.
         for (int row = 0; row < board.getChangedCells().size(); row++) {
             for (int col = 0; col < board.getChangedCells().get(0).size(); col++) {
@@ -432,6 +442,7 @@ public class MainWindowController implements Initializable {
     public void showAudioSettingsWindow() {
         try {
             Stage soundSettings = new Stage();
+            soundSettings.setHeight(500);
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AudioSettingsWindow.fxml"));
             VBox root = loader.load();
             AudioSettingsWindowController c = loader.getController();
@@ -447,7 +458,7 @@ public class MainWindowController implements Initializable {
                     c.setIsPlaying(false);
                     c.setBoardIsActive(false);
                 }
-            });        
+            });
             soundSettings.show();
         } catch (IOException exception) {
             DialogBoxes.ioException(exception.getMessage());

@@ -2,6 +2,7 @@ package controller;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
@@ -9,6 +10,11 @@ import java.util.logging.Logger;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -19,6 +25,7 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javax.sound.sampled.FloatControl;
@@ -40,6 +47,7 @@ public class AudioSettingsWindowController implements Initializable {
     private AudioTimer timer;
     private Stage thisStage;
     private boolean isPlaying;
+    private ObservableList<String> songNames = FXCollections.observableArrayList();
     @FXML
     private ImageView imgPlayPause;
     @FXML
@@ -50,12 +58,19 @@ public class AudioSettingsWindowController implements Initializable {
     private Button btnPlayBoard;
     @FXML
     private ListView songList;
+
     /**
      * Initializes the controller class.
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        if (AudioManager.isCreated()) {
+            audioManager = AudioManager.getSingelton();
+            ArrayList<String> paths = audioManager.getAllLoadedSongs();
+            reloadSongList(paths);
+        }
         audioManager = AudioManager.getSingelton();
+        audioManager.setController(this);
         timer = new AudioTimer(this);
         volumeSlider.valueProperty().addListener((observable) -> {
             changeVolume();
@@ -69,7 +84,27 @@ public class AudioSettingsWindowController implements Initializable {
         cellAudio.selectedProperty().addListener((observable) -> {
             toggleCellAudio();
         });
+        songList.getSelectionModel().selectedItemProperty().addListener((observable) -> {
+            playSong();
+        });
         Platform.runLater(this::setFpsAndCellTimer);
+        Platform.runLater(this::changeVolume);
+    }
+
+    public void playNextSong() {
+        if (songList.getSelectionModel().getSelectedIndex() != songList.getItems().size() - 1) {
+            songList.getSelectionModel().select(songList.getSelectionModel().getSelectedIndex() + 1);
+        }
+    }
+
+    public void playPreviousSongOrResetActiveSong() {
+        if (audioManager.getActiveSong().getFramePosition() / 10000 < 1) {
+            if (songList.getSelectionModel().getSelectedIndex() != 0) {
+                songList.getSelectionModel().select(songList.getSelectionModel().getSelectedIndex() - 1);
+            }
+        } else {
+            audioManager.resetSong();
+        }
     }
 
     public void resetBoard() {
@@ -77,7 +112,7 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     private void toggleGenerationAudio() {
-        if(generationAudio.isSelected()){
+        if (generationAudio.isSelected()) {
             board.setGenerationAudio(true);
         } else {
             board.setGenerationAudio(false);
@@ -85,9 +120,9 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     private void toggleCellAudio() {
-        if(cellAudio.isSelected()){
+        if (cellAudio.isSelected()) {
             board.setCellAudio(true);
-        }else {
+        } else {
             board.setCellAudio(false);
         }
     }
@@ -97,7 +132,7 @@ public class AudioSettingsWindowController implements Initializable {
         newThread.run();
         timer.stop();
     }
-    
+
     public void initializeBoardSound(BoardDynamic board) {
         BoardSound b = new BoardSound(board);
         this.board = b;
@@ -107,23 +142,68 @@ public class AudioSettingsWindowController implements Initializable {
     public AudioManager getAudioManager() {
         return this.audioManager;
     }
-    public void setBoardAudioLength (long audioLength){
+
+    public void setBoardAudioLength(long audioLength) {
         board.setAudioLength(audioLength);
     }
+
     public void getAudioFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Audio File");
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Supported Formats", "*.wav", "*.wave"),
                 new FileChooser.ExtensionFilter("Wave / .wav", "*.wav", ".wave"));
-        File f = fileChooser.showOpenDialog(thisStage); // why can thisStage be null ¯\_(ツ)_/¯ see setThisStage
+        File f = fileChooser.showOpenDialog(thisStage);
         if (f != null) {
-            try {
-                audioManager.loadAudiofile(f.getAbsoluteFile());
-            } catch (UnsupportedAudioFileException ex) {
-                DialogBoxes.genericErrorMessage("Unsupported Audio File", ex.getMessage());
+            if (checkIfSongIsLoaded(f.getName())) {
+                DialogBoxes.genericErrorMessage("Song is already loaded", "Try a differen song.");
+            } else {
+                audioManager.addAbsolutePath(f);
+                songNames.add(f.getName());
+                updateSongList(f.getName());
             }
         }
+    }
+
+    private void reloadSongList(ArrayList<String> absolutePaths) {
+        System.out.println("controller.AudioSettingsWindowController.reloadSongList()");
+        for (int i = 0; i < absolutePaths.size(); i++) {
+            int lastBackSlash = 0;
+            String songPath = absolutePaths.get(i);
+            char[] chars = songPath.toCharArray();
+            for (int o = chars.length - 1; o > 0; o--) {
+                if (chars[o] == '\\') {
+                    lastBackSlash = o;
+                    break;
+                }
+            }
+            String name = (String) songPath.subSequence(lastBackSlash + 1, chars.length);
+            songNames.add(name);
+        }
+        songList.setItems(songNames);
+    }
+
+    public boolean checkIfSongIsLoaded(String songName) {
+        for (int i = 0; i < songNames.size(); i++) {
+            if (songName.equals(songNames.get(i))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void playSong() {
+        try {
+            audioManager.loadSongFromAbsolutePath(songList.getSelectionModel().getSelectedItem().toString());
+        } catch (UnsupportedAudioFileException ex) {
+            DialogBoxes.genericErrorMessage("Unsupported Audio File", "Try a different file\n" + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+
+    public void updateSongList(String newSong) {
+        songList.setItems(songNames);
+        songList.getSelectionModel().select(newSong);
     }
 
     public void setThisStage(Stage stage) {
@@ -143,9 +223,11 @@ public class AudioSettingsWindowController implements Initializable {
             audioManager.playPauseMusicPlayer();
         }
     }
-    public void setIsPlaying (boolean isPlaying){
+
+    public void setIsPlaying(boolean isPlaying) {
         this.isPlaying = isPlaying;
     }
+
     public void toggleAudioBoardPlayState() {
         if (isPlaying) { // pause
             isPlaying = !isPlaying;
@@ -157,6 +239,7 @@ public class AudioSettingsWindowController implements Initializable {
             timer.start();
         }
     }
+
     private void showPauseIcon() {
         Image pause = new Image("/img/pause.png");
         imgPlayPause.setImage(pause);
@@ -174,10 +257,7 @@ public class AudioSettingsWindowController implements Initializable {
         board.setAudioLength(timer.getTimeBetweenCellAudioTimer());
     }
 
-    public void resetSong() {
-        audioManager.resetSong();
-    }
-    public void setBoardIsActive (boolean isActive){
+    public void setBoardIsActive(boolean isActive) {
         board.setIsActive(isActive);
     }
 }

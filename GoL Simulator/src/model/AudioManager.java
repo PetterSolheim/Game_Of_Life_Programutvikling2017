@@ -1,10 +1,12 @@
 package model;
 
+import controller.AudioSettingsWindowController;
 import controller.AudioTimer;
 import controller.Timer;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -25,43 +27,52 @@ import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import view.DialogBoxes;
 
-
 /**
  * This class is responsible for handling everything related to audio.
  *
  */
 public class AudioManager {
 
+    private AudioSettingsWindowController controller;
     static AudioManager instance;
-    static Synthesizer synthesizer;
-    static MidiChannel midiChannels[];
-    static Instrument instruments[];
-    static Sequencer sequencer;
     private Clip activeSong;
-    
+    private int activeSongQueue;
+    private ArrayList<String> absolutePathForLoadedSongs = new ArrayList<String>();
+    private AudioInputStream inputStream;
+
     private AudioManager() {
         instance = this;
-
         try {
             activeSong = AudioSystem.getClip();
-            synthesizer = MidiSystem.getSynthesizer();
-            sequencer = MidiSystem.getSequencer();
-            midiChannels = synthesizer.getChannels();
-            instruments = synthesizer.getAvailableInstruments();
-            synthesizer.open();
-            synthesizer.loadInstrument(instruments[22]); // not working?
-        } catch (MidiUnavailableException exception) {
-            DialogBoxes.genericErrorMessage("No midi devices available", "Representing the board with sound is not supported on this device.\n" + exception.getMessage());
+            activeSong.addLineListener(listener -> {
+                //if 
+                if (activeSong.getFramePosition() == activeSong.getFrameLength()) {
+                    playNextSong(activeSongQueue);
+                }
+            });
         } catch (LineUnavailableException ex) {
-            DialogBoxes.genericErrorMessage("No lines available for playback", ex.getMessage());
+            DialogBoxes.genericErrorMessage("No lines available for audio playback", ex.getMessage());
         }
     }
-
+    public static boolean isCreated (){
+        if(instance == null){
+            return false;
+        }
+        return true;
+    }
     public static AudioManager getSingelton() {
         if (instance != null) {
             return instance;
         }
         return new AudioManager();
+    }
+
+    private void playNextSong(int currentSontQueue) {
+        controller.playNextSong();
+    }
+
+    public void setController(AudioSettingsWindowController controller) {
+        this.controller = controller;
     }
 
     public void volume(float volume) {
@@ -70,33 +81,50 @@ public class AudioManager {
             activeSongGain.setValue(convertGainToVolume(activeSongGain.getMinimum(), activeSongGain.getMaximum(), volume));
         }
     }
+
     private float convertGainToVolume(float minGain, float maxGain, float desiredVolume) {
         Float range = maxGain - minGain;
         float gainUnitperVolumeUnit = range / 100;
         float newGainValue = minGain + (gainUnitperVolumeUnit * desiredVolume);
         return newGainValue;
     }
-    
-    public void loadAudiofile(File f) throws UnsupportedAudioFileException {
-        try {
-            AudioInputStream inputStream = AudioSystem.getAudioInputStream(f);
-            setActiveSong(inputStream);
-        } catch (LineUnavailableException ex) {
-            DialogBoxes.genericErrorMessage("No lines available", ex.getMessage());
-        } catch (IOException ex) {
-            DialogBoxes.genericErrorMessage("Failed to load audio file", ex.getMessage());
-        } catch (IllegalStateException ex) {
-            DialogBoxes.genericErrorMessage("This audio file is already loaded", "It is possible that the file is already loaded \n Try a different audio file.");
+
+    public void addAbsolutePath(File f) {
+        absolutePathForLoadedSongs.add(f.getAbsolutePath());
+    }
+    public ArrayList<String> getAllLoadedSongs (){
+        return absolutePathForLoadedSongs;
+    }
+    public void loadSongFromAbsolutePath(String songName) throws UnsupportedAudioFileException {
+        for (int i = 0; i < absolutePathForLoadedSongs.size(); i++) {
+            if (absolutePathForLoadedSongs.get(i).contains(songName)) {
+                try {
+                    File file = new File(absolutePathForLoadedSongs.get(i));
+                    inputStream = AudioSystem.getAudioInputStream(file);
+                    setActiveSong(inputStream);
+                    playPauseMusicPlayer();
+                } catch (IOException ex) {
+                    DialogBoxes.genericErrorMessage("Failed to load audio file", "Try again\n" + ex.getMessage());
+                }
+            }
         }
-        playPauseMusicPlayer();
     }
 
     public void resetSong() {
         activeSong.setFramePosition(0);
     }
 
-    private void setActiveSong(AudioInputStream song) throws LineUnavailableException, IOException {
-        activeSong.open(song);
+    private void setActiveSong(AudioInputStream song) {
+        try {
+            if (activeSong.isOpen()) {
+                activeSong.close();
+            }
+            activeSong.open(song);
+        } catch (LineUnavailableException ex) {
+            DialogBoxes.genericErrorMessage("No lines available", ex.getMessage());
+        } catch (IOException ex) {
+            DialogBoxes.genericErrorMessage("Failed to load audio file", "Try again\n" + ex.getMessage());
+        }
     }
 
     public Clip getActiveSong() {
@@ -117,7 +145,5 @@ public class AudioManager {
 
     public void closeLines() {
         activeSong.close();
-        synthesizer.close();
     }
-
 }

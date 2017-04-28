@@ -139,7 +139,6 @@ public class BoardSound extends BoardDynamic implements Runnable {
             cells += currentBoard.get(row).size();
         }
         this.nrOfCells = cells;
-        System.out.println("Number of cells " + nrOfCells);
     }
 
     public void cellAudio(BoardSound.CellState state) {

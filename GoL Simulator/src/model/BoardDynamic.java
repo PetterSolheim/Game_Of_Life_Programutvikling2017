@@ -28,6 +28,11 @@ public class BoardDynamic {
      */
     protected ArrayList<ArrayList<Byte>> originalBoard;
 
+    /**
+     * Used to reset the generation count when the board is reset.
+     */
+    private int oldGenerationCount;
+    
     private int generationCount = 0;
     protected int livingCells = 0;
     protected final byte DEAD = 0;
@@ -487,10 +492,28 @@ public class BoardDynamic {
      */
     public void resetBoard() {
         currentBoard = duplicateBoard(originalBoard);
-        generationCount = 0;
+        generationCount = oldGenerationCount;
         countLivingCells();
     }
-
+    /**
+     * Creates an empty board with dimensions of the previously active board. Also sets the
+     * generation count and living cell count to 0.
+     */
+    public void deleteBoard (){
+        generationCount = 0;
+        livingCells = 0;
+        currentBoard = createEmptyBoard(originalBoard.size(), originalBoard.get(0).size());
+        originalBoard = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
+    }
+    /**
+     * Preserves the active board in the originalBoard <code> ArrayList<ArrayList<Byte>> originalBoard </code>
+     * so that the user can reset their board.
+     * This method is called if the user presses the play button while the timer is paused.
+     */
+    public void preserveBoard (){
+        oldGenerationCount = generationCount;
+        originalBoard = duplicateBoard(currentBoard);
+    }
     /**
      * Gets a copy of the passed game board ArrayList.
      *

@@ -29,26 +29,35 @@
         </Label>
         <Button fx:id="btnReset" onAction="#getAudioFile" text="Select Song to play"/>
         <HBox>
-            <Button onAction="#resetSong" text="Play">
+            <Button onAction="#playPreviousSongOrResetActiveSong" text="">
                 <graphic>
-                    <ImageView fitHeight="19.0" pickOnBounds="true" preserveRatio="true">
+                    <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../img/reset.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="btnPlayMusic" onAction="#toggleMusicPlayState" text="">
+                <graphic>
+                    <ImageView fx:id="imgPlayPause" fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
                         <image>
                             <Image url="@../img/play.png" />
                         </image>
                     </ImageView>
                 </graphic>
             </Button>
-            <Button fx:id="btnPlayMusic" onAction="#toggleMusicPlayState" text="Play">
+            <Button fx:id="btnPlayNextSong" onAction="#playNextSong" text="">
                 <graphic>
-                    <ImageView fx:id="imgPlayPause" fitHeight="19.0" pickOnBounds="true" preserveRatio="true">
+                    <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
                         <image>
-                            <Image url="@../img/play.png" />
+                            <Image url="@../img/next.png" />
                         </image>
                     </ImageView>
                 </graphic>
             </Button>
         </HBox>
-        <ListView fx:id="songList"/>
+        <ListView fx:id="songList" prefHeight="200"/>
         <Separator prefWidth="200.0" />
         <Label text="Miscellanous">
             <font>
