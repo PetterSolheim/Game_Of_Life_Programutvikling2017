@@ -93,7 +93,7 @@ public class AudioSettingsWindowController implements Initializable {
     public void createNextGeneration() {
         Thread newThread = new Thread(board);
         newThread.run();
-        
+        timer.stop();
     }
     
     public void initializeBoardSound(BoardDynamic board) {

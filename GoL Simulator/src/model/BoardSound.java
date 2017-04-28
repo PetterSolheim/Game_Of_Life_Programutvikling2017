@@ -106,6 +106,7 @@ public class BoardSound extends BoardDynamic implements Runnable {
                     Logger.getLogger(BoardSound.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
+            System.out.println(row);
         }
         if (generationAudio) {
             generationAudio();
@@ -147,7 +148,7 @@ public class BoardSound extends BoardDynamic implements Runnable {
                 for (MidiChannel m : midiChannels) {
                     if (m != null) { // channel is open
                         try {
-                            m.noteOn(60, 10);
+                            m.noteOn(60, 50);
                             Thread.sleep(audioLength);
                         } catch (InterruptedException ex) {
                             Logger.getLogger(AudioManager.class.getName()).log(Level.SEVERE, null, ex);
