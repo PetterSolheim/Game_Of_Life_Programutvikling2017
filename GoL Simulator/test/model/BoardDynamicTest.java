@@ -6,12 +6,8 @@
 package model;
 
 import java.util.ArrayList;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
-import org.junit.Before;
 
 /**
  *
@@ -173,11 +169,48 @@ public class BoardDynamicTest {
     @Test
     public void testDeepCopy() {
         System.out.println("deepCopy");
-        BoardDynamic instance = new BoardDynamic();
-        BoardDynamic expResult = null;
-        BoardDynamic result = instance.deepCopy();
-        assertEquals(expResult, result);
-        fail("TODO: complete test code.");
+        BoardDynamic instance = new BoardDynamic(2, 2);
+        byte[][] instanceBoard = {
+            {0, 1, 1},
+            {0, 1, 1},
+            {0, 0, 0}
+        };
+        instance.setBoard(instanceBoard);
+        
+        for (int i = 0; i < 10; i++) {
+            instance.nextGeneration();
+        }
+        BoardDynamic newBoard = instance.deepCopy();
+
+        // test that values are the same
+        assertEquals(instance.getBoard(), newBoard.getBoard());
+        assertEquals(instance.getChangedCells(), newBoard.getChangedCells());
+        assertEquals(instance.getCols(), newBoard.getCols());
+        assertEquals(instance.getRows(), newBoard.getRows());
+        assertEquals(instance.getGenerationCount(), newBoard.getGenerationCount());
+        assertEquals(instance.getLivingCellCount(), newBoard.getLivingCellCount());
+        assertEquals(instance.getNumberOfCells(), newBoard.getNumberOfCells());
+
+        // make changes to the new board
+        byte[][] board = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 1, 0, 0},
+            {0, 0, 1, 0, 0},
+            {0, 0, 1, 0, 0},
+            {0, 0, 0, 0, 0}
+        };
+        newBoard.setBoard(board);
+        for (int i = 0; i < 12; i++) {
+            newBoard.nextGeneration();
+        }
+
+        // ensure original boards values are unchanged
+        assertEquals(instance.toString(), "011011000");
+        assertEquals(instance.getCols(), 3);
+        assertEquals(instance.getRows(), 3);
+        assertEquals(instance.getGenerationCount(), 10);
+        assertEquals(instance.getLivingCellCount(), 4);
+        assertEquals(instance.getNumberOfCells(), 9);
     }
 
     @Test
@@ -333,7 +366,7 @@ public class BoardDynamicTest {
     @Test
     public void testGetRows() {
         System.out.println("getRows");
-        BoardDynamic instance = new BoardDynamic(10,11);
+        BoardDynamic instance = new BoardDynamic(10, 11);
         int expResult = 10;
         int result = instance.getRows();
         assertEquals(expResult, result);
@@ -345,38 +378,9 @@ public class BoardDynamicTest {
     @Test
     public void testGetCols() {
         System.out.println("getCols");
-        BoardDynamic instance = new BoardDynamic(10,11);
+        BoardDynamic instance = new BoardDynamic(10, 11);
         int expResult = 11;
         int result = instance.getCols();
         assertEquals(expResult, result);
     }
-
-    /**
-     * Test of moveBoardWithArrowKeys method, of class BoardDynamic.
-     */
-    @Test
-    public void testMoveBoardWithArrowKeys() {
-        System.out.println("moveBoardWithArrowKeys");
-        int xAxis = 0;
-        int yAxis = 0;
-        BoardDynamic instance = new BoardDynamic();
-        instance.moveBoardWithArrowKeys(xAxis, yAxis);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of getIndexSum method, of class BoardDynamic.
-     */
-    @Test
-    public void testGetIndexSum() {
-        System.out.println("getIndexSum");
-        BoardDynamic instance = new BoardDynamic();
-        int expResult = 0;
-        int result = instance.getIndexSum();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
 }
