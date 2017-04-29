@@ -6,10 +6,12 @@
 package model;
 
 import java.util.ArrayList;
+import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.Before;
 
 /**
  *
@@ -19,15 +21,6 @@ public class BoardDynamicTest {
 
     public BoardDynamicTest() {
 
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
     }
 
     @Test
@@ -316,6 +309,7 @@ public class BoardDynamicTest {
         byte[][] testBoard = {{0, 1, 0}, {0, 1, 0}, {0, 1, 0}};
         instance.setBoard(testBoard);
         instance.nextGeneration();
+        assertEquals("000111000", instance.toString());
         instance.resetBoard();
         assertEquals("010010010", instance.toString());
     }
@@ -331,6 +325,58 @@ public class BoardDynamicTest {
         };
         instance.setBoard(testBoard);
         assertEquals("101101101", instance.toString());
+    }
+
+    /**
+     * Test of getRows method, of class BoardDynamic.
+     */
+    @Test
+    public void testGetRows() {
+        System.out.println("getRows");
+        BoardDynamic instance = new BoardDynamic(10,11);
+        int expResult = 10;
+        int result = instance.getRows();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getCols method, of class BoardDynamic.
+     */
+    @Test
+    public void testGetCols() {
+        System.out.println("getCols");
+        BoardDynamic instance = new BoardDynamic(10,11);
+        int expResult = 11;
+        int result = instance.getCols();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of moveBoardWithArrowKeys method, of class BoardDynamic.
+     */
+    @Test
+    public void testMoveBoardWithArrowKeys() {
+        System.out.println("moveBoardWithArrowKeys");
+        int xAxis = 0;
+        int yAxis = 0;
+        BoardDynamic instance = new BoardDynamic();
+        instance.moveBoardWithArrowKeys(xAxis, yAxis);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of getIndexSum method, of class BoardDynamic.
+     */
+    @Test
+    public void testGetIndexSum() {
+        System.out.println("getIndexSum");
+        BoardDynamic instance = new BoardDynamic();
+        int expResult = 0;
+        int result = instance.getIndexSum();
+        assertEquals(expResult, result);
+        // TODO review the generated test code and remove the default call to fail.
+        fail("The test case is a prototype.");
     }
 
 }
