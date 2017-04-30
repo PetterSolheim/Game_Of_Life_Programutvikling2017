@@ -25,7 +25,7 @@ public class FileImporterTest {
         Path path = Paths.get("test/model/testPatterns/octagon2.rle");
         File f = path.toFile();
         BoardDynamic result = new BoardDynamic();
-        result.setBoard(instance.readGameBoardFromDisk(f));
+        result = instance.readGameBoardFromDisk(f);
 
         // create a board object representing the expected result.
         BoardDynamic expResult = new BoardDynamic();
@@ -62,7 +62,7 @@ public class FileImporterTest {
         String url = "http://www.conwaylife.com/patterns/octagon2.rle";
         FileImporter instance = new FileImporter();
         BoardDynamic result = new BoardDynamic();
-        result.setBoard(instance.readGameBoardFromUrl(url));
+        result = instance.readGameBoardFromUrl(url);
 
         // create a board object representing the expected result.
         BoardDynamic expResult = new BoardDynamic();
@@ -94,7 +94,7 @@ public class FileImporterTest {
         FileImporter instance2 = new FileImporter();
         String url2 = "http://www.conwaylife.com/patterns/blinker.rle";
         BoardDynamic result2 = new BoardDynamic();
-        result2.setBoard(instance2.readGameBoardFromUrl(url2));
+        result2 = instance2.readGameBoardFromUrl(url2);
 
         // create a board object representing the expected result.
         BoardDynamic expResult2 = new BoardDynamic();
@@ -125,7 +125,7 @@ public class FileImporterTest {
         File f = path.toFile();
         BoardDynamic result = new BoardDynamic();
         try {
-            result.setBoard(instance.readGameBoardFromDisk(f));
+            result = instance.readGameBoardFromDisk(f);
         } catch (PatternFormatException e) {
             caught = e;
         } catch (IOException e) {
@@ -141,7 +141,7 @@ public class FileImporterTest {
         Path path = Paths.get("test/model/testPatterns/octagon2EarlyEOF.rle");
         File f = path.toFile();
         BoardDynamic result = new BoardDynamic();
-        result.setBoard(instance.readGameBoardFromDisk(f));
+        result = instance.readGameBoardFromDisk(f);
         byte[][] expectedBoard = {
             {0, 0, 0, 1, 1, 0, 0, 0},
             {0, 0, 1, 0, 0, 1, 0, 0},
@@ -165,7 +165,7 @@ public class FileImporterTest {
         BoardDynamic result = new BoardDynamic();
         Throwable caught = null;
         try {
-            result.setBoard(instance.readGameBoardFromDisk(f));
+            result = instance.readGameBoardFromDisk(f);
         } catch (PatternFormatException e) {
             caught = e;
         } catch (IOException e) {

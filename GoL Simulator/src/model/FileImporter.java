@@ -11,6 +11,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import view.DialogBoxes;
 
 /**
  * Class for converting external Game of Life pattern files to a byte[][] array
@@ -18,8 +19,11 @@ import java.util.regex.Pattern;
  * has been written so as to be easily extendable to support additional formats.
  */
 public class FileImporter {
-
+    private BoardDynamic board = new BoardDynamic();
     private byte[][] boardArray;
+    private String author = "";
+    private String name = "";
+    private String comment = "";
     private Rules rules = Rules.getInstance();
 
     /**
@@ -31,10 +35,10 @@ public class FileImporter {
      * @throws IOException if there are errors reading the file.
      * @throws PatternFormatException if pattern could not be parsed.
      */
-    public byte[][] readGameBoardFromDisk(File f) throws IOException, PatternFormatException {
+    public BoardDynamic readGameBoardFromDisk(File f) throws IOException, PatternFormatException {
         String fileExtension = getFileExtension(f); // determine the filetype
         readGameBoard(new FileReader(f), fileExtension);
-        return boardArray;
+        return board;
     }
 
     /**
@@ -46,12 +50,12 @@ public class FileImporter {
      * @throws IOException if there are errors reading the file.
      * @throws PatternFormatException if the pattern could not be parsed.
      */
-    public byte[][] readGameBoardFromUrl(String url) throws IOException, PatternFormatException {
+    public BoardDynamic readGameBoardFromUrl(String url) throws IOException, PatternFormatException {
         String fileExtension = getFileExtension(url); // determin the filetype
         URL destination = new URL(url);
         URLConnection conn = destination.openConnection();
         readGameBoard(new InputStreamReader(conn.getInputStream()), fileExtension);
-        return boardArray;
+        return board;
     }
 
     /**
@@ -107,6 +111,8 @@ public class FileImporter {
         readRleBoardSize(lineList);
         readRleRules(lineList);
         readRleBoard(lineList);
+        board.setBoard(boardArray);
+        board.setMetadata(author, name, comment);
     }
 
     /**
@@ -117,12 +123,13 @@ public class FileImporter {
      */
     private void readRleComments(ArrayList<String> lineList) {
         Matcher m;
+        ArrayList<String> comments = new ArrayList<>();
         Pattern commentPattern = Pattern.compile("(#.*)");
         for (int i = 0; i < lineList.size(); i++) {
             m = commentPattern.matcher(lineList.get(i));
             if (m.find()) {
                 if (!m.group(1).isEmpty()) {
-                    System.out.println("Comment: " + m.group(1));
+                    comments.add(m.group(1));
                 }
             }
         }
@@ -135,6 +142,38 @@ public class FileImporter {
                 }
             }
         }
+        
+        // get name of game board
+        commentPattern = Pattern.compile("([#]N)(.+)");
+        for (int i = 0; i < comments.size(); i++) {
+            m = commentPattern.matcher(comments.get(i));
+            if (m.find()) {
+                name = m.group(2);
+                i = comments.size();
+            }
+        }
+        
+        // get author name
+        commentPattern = Pattern.compile("([#]O)(.+)");
+        for (int i = 0; i < comments.size(); i++) {
+            m = commentPattern.matcher(comments.get(i));
+            if (m.find()) {
+                author = m.group(2);
+                i = comments.size();
+            }
+        }
+        
+        // get comments
+        commentPattern = Pattern.compile("([#]C)(.+)");
+        StringBuilder commentStringBuilder = new StringBuilder();
+        for (int i = 0; i < comments.size(); i++) {
+            m = commentPattern.matcher(comments.get(i));
+            if (m.find()) {
+                commentStringBuilder.append(m.group(2));
+                commentStringBuilder.append("\n");
+            }
+        }
+        comment = commentStringBuilder.toString();
     }
 
     /**

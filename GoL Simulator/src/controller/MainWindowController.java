@@ -138,6 +138,16 @@ public class MainWindowController implements Initializable {
         canvas.setCanvasSize(canvasAnchor.getHeight(), canvasAnchor.getWidth());
         canvas.drawBoard(board.getBoard());
     }
+    
+    /**
+     * Display a simple info dialog box displaying the boards metadata.
+     */
+    @FXML
+    private void showMetadata() {
+        DialogBoxes.info("Author:\n" + board.getAuthor() + "\n\n" + 
+                "Board Name:\n" + board.getName() + "\n\n" + 
+                        "Comments:\n" + board.getComment(), "Metadata");
+    }
 
     /**
      * Creates a new blank board of a user defined size. User is presented with
@@ -336,7 +346,7 @@ public class MainWindowController implements Initializable {
         File file = fileChooser.showOpenDialog(stage);
         if (file != null && file.exists()) {
             try {
-                board.setBoard(fileImporter.readGameBoardFromDisk(file));
+                board = fileImporter.readGameBoardFromDisk(file);
                 centreBoardOnCanvas();
                 canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
@@ -346,7 +356,7 @@ public class MainWindowController implements Initializable {
             } catch (IOException e) {
                 DialogBoxes.ioException("There was a problem reading the file: " + e.getMessage());
             } catch (PatternFormatException e) {
-                DialogBoxes.patternFormatException("There was an error parsing the file: " + e.getMessage());
+                DialogBoxes.patternFormatError("There was an error parsing the file: " + e.getMessage());
             }
         }
     }
@@ -366,7 +376,7 @@ public class MainWindowController implements Initializable {
         Optional<String> url = inputDialog.showAndWait();
         if (url.isPresent()) {
             try {
-                board.setBoard(fileImporter.readGameBoardFromUrl(url.get()));
+                board = fileImporter.readGameBoardFromUrl(url.get());
                 centreBoardOnCanvas();
                 canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
@@ -377,7 +387,7 @@ public class MainWindowController implements Initializable {
             } catch (IOException e) {
                 DialogBoxes.ioException("File not found at: " + e.getMessage());
             } catch (PatternFormatException e) {
-                DialogBoxes.patternFormatException("There was an error parsing the file: " + e.getMessage());
+                DialogBoxes.patternFormatError("There was an error parsing the file: " + e.getMessage());
             }
         }
     }
