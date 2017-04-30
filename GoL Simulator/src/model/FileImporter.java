@@ -23,7 +23,7 @@ public class FileImporter {
     private Rules rules = Rules.getInstance();
 
     /**
-     * Reads a pattern file from disk and parses it. Returns a byte[][] array 
+     * Reads a pattern file from disk and parses it. Returns a byte[][] array
      * containing the pattern, and sets the rules specified by the pattern file.
      *
      * @param f the file object containing the pattern to be read.
@@ -40,10 +40,11 @@ public class FileImporter {
     /**
      * Reads a pattern file from an URL and parses it. Returns a byte[][] array
      * containing the pattern, and sets the rules specified by the pattern file.
+     *
      * @param url a <code>String</code> containing the URL of the pattern file.
      * @return a <code>byte[][]</code> containing the parsed pattern.
      * @throws IOException if there are errors reading the file.
-     * @throws PatternFormatException if the pattern could not be parsed. 
+     * @throws PatternFormatException if the pattern could not be parsed.
      */
     public byte[][] readGameBoardFromUrl(String url) throws IOException, PatternFormatException {
         String fileExtension = getFileExtension(url); // determin the filetype
@@ -56,10 +57,11 @@ public class FileImporter {
     /**
      * Pass the pattern file to the appropriate parser based on file type
      * extension.
+     *
      * @param r
      * @param fileExtension the extension of the pattern file (for instance RLE)
      * @throws IOException if there are errors reading the file.
-     * @throws PatternFormatException if the pattern could not be parsed. 
+     * @throws PatternFormatException if the pattern could not be parsed.
      */
     private void readGameBoard(Reader r, String fileExtension) throws PatternFormatException, IOException {
         switch (fileExtension) {
@@ -86,7 +88,7 @@ public class FileImporter {
      *
      * @param r
      * @throws IOException if there are errors reading the file.
-     * @throws PatternFormatException if the pattern could not be parsed. 
+     * @throws PatternFormatException if the pattern could not be parsed.
      */
     private void rleReader(Reader r) throws IOException, PatternFormatException {
         BufferedReader br = new BufferedReader(r);
@@ -139,8 +141,8 @@ public class FileImporter {
      * Extracts the size of the board being parsed.
      *
      * @param lineList
-     * @throws PatternFormatException if board dimensions are not defined, or 
-     * if parser is unable to interpret the size.
+     * @throws PatternFormatException if board dimensions are not defined, or if
+     * parser is unable to interpret the size.
      */
     private void readRleBoardSize(ArrayList<String> lineList) throws PatternFormatException {
         Matcher m;
@@ -250,9 +252,9 @@ public class FileImporter {
      * Creates a byte[][] array containing the defined board.
      *
      * @param lineList
-     * @throws PatternFormatException if; unrecognized character in pattern,
-     * no end of file indicator found or the pattern size does not match the 
-     * size defined by the pattern file.
+     * @throws PatternFormatException if; unrecognized character in pattern, no
+     * end of file indicator found or the pattern size does not match the size
+     * defined by the pattern file.
      */
     private void readRleBoard(ArrayList<String> lineList) throws PatternFormatException {
         Matcher m;
@@ -261,14 +263,16 @@ public class FileImporter {
             if (lineList.get(i).matches("^(?:\\d*[bo\\$\\!]{1})*$")) {
                 stringBuilder.append(lineList.get(i));
             } else {
-                throw new PatternFormatException("Invalid character found in board definition.");
+                throw new PatternFormatException("Unsuported character found in "
+                        + "board definition.");
             }
         }
         String readString = stringBuilder.toString().trim();
 
         //ensure file contains end of file indicator.
         if (!readString.contains("!")) {
-            throw new PatternFormatException("No end of file character (!) found.");
+            throw new PatternFormatException("No end of file character (!) "
+                    + "found.");
         }
 
         String[] boardStringArray = readString.split("\\$");
@@ -292,12 +296,19 @@ public class FileImporter {
 
                 try {
                     for (int j = cellPosition; j < cellPosition + numberOfCells; j++) {
-                        if (m.group(2).equals("o")) {
+                        if (m.group(2).equals("o") || m.group(2).equals("O")) {
                             boardArray[i + rowOffsett][j] = 1;
-                        } else if (m.group(2).equals("b")) {
+                        } else if (m.group(2).equals("b") || m.group(2).equals("B")) {
                             boardArray[i + rowOffsett][j] = 0;
+                        } else if (m.group(2).equals("!")) {
+                            i = (boardStringArray.length - 1);
                         } else {
-                            i = (boardStringArray.length - 1); // end of file reached. Break out of loop.
+                            throw new PatternFormatException("Unsuported "
+                                    + "character found in board definition. "
+                                    + "This application only supports two cell "
+                                    + "states. Dead (symbolized by b or B and "
+                                    + "alive, symbolized by o or O. Character "
+                                    + "found was" + m.group(2));
                         }
 
                     }
