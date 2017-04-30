@@ -5,10 +5,12 @@
         <group>
             <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/test/model/StatisticsTest.java</file>
             <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/model/BoardDynamic.java</file>
-            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/view/GameRulesWindow.fxml</file>
+            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/view/GameCanvas.java</file>
             <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/controller/MainWindowController.java</file>
+            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/test/model/BoardTest.java</file>
             <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/test/model/BoardDynamicTest.java</file>
             <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/model/Rules.java</file>
+            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/view/DialogBoxes.java</file>
             <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/controller/GameRulesWindowController.java</file>
         </group>
     </open-files>

@@ -2,6 +2,7 @@ package model;
 
 import java.util.ArrayList;
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.nio.file.Path;
 import org.junit.Test;
@@ -115,4 +116,63 @@ public class FileImporterTest {
         assertEquals(expBirthRules2, rules.getBirthRules());
     }
 
+    // test file with unsuported character
+    @Test
+    public void testFileWithInvalidCharacter() {
+        Throwable caught = null;
+        FileImporter instance = new FileImporter();
+        Path path = Paths.get("test/model/testPatterns/octagon2UnknownCharacter.rle");
+        File f = path.toFile();
+        BoardDynamic result = new BoardDynamic();
+        try {
+            result.setBoard(instance.readGameBoardFromDisk(f));
+        } catch (PatternFormatException e) {
+            caught = e;
+        } catch (IOException e) {
+            caught = e;
+        }
+        assertNotNull(caught);
+        assertSame(PatternFormatException.class, caught.getClass());
+    }
+
+    @Test
+    public void testEarlyEndOfFile() throws Exception {
+        FileImporter instance = new FileImporter();
+        Path path = Paths.get("test/model/testPatterns/octagon2EarlyEOF.rle");
+        File f = path.toFile();
+        BoardDynamic result = new BoardDynamic();
+        result.setBoard(instance.readGameBoardFromDisk(f));
+        byte[][] expectedBoard = {
+            {0, 0, 0, 1, 1, 0, 0, 0},
+            {0, 0, 1, 0, 0, 1, 0, 0},
+            {0, 1, 0, 0, 0, 0, 1, 0},
+            {1, 0, 0, 0, 0, 0, 0, 1},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0}
+        };
+        BoardDynamic expResult = new BoardDynamic();
+        expResult.setBoard(expectedBoard);
+        assertEquals(result.getBoard(), expResult.getBoard());
+    }
+
+    @Test
+    public void testNoDimensions() {
+        FileImporter instance = new FileImporter();
+        Path path = Paths.get("test/model/testPatterns/octagon2NoDimensions.rle");
+        File f = path.toFile();
+        BoardDynamic result = new BoardDynamic();
+        Throwable caught = null;
+        try {
+            result.setBoard(instance.readGameBoardFromDisk(f));
+        } catch (PatternFormatException e) {
+            caught = e;
+        } catch (IOException e) {
+            caught = e;
+        }
+
+        assertNotNull(caught);
+        assertSame(PatternFormatException.class, caught.getClass());
+    }
 }
