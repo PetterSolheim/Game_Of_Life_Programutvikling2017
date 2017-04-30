@@ -9,9 +9,9 @@ import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import view.DialogBoxes;
 
 /**
  * Class for converting external Game of Life pattern files to a byte[][] array
@@ -22,8 +22,8 @@ public class FileImporter {
 
     private BoardDynamic board = new BoardDynamic();
     private byte[][] boardArray;
-    private String author = "";
-    private String name = "";
+    private String author = "unknown";
+    private String name = "unknown";
     private String comment = "";
     private Rules rules = Rules.getInstance();
 
@@ -69,13 +69,15 @@ public class FileImporter {
      * @throws PatternFormatException if the pattern could not be parsed.
      */
     private void readGameBoard(Reader r, String fileExtension) throws PatternFormatException, IOException {
-        System.out.println(fileExtension);
         switch (fileExtension) {
             case "rle":
                 rleReader(r);
                 break;
             case "cells":
                 cellsReader(r);
+                break;
+            case "lif":
+                lifReader(r);
                 break;
             default:
                 throw new PatternFormatException("Unrecognized file type.");
@@ -212,7 +214,6 @@ public class FileImporter {
         }
 
         boardArray = new byte[row][col];
-        System.out.println("Rows: " + boardArray.length + " Columns: " + boardArray[0].length);
     }
 
     /**
@@ -245,7 +246,6 @@ public class FileImporter {
                     } else {
                         birth = m.group(4);
                     }
-                    System.out.println(survive + " " + birth);
                     boardRulesSet = true;
                     lineList.remove(i);
                 } else if (m.group(2) != null && m.group(4) != null) {
@@ -375,6 +375,201 @@ public class FileImporter {
         }
     }
 
+    private void lifReader(Reader r) throws IOException, PatternFormatException {
+        BufferedReader br = new BufferedReader(r);
+        String line = null;
+        boolean endOfFile = false;
+        ArrayList<String> lineList = new ArrayList<>();
+        while (!endOfFile) {
+            line = br.readLine();
+            if (line != null) {
+                lineList.add(line);
+            } else {
+                endOfFile = true;
+            }
+        }
+
+        Matcher m;
+        boolean detectedFileType = false;
+        ArrayList<String> comments = new ArrayList<>();
+        Pattern fileType105 = Pattern.compile("(#Life 1.05)");
+        m = fileType105.matcher(lineList.get(0));
+        if (m.find()) {
+            if (!m.group(1).isEmpty()) {
+                detectedFileType = true;
+                lif105Reader(lineList);
+            }
+        }
+
+        if (!detectedFileType) {
+            Pattern fileType106 = Pattern.compile("(#Life 1.06)");
+            fileType106.matcher(lineList.get(0));
+            if (m.find()) {
+                if (!m.group(1).isEmpty()) {
+                    detectedFileType = true;
+                    throw new PatternFormatException("Life 1.06 not supported!");
+                }
+            }
+        }
+
+        if (!detectedFileType) {
+            throw new PatternFormatException("Lif file does not specify file"
+                    + "type. Unable to read file.");
+        }
+    }
+
+    private void lif105Reader(ArrayList<String> lineList) throws PatternFormatException {
+        readLif105Comments(lineList);
+        readLif105Rules(lineList);
+        readLif105Size(lineList);
+        readLif105Board(lineList);
+        board.setBoard(boardArray);
+        board.setMetadata(author, name, comment);
+    }
+
+    private void readLif105Comments(ArrayList<String> lineList) {
+        Matcher m;
+        ArrayList<String> comments = new ArrayList<>();
+        Pattern commentPattern = Pattern.compile("(#D.*)");
+        for (int i = 0; i < lineList.size(); i++) {
+            m = commentPattern.matcher(lineList.get(i));
+            if (m.find()) {
+                if (!m.group(1).isEmpty()) {
+                    comments.add(m.group(1));
+                }
+            }
+        }
+
+        // get name of game board
+        commentPattern = Pattern.compile("(#D Name:|#D name:)(.+)");
+        for (int i = 0; i < comments.size(); i++) {
+            m = commentPattern.matcher(comments.get(i));
+            if (m.find()) {
+                if (!m.group(2).isEmpty()) {
+                    name = m.group(2).trim();
+                    i = comments.size();
+                }
+            }
+        }
+
+        // get author of game board
+        commentPattern = Pattern.compile("(#D Author:|#D author:)(.+)");
+        for (int i = 0; i < comments.size(); i++) {
+            m = commentPattern.matcher(comments.get(i));
+            if (m.find()) {
+                if (!m.group(2).isEmpty()) {
+                    author = m.group(2).trim();
+                    comments.remove(i);
+                    i = comments.size();
+                }
+            }
+        }
+
+        // get comments
+        commentPattern = Pattern.compile("(#D)(.+)");
+        StringBuilder commentStringBuilder = new StringBuilder();
+        for (int i = 0; i < comments.size(); i++) {
+            m = commentPattern.matcher(comments.get(i));
+            if (m.find()) {
+                if (!m.group(2).isEmpty()) {
+                    commentStringBuilder.append(m.group(2));
+                    commentStringBuilder.append("\n");
+                }
+            }
+            this.comment = commentStringBuilder.toString();
+        }
+    }
+
+    private void readLif105Rules(ArrayList<String> lineList) throws PatternFormatException {
+        Matcher m;
+        Pattern rulePattern = Pattern.compile("(#N|#R)+\\s*([0-8]*\\/[0-8]*)*");
+        for (int i = 0; i < lineList.size(); i++) {
+            m = rulePattern.matcher(lineList.get(i));
+            if (m.find()) {
+                if (m.group(1).equals("#N")) {
+                    rules.setSurviveRules(2, 3);
+                    rules.setBirthRules(3);
+                } else if (m.group(1).equals("#R")) {
+                    try {
+                        String survive = m.group(2);
+                        String birth = m.group(3);
+                        String[] surviveStringArray = survive.split("");
+                        int[] survivalRules;
+                        survivalRules = new int[surviveStringArray.length];
+                        for (int j = 0; j < surviveStringArray.length; j++) {
+                            survivalRules[j] = Integer.parseInt(surviveStringArray[j]);
+                        }
+
+                        rules.setSurviveRules(survivalRules);
+
+                        String[] birthStringArray = birth.split("");
+                        int[] birthRules;
+                        birthRules = new int[birthStringArray.length];
+                        for (int j = 0; j < birthStringArray.length; j++) {
+                            birthRules[j] = Integer.parseInt(birthStringArray[j]);
+                        }
+
+                        rules.setBirthRules(birthRules);
+
+                    } catch (NumberFormatException e) {
+                        throw new PatternFormatException("Failed to determin"
+                                + "rules.");
+                    }
+                } else {
+                    throw new PatternFormatException("Failed to determin rules.");
+                }
+            }
+        }
+        
+        Pattern commentPattern = Pattern.compile("(#.*)");
+        // clear ArrayList of all comments
+        for(int i = 0; i < lineList.size(); i++) {
+            m = commentPattern.matcher(lineList.get(i));
+            if(m.find()) {
+                lineList.remove(i);
+                i--;
+            }
+        }
+
+    }
+
+    private void readLif105Size(ArrayList<String> lineList) throws PatternFormatException {
+        // remove blanc lines
+        lineList.removeAll(Arrays.asList(null, ""));
+
+        int rows = lineList.size();
+        int cols = 0;
+
+        for (int i = 0; i < lineList.size(); i++) {
+            String lineLength = lineList.get(i).trim();
+            if (cols < lineLength.length()) {
+                cols = lineLength.length();
+            }
+        }
+
+        if (cols == 0) {
+            throw new PatternFormatException("Error reading board size");
+        }
+
+        boardArray = new byte[rows][cols];
+    }
+
+    private void readLif105Board(ArrayList<String> lineList) throws PatternFormatException {
+        for (int row = 0; row < boardArray.length; row++) {
+            String[] boardRow = lineList.get(row).split("(?!^)");
+            for (int col = 0; col < boardRow.length; col++) {
+                if (boardRow[col].equals(".")) {
+                    boardArray[row][col] = 0;
+                } else if (boardRow[col].equals("*")) {
+                    boardArray[row][col] = 1;
+                } else {
+                    throw new PatternFormatException("Unrecognized character in"
+                            + "board definition " + boardRow[col]);
+                }
+            }
+        }
+    }
+
     private void cellsReader(Reader r) throws IOException, PatternFormatException {
         BufferedReader br = new BufferedReader(r);
         String line = null;
@@ -420,12 +615,12 @@ public class FileImporter {
         }
 
         // get name of game board
-        commentPattern = Pattern.compile("([!]Name|[!]name)(.+)");
+        commentPattern = Pattern.compile("([!]Name:|[!]name:)(.+)");
         for (int i = 0; i < comments.size(); i++) {
             m = commentPattern.matcher(comments.get(i));
             if (m.find()) {
                 if (!m.group(2).isEmpty()) {
-                    name = m.group(2);
+                    name = m.group(2).trim();
                     comments.remove(i);
                     i = comments.size();
                 }
@@ -433,12 +628,12 @@ public class FileImporter {
         }
 
         // get author of game board
-        commentPattern = Pattern.compile("([!]Author|[!]author)(.+)");
+        commentPattern = Pattern.compile("([!]Author:|[!]author:)(.+)");
         for (int i = 0; i < comments.size(); i++) {
             m = commentPattern.matcher(comments.get(i));
             if (m.find()) {
                 if (!m.group(2).isEmpty()) {
-                    author = m.group(2);
+                    author = m.group(2).trim();
                     comments.remove(i);
                     i = comments.size();
                 }
@@ -461,6 +656,9 @@ public class FileImporter {
     }
 
     private void readCellsSize(ArrayList<String> lineList) throws PatternFormatException {
+        // remove blanc lines
+        lineList.removeAll(Arrays.asList(null, ""));
+
         int rows = lineList.size();
         int cols = 0;
 
@@ -478,14 +676,17 @@ public class FileImporter {
         boardArray = new byte[rows][cols];
     }
 
-    private void readCellsBoard(ArrayList<String> lineList) {
+    private void readCellsBoard(ArrayList<String> lineList) throws PatternFormatException {
         for (int row = 0; row < boardArray.length; row++) {
             String[] boardRow = lineList.get(row).split("(?!^)");
             for (int col = 0; col < boardRow.length; col++) {
-                if(boardRow[col].equals(".")) {
+                if (boardRow[col].equals(".")) {
                     boardArray[row][col] = 0;
                 } else if (boardRow[col].equals("O")) {
                     boardArray[row][col] = 1;
+                } else {
+                    throw new PatternFormatException("Unrecognized character in"
+                            + "board definition");
                 }
             }
         }
