@@ -17,10 +17,10 @@ public class FileImporterTest {
     Rules rules = Rules.getInstance();
 
     @Test
-    public void testReadGameBoardFromDisk() throws Exception {
-        System.out.println("readGameBoardFromDisk");
+    public void testReadGameBoardFromDiskRle() throws Exception {
+        System.out.println("readGameBoardFromDiskRle");
 
-        // read the file used for testing
+        // RLE file test.
         FileImporter instance = new FileImporter();
         Path path = Paths.get("test/model/testPatterns/octagon2.rle");
         File f = path.toFile();
@@ -53,10 +53,37 @@ public class FileImporterTest {
         assertEquals(expBirthRules, rules.getBirthRules());
     }
 
+    @Test
+    public void testReadGameBoardFromDiskCells() throws Exception {
+        System.out.println("readGameBoardFromDiskCells");
+
+        // cells file test.
+        FileImporter instance = new FileImporter();
+        Path path = Paths.get("test/model/testPatterns/octagon2.cells");
+        File f = path.toFile();
+        BoardDynamic result = new BoardDynamic();
+        result = instance.readGameBoardFromDisk(f);
+
+        // create a board object representing the expected result.
+        BoardDynamic expResult = new BoardDynamic();
+        byte[][] boardPattern = {
+            {0, 0, 0, 1, 1, 0, 0, 0},
+            {0, 0, 1, 0, 0, 1, 0, 0},
+            {0, 1, 0, 0, 0, 0, 1, 0},
+            {1, 0, 0, 0, 0, 0, 0, 1},
+            {1, 0, 0, 0, 0, 0, 0, 1},
+            {0, 1, 0, 0, 0, 0, 1, 0},
+            {0, 0, 1, 0, 0, 1, 0, 0},
+            {0, 0, 0, 1, 1, 0, 0, 0},};
+        expResult.setBoard(boardPattern);
+        assertEquals(expResult.getBoard(), result.getBoard());
+    }
+
     @Test // requires an internet connection to succeed. 
     public void testReadGameBoardFromUrl() throws Exception {
         System.out.println("readGameBoardFromUrl");
 
+        // RLE tests
         // Board Test nr. 1 of 2.
         // read the file used for testing
         String url = "http://www.conwaylife.com/patterns/octagon2.rle";

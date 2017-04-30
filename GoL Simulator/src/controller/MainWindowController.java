@@ -138,15 +138,15 @@ public class MainWindowController implements Initializable {
         canvas.setCanvasSize(canvasAnchor.getHeight(), canvasAnchor.getWidth());
         canvas.drawBoard(board.getBoard());
     }
-    
+
     /**
      * Display a simple info dialog box displaying the boards metadata.
      */
     @FXML
     private void showMetadata() {
-        DialogBoxes.info("Author:\n" + board.getAuthor() + "\n\n" + 
-                "Board Name:\n" + board.getName() + "\n\n" + 
-                        "Comments:\n" + board.getComment(), "Metadata");
+        DialogBoxes.info("Author:\n" + board.getAuthor() + "\n\n"
+                + "Board Name:\n" + board.getName() + "\n\n"
+                + "Comments:\n" + board.getComment(), "Metadata");
     }
 
     /**
@@ -197,7 +197,7 @@ public class MainWindowController implements Initializable {
                 int row = Integer.parseInt(consumer.get(0));
                 int col = Integer.parseInt(consumer.get(1));
                 boolean isOk = true;
-                
+
                 // check that the user defined size is within reasonable limits.
                 // Warn them if it is not, and give them the chance to change
                 // their mind.
@@ -206,7 +206,7 @@ public class MainWindowController implements Initializable {
                             + " to slow performance. Are you sure you wish to"
                             + " continue?");
                 }
-                
+
                 // if all is ok, create and display the new board.
                 if (isOk) {
                     BoardDynamic newBoard = new BoardDynamic(row, col);
@@ -327,10 +327,12 @@ public class MainWindowController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose file");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Supported Formats", "*.rle"/*, "*.lif", "*.life", "*.cells"*/),
-                new FileChooser.ExtensionFilter("RLE", "*.rle"));
+                new FileChooser.ExtensionFilter("Supported Formats", "*.rle", "*.cells"),
+                new FileChooser.ExtensionFilter("RLE", "*.rle"),
+                new FileChooser.ExtensionFilter("Plaintext", "*.cells")
+        );
+        
         //new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
-        //new FileChooser.ExtensionFilter("Plaintext", "*.cells")),
         return fileChooser;
     }
 

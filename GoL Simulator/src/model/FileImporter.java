@@ -19,6 +19,7 @@ import view.DialogBoxes;
  * has been written so as to be easily extendable to support additional formats.
  */
 public class FileImporter {
+
     private BoardDynamic board = new BoardDynamic();
     private byte[][] boardArray;
     private String author = "";
@@ -68,23 +69,17 @@ public class FileImporter {
      * @throws PatternFormatException if the pattern could not be parsed.
      */
     private void readGameBoard(Reader r, String fileExtension) throws PatternFormatException, IOException {
+        System.out.println(fileExtension);
         switch (fileExtension) {
             case "rle":
                 rleReader(r);
                 break;
-            case "life":
-                throw new PatternFormatException("LIFE files are not currently"
-                        + "supported.");
-            case "lif":
-                throw new PatternFormatException("LIF files are not currently"
-                        + "supported.");
             case "cells":
-                throw new PatternFormatException("MCELL files are not currently"
-                        + "supported.");
+                cellsReader(r);
+                break;
             default:
                 throw new PatternFormatException("Unrecognized file type.");
         }
-
     }
 
     /**
@@ -142,7 +137,7 @@ public class FileImporter {
                 }
             }
         }
-        
+
         // get name of game board
         commentPattern = Pattern.compile("([#]N)(.+)");
         for (int i = 0; i < comments.size(); i++) {
@@ -152,7 +147,7 @@ public class FileImporter {
                 i = comments.size();
             }
         }
-        
+
         // get author name
         commentPattern = Pattern.compile("([#]O)(.+)");
         for (int i = 0; i < comments.size(); i++) {
@@ -162,7 +157,7 @@ public class FileImporter {
                 i = comments.size();
             }
         }
-        
+
         // get comments
         commentPattern = Pattern.compile("([#]C)(.+)");
         StringBuilder commentStringBuilder = new StringBuilder();
@@ -291,7 +286,7 @@ public class FileImporter {
      * Creates a byte[][] array containing the defined board.
      *
      * @param lineList
-     * @throws PatternFormatException if; unrecognized character in pattern, no
+     * @throws PatternFormatException if unrecognized character in pattern, no
      * end of file indicator found or the pattern size does not match the size
      * defined by the pattern file.
      */
@@ -378,6 +373,123 @@ public class FileImporter {
 
             }
         }
+    }
+
+    private void cellsReader(Reader r) throws IOException, PatternFormatException {
+        BufferedReader br = new BufferedReader(r);
+        String line = null;
+        boolean endOfFile = false;
+        ArrayList<String> lineList = new ArrayList<>();
+        while (!endOfFile) {
+            line = br.readLine();
+            if (line != null) {
+                lineList.add(line);
+            } else {
+                endOfFile = true;
+            }
+        }
+        readCellsComments(lineList);
+        readCellsSize(lineList);
+        readCellsBoard(lineList);
+        board.setBoard(boardArray);
+        rules.setSurviveRules(2, 3);
+        rules.setBirthRules(3);
+        board.setMetadata(author, name, comment);
+    }
+
+    private void readCellsComments(ArrayList<String> lineList) {
+        Matcher m;
+        ArrayList<String> comments = new ArrayList<>();
+        Pattern commentPattern = Pattern.compile("(!.*)");
+        for (int i = 0; i < lineList.size(); i++) {
+            m = commentPattern.matcher(lineList.get(i));
+            if (m.find()) {
+                if (!m.group(1).isEmpty()) {
+                    comments.add(m.group(1));
+                }
+            }
+        }
+
+        for (int i = lineList.size() - 1; i >= 0; i--) {
+            m = commentPattern.matcher(lineList.get(i));
+            if (m.find()) {
+                if (!m.group(1).isEmpty()) {
+                    lineList.remove(i);
+                }
+            }
+        }
+
+        // get name of game board
+        commentPattern = Pattern.compile("([!]Name|[!]name)(.+)");
+        for (int i = 0; i < comments.size(); i++) {
+            m = commentPattern.matcher(comments.get(i));
+            if (m.find()) {
+                if (!m.group(2).isEmpty()) {
+                    name = m.group(2);
+                    comments.remove(i);
+                    i = comments.size();
+                }
+            }
+        }
+
+        // get author of game board
+        commentPattern = Pattern.compile("([!]Author|[!]author)(.+)");
+        for (int i = 0; i < comments.size(); i++) {
+            m = commentPattern.matcher(comments.get(i));
+            if (m.find()) {
+                if (!m.group(2).isEmpty()) {
+                    author = m.group(2);
+                    comments.remove(i);
+                    i = comments.size();
+                }
+            }
+        }
+
+        // get comments
+        commentPattern = Pattern.compile("([!])(.+)");
+        StringBuilder commentStringBuilder = new StringBuilder();
+        for (int i = 0; i < comments.size(); i++) {
+            m = commentPattern.matcher(comments.get(i));
+            if (m.find()) {
+                if (!m.group(2).isEmpty()) {
+                    commentStringBuilder.append(m.group(2));
+                    commentStringBuilder.append("\n");
+                }
+            }
+            this.comment = commentStringBuilder.toString();
+        }
+    }
+
+    private void readCellsSize(ArrayList<String> lineList) throws PatternFormatException {
+        int rows = lineList.size();
+        int cols = 0;
+
+        for (int i = 0; i < lineList.size(); i++) {
+            String lineLength = lineList.get(i).trim();
+            if (cols < lineLength.length()) {
+                cols = lineLength.length();
+            }
+        }
+
+        if (cols == 0) {
+            throw new PatternFormatException("Error reading board size");
+        }
+
+        boardArray = new byte[rows][cols];
+    }
+
+    private void readCellsBoard(ArrayList<String> lineList) {
+        for (int row = 0; row < boardArray.length; row++) {
+            String[] boardRow = lineList.get(row).split("(?!^)");
+            for (int col = 0; col < boardRow.length; col++) {
+                if(boardRow[col].equals(".")) {
+                    boardArray[row][col] = 0;
+                } else if (boardRow[col].equals("O")) {
+                    boardArray[row][col] = 1;
+                }
+            }
+        }
+
     }
 
     /**
