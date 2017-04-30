@@ -34,17 +34,12 @@ public class AudioTimer extends AnimationTimer {
     public AudioTimer (AudioSettingsWindowController controller){
         this.controller = controller;
     }
-    /**
-     * Sets the desired FPS for the animation.
-     *
-     * @param timeInNanoSeconds
-     */
+
     public void setFps(long timeInNanoSeconds) {
         this.timeBetweenGeneration = timeInNanoSeconds;
     }
     public void setTimeBetweenCellAudioTimer (int cells){
         this.timeBetweenCellAudio = timeBetweenGeneration / cells;
-        System.out.println("Cell Audio Timer = " + this.timeBetweenCellAudio);
     }
     public long getTimeBetweenCellAudioTimer (){
         return this.timeBetweenCellAudio;

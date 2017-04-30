@@ -235,11 +235,14 @@ public class BoardDynamic {
                     currentBoard.get(row).set(col, DEAD);
                     changedCells.get(row).set(col, CHANGED);
                     livingCells--;
+                } else if (testPattern.get(row).get(col) == 1 && rules.getSurviveRules().contains(nrOfNeighbours)) {
                     indexSum += (row + col);
-                } else if (testPattern.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
+                }
+                else if (testPattern.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
                     currentBoard.get(row).set(col, ALLIVE);
                     changedCells.get(row).set(col, CHANGED);
                     livingCells++;
+                    indexSum += (row + col);
                 }
             }
             

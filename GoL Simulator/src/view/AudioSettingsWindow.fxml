@@ -66,6 +66,18 @@
         </Label>
         <VBox>
             <children>
+                <Text text="Generate audio for the currently active board."/>
+            </children>
+        </VBox>
+        <HBox>
+            <children>
+                <Text text="Enter mount of generations to generate audio for "/>
+                <TextField fx:id="txtGenerations" prefWidth="50" />
+                <Button text="Start" onAction="#generateAudioSequence"/>
+            </children>
+        </HBox>
+        <VBox>
+            <children>
                 <Text text="Volume " />
                 <Slider fx:id="volumeSlider" max = "100.0" min ="0.0" minorTickCount="0" snapToTicks="true" majorTickUnit="1.0" value="100.0"/>
             </children>

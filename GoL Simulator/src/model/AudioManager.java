@@ -36,7 +36,6 @@ public class AudioManager {
     private AudioSettingsWindowController controller;
     static AudioManager instance;
     private Clip activeSong;
-    private int activeSongQueue;
     private ArrayList<String> absolutePathForLoadedSongs = new ArrayList<String>();
     private AudioInputStream inputStream;
 
@@ -45,9 +44,9 @@ public class AudioManager {
         try {
             activeSong = AudioSystem.getClip();
             activeSong.addLineListener(listener -> {
-                //if 
+                //plays the next song in the queue if the current song is finished
                 if (activeSong.getFramePosition() == activeSong.getFrameLength()) {
-                    playNextSong(activeSongQueue);
+                    playNextSong();
                 }
             });
         } catch (LineUnavailableException ex) {
@@ -67,7 +66,7 @@ public class AudioManager {
         return new AudioManager();
     }
 
-    private void playNextSong(int currentSontQueue) {
+    private void playNextSong() {
         controller.playNextSong();
     }
 
@@ -126,7 +125,9 @@ public class AudioManager {
             DialogBoxes.genericErrorMessage("Failed to load audio file", "Try again\n" + ex.getMessage());
         }
     }
-
+    public void generateAudioSequence (ArrayList<ArrayList> data){
+        
+    }
     public Clip getActiveSong() {
         return activeSong;
     }

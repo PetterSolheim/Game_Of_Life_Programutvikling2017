@@ -68,12 +68,10 @@ public class MainWindowController implements Initializable {
     @FXML
     private ImageView imgPlayPause;
     @FXML
-    private ToolBar toolbar;
     private BoardDynamic board;
     private Timer time;
     private boolean isPaused = true;
     private Stage stage;
-    private Stage mainStage;
     private double previousXOffset;
     private double previousYOffset;
 
@@ -427,7 +425,7 @@ public class MainWindowController implements Initializable {
             controller.setBoard(board.deepCopy());
             Scene scene = new Scene(root);
             statistics.setScene(scene);
-            statistics.setTitle("Statistics");
+            statistics.setTitle("Game of Life Simulator - Statistics");
             statistics.initModality(Modality.APPLICATION_MODAL);
             statistics.show();
         } catch (IOException exception) {
@@ -437,21 +435,23 @@ public class MainWindowController implements Initializable {
 
     /**
      * Displays the audio settings window where the user can see information on
-     * future generations of the <bold>active</bold> board.
+     * future generations of the <bold>active/CurrentBoard</bold> board.
      */
     public void showAudioSettingsWindow() {
         try {
             Stage soundSettings = new Stage();
-            soundSettings.setHeight(500);
+            soundSettings.setHeight(700);
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AudioSettingsWindow.fxml"));
             VBox root = loader.load();
             AudioSettingsWindowController c = loader.getController();
             c.setThisStage(soundSettings);
             c.initializeBoardSound(board);
+            c.setMainBoard(board);
             Scene scene = new Scene(root);
             soundSettings.setScene(scene);
-            soundSettings.setTitle("Audio Settings");
+            soundSettings.setTitle("Game of Life Simulator - Audio Settings");
             soundSettings.initModality(Modality.APPLICATION_MODAL);
+            //Stop audioplaybak of BoardSound if window is closed.
             soundSettings.setOnCloseRequest(new EventHandler<WindowEvent>() {
                 @Override
                 public void handle(WindowEvent we) {
@@ -586,10 +586,6 @@ public class MainWindowController implements Initializable {
     private void quit() {
         AudioManager.getSingelton().closeLines();
         Platform.exit();
-    }
-
-    public void setMainStage(Stage s) {
-        this.mainStage = s;
     }
 
     /**

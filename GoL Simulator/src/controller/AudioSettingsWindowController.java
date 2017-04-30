@@ -3,6 +3,7 @@ package controller;
 import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 import java.util.concurrent.ExecutorService;
 import java.util.logging.Level;
@@ -22,6 +23,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TreeItem;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -33,6 +35,7 @@ import javax.sound.sampled.UnsupportedAudioFileException;
 import model.AudioManager;
 import model.BoardDynamic;
 import model.BoardSound;
+import model.Statistics;
 import view.DialogBoxes;
 
 /**
@@ -42,6 +45,8 @@ import view.DialogBoxes;
  */
 public class AudioSettingsWindowController implements Initializable {
 
+    private MainWindowController mainWindowController;
+    private BoardDynamic mainBoard;
     private BoardSound board;
     private AudioManager audioManager;
     private AudioTimer timer;
@@ -58,6 +63,8 @@ public class AudioSettingsWindowController implements Initializable {
     private Button btnPlayBoard;
     @FXML
     private ListView songList;
+    @FXML
+    private TextField txtGenerations;
 
     /**
      * Initializes the controller class.
@@ -94,11 +101,19 @@ public class AudioSettingsWindowController implements Initializable {
     public void playNextSong() {
         if (songList.getSelectionModel().getSelectedIndex() != songList.getItems().size() - 1) {
             songList.getSelectionModel().select(songList.getSelectionModel().getSelectedIndex() + 1);
+        } else {
+            resetPlayList();
         }
     }
 
+    public void resetPlayList() {
+        showPlayIcon();
+        songList.getSelectionModel().select(0);
+        audioManager.playPauseMusicPlayer();
+    }
+
     public void playPreviousSongOrResetActiveSong() {
-        if (audioManager.getActiveSong().getFramePosition() / 10000 < 1) {
+        if (audioManager.getActiveSong().getFramePosition() / 10000 < 1.5) {
             if (songList.getSelectionModel().getSelectedIndex() != 0) {
                 songList.getSelectionModel().select(songList.getSelectionModel().getSelectedIndex() - 1);
             }
@@ -153,20 +168,23 @@ public class AudioSettingsWindowController implements Initializable {
         fileChooser.getExtensionFilters().addAll(
                 new FileChooser.ExtensionFilter("Supported Formats", "*.wav", "*.wave"),
                 new FileChooser.ExtensionFilter("Wave / .wav", "*.wav", ".wave"));
-        File f = fileChooser.showOpenDialog(thisStage);
-        if (f != null) {
-            if (checkIfSongIsLoaded(f.getName())) {
-                DialogBoxes.genericErrorMessage("Song is already loaded", "Try a differen song.");
-            } else {
-                audioManager.addAbsolutePath(f);
-                songNames.add(f.getName());
-                updateSongList(f.getName());
+        List<File> file = fileChooser.showOpenMultipleDialog(thisStage);
+        if (file != null) {
+            for (File f : file) {
+                if (checkIfSongIsLoaded(f.getName())) {
+                    if (checkIfSongIsLoaded(f.getName())) {
+                        DialogBoxes.genericErrorMessage("Song " + f.getName() + " is already loaded", "Try a differen song.");
+                    }
+                } else {
+                    audioManager.addAbsolutePath(f);
+                    songNames.add(f.getName());
+                    updateSongList(f.getName());
+                }
             }
         }
     }
 
     private void reloadSongList(ArrayList<String> absolutePaths) {
-        System.out.println("controller.AudioSettingsWindowController.reloadSongList()");
         for (int i = 0; i < absolutePaths.size(); i++) {
             int lastBackSlash = 0;
             String songPath = absolutePaths.get(i);
@@ -195,6 +213,7 @@ public class AudioSettingsWindowController implements Initializable {
     private void playSong() {
         try {
             audioManager.loadSongFromAbsolutePath(songList.getSelectionModel().getSelectedItem().toString());
+            showPauseIcon();
         } catch (UnsupportedAudioFileException ex) {
             DialogBoxes.genericErrorMessage("Unsupported Audio File", "Try a different file\n" + ex.getMessage());
             ex.printStackTrace();
@@ -216,7 +235,7 @@ public class AudioSettingsWindowController implements Initializable {
 
     public void toggleMusicPlayState() {
         if (audioManager.getActiveSong().isActive()) { // pause song
-            showPauseIcon();
+            showPlayIcon();
             audioManager.playPauseMusicPlayer();
         } else { // play song
             showPlayIcon();
@@ -240,6 +259,13 @@ public class AudioSettingsWindowController implements Initializable {
         }
     }
 
+    public void generateAudioSequence() {
+        int generations = Integer.parseInt(txtGenerations.getText());
+        Statistics statistics = new Statistics(mainBoard, generations);
+        statistics.generateAudioSequence();
+        //audioManager.generateAudioSequence();
+    }
+
     private void showPauseIcon() {
         Image pause = new Image("/img/pause.png");
         imgPlayPause.setImage(pause);
@@ -259,5 +285,17 @@ public class AudioSettingsWindowController implements Initializable {
 
     public void setBoardIsActive(boolean isActive) {
         board.setIsActive(isActive);
+    }
+
+    public void setMainWindowConttroller(MainWindowController mainWindowController) {
+        this.mainWindowController = mainWindowController;
+    }
+
+    public void setMainBoard(BoardDynamic mainBoard) {
+        this.mainBoard = mainBoard;
+    }
+
+    public BoardDynamic getMainBoard() {
+        return mainBoard;
     }
 }
