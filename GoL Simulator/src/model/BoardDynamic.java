@@ -75,6 +75,24 @@ public class BoardDynamic {
         currentBoard = duplicateBoard(originalBoard);
         changedCells = createEmptyBoard(row, col);
     }
+    
+    /**
+     * Gets the the number of rows on the current board.
+     * @return an <code>int</code> specifying the number of rows on the current
+     * board.
+     */
+    public int getRows() {
+        return currentBoard.size();
+    }
+    
+    /**
+     * Gets the number of columns on the current board.
+     * @return an <code>int</code> specifying the number of columns on the
+     * current board.
+     */
+    public int getCols() {
+        return currentBoard.get(0).size();
+    }
 
     /**
      * Sets a new game board.
@@ -218,7 +236,7 @@ public class BoardDynamic {
         // reset list of changed cells.
         changedCells = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
 
-        if (rules.isDynamic()) {
+        if (rules.isDynamic() && getNumberOfCells() < rules.getMaxNumberOfCells()) {
             expandBoardIfNeeded();
         }
 

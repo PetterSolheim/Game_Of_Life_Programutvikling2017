@@ -22,7 +22,7 @@ public class Rules {
     private ArrayList<Integer> survivalRules;
     private ArrayList<Integer> birthRules;
     private boolean dynamic = false;
-    private long maxNumberOfCells = 16000000L;
+    private int maxNumberOfCells = 4000000;
     private static Rules rules;
 
     /**
@@ -164,6 +164,22 @@ public class Rules {
      */
     public ArrayList<Integer> getBirthRules() {
         return birthRules;
+    }
+    
+    /**
+     * Gets the max number of cells for a board.
+     * @return a <code>long</code> specifying the max number of cells.
+     */
+    public int getMaxNumberOfCells() {
+        return maxNumberOfCells;
+    }
+    
+    /**
+     * Sets the max number of cells for a board.
+     * @param newValue a <code>long</code> specifying the max number of cells.
+     */
+    public void setMaxNumberOfCells(int newValue) {
+        maxNumberOfCells = newValue;
     }
 
 }

@@ -5,11 +5,11 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
-import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,8 +17,12 @@ import javafx.scene.Cursor;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Dialog;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
@@ -34,6 +38,7 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
 import javafx.stage.WindowEvent;
@@ -83,7 +88,7 @@ public class MainWindowController implements Initializable {
         Platform.runLater(this::defineStage); // allows easy referal to the stage.
         Platform.runLater(this::resizeCanvas); // ensures the parent node is ready before resizing the canvas.
         Platform.runLater(this::setArrowKeyEventListener); // Eventhandler for arrowkeys after stage is loaded
-        board = new BoardDynamic(10, 10);
+        board = new BoardDynamic(50, 50);
         time = new Timer(this); // used for animation timing.
 
         // set the default value of the color pickers.
@@ -100,8 +105,15 @@ public class MainWindowController implements Initializable {
 
         // prepare the cellSizeSlider.
         cellSizeSlider.valueProperty().addListener((observable) -> {
+            int oldValue = canvas.getCellSize() + canvas.getSpaceBetweenCells();
             canvas.setCellSize((int) cellSizeSlider.getValue());
+            int newValue = canvas.getCellSize() + canvas.getSpaceBetweenCells();
+            int yOffsetAdjust = ((oldValue - newValue) * board.getRows()) / 2;
+            int xOffsetAdjust = ((oldValue - newValue) * board.getCols()) / 2;
+            canvas.adjustOffset(xOffsetAdjust, yOffsetAdjust);
+
             canvas.drawBoard(board.getBoard());
+
         });
 
         canvas.setCellSize((int) cellSizeSlider.getValue());
@@ -118,6 +130,7 @@ public class MainWindowController implements Initializable {
         // update the labels for the living cell count and generation count.
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
+        Platform.runLater(this::centreBoardOnCanvas);
     }
 
     /**
@@ -130,17 +143,83 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Creates a new empty board of a user defined size.
+     * Creates a new blank board of a user defined size. User is presented with
+     * a dialog box asking for board size.
      */
     @FXML
     private void newBoard() {
+        // create a window request user input for number of rows and cols.
+        Dialog dialog = new Dialog<>();
+        dialog.setTitle("New Board");
+        GridPane grid = new GridPane();
 
+        Label lblRow = new Label("Rows: ");
+        grid.add(lblRow, 0, 0);
+        TextField txtRow = new TextField();
+        txtRow.setPromptText("Enter number of rows");
+        grid.add(txtRow, 1, 0);
+
+        Label lblCol = new Label("Columns: ");
+        grid.add(lblCol, 0, 1);
+        TextField txtCol = new TextField();
+        txtCol.setPromptText("Enter number of columns");
+        grid.add(txtCol, 1, 1);
+
+        dialog.getDialogPane().setContent(grid);
+
+        // store user settings in an ArrayList<String>
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == ButtonType.OK) {
+                ArrayList<String> values = new ArrayList<>();
+                values.add(txtRow.getText());
+                values.add(txtCol.getText());
+                return values;
+            } else {
+                return null;
+            }
+        });
+
+        dialog.getDialogPane().getButtonTypes().addAll(ButtonType.CANCEL, ButtonType.OK);
+        // show the window, and wait for input
+        Optional<ArrayList<String>> result = dialog.showAndWait();
+
+        // if user entered input, try to parse it as an int. If input is not an
+        // int, catch the exception and display a dialog box to the user.
+        result.ifPresent(consumer -> {
+            try {
+                int row = Integer.parseInt(consumer.get(0));
+                int col = Integer.parseInt(consumer.get(1));
+                boolean isOk = true;
+                
+                // check that the user defined size is within reasonable limits.
+                // Warn them if it is not, and give them the chance to change
+                // their mind.
+                if ((row * col) > 2000000) {
+                    isOk = DialogBoxes.confirm("High cell counts can lead"
+                            + " to slow performance. Are you sure you wish to"
+                            + " continue?");
+                }
+                
+                // if all is ok, create and display the new board.
+                if (isOk) {
+                    BoardDynamic newBoard = new BoardDynamic(row, col);
+                    board = newBoard;
+                    centreBoardOnCanvas();
+                    canvas.drawBoard(board.getBoard());
+                }
+
+            } catch (IllegalArgumentException e) {
+                DialogBoxes.inputError("Entered value is not a number, or is to"
+                        + " high a number.");
+            }
+        });
     }
 
     /**
      * Sets the board back to its original state, and reset counters.
      */
     @FXML
+
     private void reset() {
         pause();
         board.resetBoard();
@@ -298,6 +377,7 @@ public class MainWindowController implements Initializable {
         if (url.isPresent()) {
             try {
                 board.setBoard(fileImporter.readGameBoardFromUrl(url.get()));
+                centreBoardOnCanvas();
                 canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
             } catch (MalformedURLException e) {

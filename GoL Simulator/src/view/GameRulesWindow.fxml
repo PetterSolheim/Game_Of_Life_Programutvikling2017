@@ -6,11 +6,12 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.RadioButton?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox fx:id="vBox" prefHeight="399.0" prefWidth="400" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameRulesWindowController">
+<VBox fx:id="vBox" prefHeight="502.0" prefWidth="400" spacing="10.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.GameRulesWindowController">
     <children>
       <Label text="Game Rules">
          <font>
@@ -81,10 +82,31 @@
          </font>
       </Label>
       <Label text="Define how the game should behave if a living cell reaches the border. " />
-      <VBox prefHeight="57.0" prefWidth="380.0" spacing="10.0">
+      <VBox prefHeight="168.0" prefWidth="380.0" spacing="10.0">
          <children>
-            <RadioButton fx:id="rbtnStatic" onAction="#rbtnStaticClicked" mnemonicParsing="false" text="Static: board stays the same size." wrapText="true" />
-            <RadioButton fx:id="rbtnDynamic" onAction="#rbtnDynamicClicked" mnemonicParsing="false" text="Dynamic: board expands to accomodate the growth of new cells." wrapText="true" />
+            <RadioButton fx:id="rbtnStatic" mnemonicParsing="false" onAction="#rbtnStaticClicked" text="Static: board stays the same size." wrapText="true" />
+            <RadioButton fx:id="rbtnDynamic" mnemonicParsing="false" onAction="#rbtnDynamicClicked" text="Dynamic: board expands to accomodate the growth of new cells." wrapText="true" />
+            <Label prefHeight="60.0" prefWidth="380.0" text="Large boards can cause large amounts of system resources to be consumed.  There is therefore an upper limit to the max number of cells for dynamic boards. You can adjust this upper limit here." wrapText="true" />
+            <HBox alignment="TOP_RIGHT" prefHeight="1.0" prefWidth="380.0">
+               <children>
+                  <Label alignment="BOTTOM_LEFT" text="Max number of cells: ">
+                     <opaqueInsets>
+                        <Insets />
+                     </opaqueInsets>
+                     <padding>
+                        <Insets right="10.0" />
+                     </padding>
+                     <HBox.margin>
+                        <Insets top="2.0" />
+                     </HBox.margin>
+                  </Label>
+                  <TextField fx:id="txtMaxCells" alignment="BOTTOM_RIGHT" prefHeight="25.0" prefWidth="108.0">
+                     <HBox.margin>
+                        <Insets right="10.0" />
+                     </HBox.margin>
+                  </TextField>
+               </children>
+            </HBox>
          </children>
          <VBox.margin>
             <Insets />
