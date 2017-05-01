@@ -57,7 +57,7 @@
                 </graphic>
             </Button>
         </HBox>
-        <ListView fx:id="songList" prefHeight="200"/>
+        <ListView fx:id="trackList" prefHeight="200"/>
         <Separator prefWidth="200.0" />
         <Label text="Miscellanous">
             <font>

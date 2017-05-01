@@ -3,7 +3,7 @@ package controller;
 import javafx.animation.AnimationTimer;
 
 /**
- * This class is responsible for triggering the call <code>createNextGeneration</code> that iterates the game to the next generation.
+ * This class is responsible for triggering the call to <code>createNextGeneration</code> that iterates the game to the next generation.
  * @see controller.MainWindowController#createNextGeneration() 
  */
 public class Timer extends AnimationTimer {
@@ -18,7 +18,8 @@ public class Timer extends AnimationTimer {
      */
     private long timeBetweenGeneration;
     /**
-     * 
+     * Timer constructor. Takes a reference to the main controller so it can call
+     * <code>createNextGeneration</code>
      * @param controller 
      */
     public Timer(MainWindowController controller) {

@@ -8,7 +8,6 @@ import javafx.scene.paint.Color;
 /**
  * Resizable canvas object with the necessary methods for drawing based on
  * patterns passed as an <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>.
- *
  */
 public class GameCanvas extends Canvas {
 
