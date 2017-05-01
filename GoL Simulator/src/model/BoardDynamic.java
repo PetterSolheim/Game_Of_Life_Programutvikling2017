@@ -27,12 +27,14 @@ public class BoardDynamic {
      * for resetting the game board.
      */
     protected ArrayList<ArrayList<Byte>> originalBoard;
+    
+    private ArrayList<ArrayList<Byte>> nextGeneration;
 
     /**
      * Used to reset the generation count when the board is reset.
      */
     private int oldGenerationCount;
-    
+
     private int generationCount = 0;
 
     protected int livingCells = 0;
@@ -42,11 +44,14 @@ public class BoardDynamic {
     private float indexSum;
 
     private Rules rules = Rules.getInstance();
+    
     private String boardAuthor = "";
     private String boardName = "";
     private String boardComment = "";
     
-
+    
+    private int numWorkers = Runtime.getRuntime().availableProcessors();
+    private ArrayList<Thread> workers = new ArrayList<Thread>();
 
     /**
      * Board no-argument constructor initializes a game board consisting of 200
@@ -59,9 +64,10 @@ public class BoardDynamic {
     }
 
     /**
-     * Board constructor. Accepts an <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>
-     * representing a board which is used as the starting board for the
-     * DynamicBoard object.
+     * Board constructor. Accepts an
+     * <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code> representing a board
+     * which is used as the starting board for the DynamicBoard object.
+     *
      * @param board an <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>
      * representing the starting board.
      */
@@ -89,54 +95,61 @@ public class BoardDynamic {
         currentBoard = duplicateBoard(originalBoard);
         changedCells = createEmptyBoard(row, col);
     }
-    
+
     /**
      * Set the metadata for the board. Three Strings expected.
+     *
      * @param author a <code>String</code> specifying the author of the board.
      * @param name a <code>String</code> specifying the name of the board.
-     * @param comment a <code>String</code> specifying the comments for the board.
+     * @param comment a <code>String</code> specifying the comments for the
+     * board.
      */
     public void setMetadata(String author, String name, String comment) {
         boardAuthor = author;
         boardName = name;
         boardComment = comment;
     }
-    
+
     /**
      * Gets the name of the boards author.
+     *
      * @return a <code>String</code> specifying the boards author.
      */
     public String getAuthor() {
         return boardAuthor;
     }
-    
+
     /**
      * Gets the name of the board.
+     *
      * @return a <code>String</code> specifying the boards name.
      */
     public String getName() {
         return boardName;
     }
-    
+
     /**
      * Gets the boards comments.
+     *
      * @return a <code>String</code> specifying the boards comments.
      */
     public String getComment() {
         return boardComment;
     }
-    
+
     /**
      * Gets the the number of rows on the current board.
+     *
      * @return an <code>int</code> specifying the number of rows on the current
      * board.
      */
     public int getRows() {
         return currentBoard.size();
     }
-    
+
     /**
      * Gets the number of columns on the current board.
+     *
      * @return an <code>int</code> specifying the number of columns on the
      * current board.
      */
@@ -215,7 +228,7 @@ public class BoardDynamic {
             for (int col = 0; col < currentBoard.get(row).size(); col++) {
                 if (currentBoard.get(row).get(col) == 1) {
                     //check if new coordinates is within the bounds of the board
-                    if ((row + yAxis < currentBoard.size()) && (row + yAxis > - 1) && (col + xAxis >  - 1) && (col + xAxis < currentBoard.get(row).size())) {
+                    if ((row + yAxis < currentBoard.size()) && (row + yAxis > - 1) && (col + xAxis > - 1) && (col + xAxis < currentBoard.get(row).size())) {
                         newBoard.get(row + yAxis).set(col + xAxis, ALLIVE);
                     } else {
                         return;
@@ -277,6 +290,23 @@ public class BoardDynamic {
     }
 
     /**
+     *
+     * Determines the time it takes to take a board to its next generation, and
+     *
+     * prints it to the screen.
+     *
+     */
+    public void nextGenerationPrintPerformance(int iterations) {
+        long totaltime = 0;
+        for (int i = 0; i < iterations; i++) {
+            long start = System.currentTimeMillis();
+            nextGeneration();
+            totaltime += System.currentTimeMillis() - start;
+        }
+        System.out.println("Single Thread: time to perform " + iterations + " iterations: " + totaltime);
+    }
+
+    /**
      * Iterates the current board to its next generation, playing by the rules
      * defined in the Rules class object.
      *
@@ -292,32 +322,149 @@ public class BoardDynamic {
 
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.
-        ArrayList<ArrayList<Byte>> testPattern = duplicateBoard(currentBoard);
+        nextGeneration = duplicateBoard(currentBoard);
 
         // iterate through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
-        for (int row = 0; row < testPattern.size(); row++) {
-            for (int col = 0; col < testPattern.get(0).size(); col++) {
-                int nrOfNeighbours = countNeighbours(testPattern, row, col);
+        for (int row = 0; row < nextGeneration.size(); row++) {
+            for (int col = 0; col < nextGeneration.get(0).size(); col++) {
+                int nrOfNeighbours = countNeighbours(currentBoard, row, col);
 
-                if (testPattern.get(row).get(col) == 1 && !rules.getSurviveRules().contains(nrOfNeighbours)) {
-                    currentBoard.get(row).set(col, DEAD);
+                if (currentBoard.get(row).get(col) == 1 && !rules.getSurviveRules().contains(nrOfNeighbours)) {
+                    nextGeneration.get(row).set(col, DEAD);
                     changedCells.get(row).set(col, CHANGED);
                     livingCells--;
-                } else if (testPattern.get(row).get(col) == 1 && rules.getSurviveRules().contains(nrOfNeighbours)) {
+                } else if (currentBoard.get(row).get(col) == 1 && rules.getSurviveRules().contains(nrOfNeighbours)) {
                     indexSum += ((row * 0.2) + (col * 0.7));
-                }
-                else if (testPattern.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
-                    currentBoard.get(row).set(col, ALLIVE);
+                } else if (currentBoard.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
+                    nextGeneration.get(row).set(col, ALLIVE);
                     changedCells.get(row).set(col, CHANGED);
                     livingCells++;
                     indexSum += ((row * 0.2) + (col * 0.7));
                 }
             }
-            
-            
+
         }
+        currentBoard = nextGeneration;
         generationCount++;
+    }
+
+    /**
+     * Determines the time it takes to take a board to its next generation using
+     * the thread optimized nextGenerationConcurrent().
+     */
+    public void nextGenerationConcurrentPrintPerformance(int iterations) {
+        long totaltime = 0;
+        for (int i = 0; i < iterations; i++) {
+            long start = System.currentTimeMillis();
+            nextGenerationConcurrent();
+            totaltime += System.currentTimeMillis() - start;
+        }
+        System.out.println("Multi-Threaded: Time to perform " + iterations + " iterations: " + totaltime);
+    }
+
+    /**
+     *
+     * Iterates the current board to its next generation, playing by the rules
+     *
+     * defined in the Rules class object. This method uses threads to improve
+     *
+     * performance.
+     *
+     *
+     *
+     * @see model.Rules
+     *
+     */
+    public void nextGenerationConcurrent() {
+
+        // reset list of changed cells.
+        changedCells = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
+
+        // determin if board should expand
+        if (rules.isDynamic() && getNumberOfCells() < rules.getMaxNumberOfCells()) {
+            expandBoardIfNeeded();
+        }
+
+        nextGeneration = duplicateBoard(currentBoard);
+
+        // create threads and assign them their task.
+        createNextGenerationWorkers();
+
+        // if a thread gets interupted during execution, roll back changes made 
+        // during this generational shift.
+        try {
+            runNextGenerationWorkers();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        currentBoard = nextGeneration;
+        workers.clear(); // clear workers
+        generationCount++;
+    }
+
+    private void createNextGenerationWorkers() {
+        for (int i = 0; i < numWorkers; i++) {
+            int workerNr = i;
+            workers.add(new Thread(() -> {
+                partialNextGeneration(workerNr);
+            }));
+        }
+    }
+
+    private void runNextGenerationWorkers() throws InterruptedException {
+
+        for (Thread t : workers) {
+            t.start();
+        }
+
+        for (Thread t : workers) {
+
+            t.join();
+        }
+    }
+
+    private void partialNextGeneration(int workerNr) {
+
+        int startCol = (nextGeneration.get(0).size() / numWorkers) * workerNr;
+        int endCol;
+        if (workerNr + 1 == numWorkers) {
+            endCol = nextGeneration.get(0).size() - 1;
+        } else {
+            endCol = ((nextGeneration.get(0).size() / numWorkers) * (workerNr + 1)) - 1;
+        }
+
+        for (int row = 0; row < nextGeneration.size(); row++) {
+            for (int col = startCol; col <= endCol; col++) {
+                int nrOfNeighbours = countNeighbours(currentBoard, row, col);
+                if (currentBoard.get(row).get(col) == 1 && !rules.getSurviveRules().contains(nrOfNeighbours)) {
+                    nextGeneration.get(row).set(col, DEAD);
+                    changedCells.get(row).set(col, CHANGED);
+                    addToLivingCells(-1);
+                } else if (currentBoard.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
+                    nextGeneration.get(row).set(col, ALLIVE);
+                    changedCells.get(row).set(col, CHANGED);
+                    addToLivingCells(+1);
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * Allows for increasing of the number of living cells. Pass negative values
+     *
+     * to decrease. Method is synchronized and therefore safe to threaded use.
+     *
+     *
+     *
+     * @param i
+     *
+     */
+    private synchronized void addToLivingCells(int i) {
+
+        livingCells += i;
+
     }
 
     /**
@@ -567,25 +714,30 @@ public class BoardDynamic {
         generationCount = oldGenerationCount;
         countLivingCells();
     }
+
     /**
-     * Creates an empty board with dimensions of the previously active board. Also sets the
-     * generation count and living cell count to 0.
+     * Creates an empty board with dimensions of the previously active board.
+     * Also sets the generation count and living cell count to 0.
      */
-    public void deleteBoard (){
+    public void deleteBoard() {
         generationCount = 0;
         livingCells = 0;
         currentBoard = createEmptyBoard(originalBoard.size(), originalBoard.get(0).size());
         originalBoard = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
     }
+
     /**
+
      * Preserves the active board in the originalBoard variable
      * so that the user can reset their board.
      * This method is called if the user presses the play button while the timer is paused.
+
      */
-    public void preserveBoard (){
+    public void preserveBoard() {
         oldGenerationCount = generationCount;
         originalBoard = duplicateBoard(currentBoard);
     }
+
     /**
      * Gets a copy of the passed game board ArrayList.
      *

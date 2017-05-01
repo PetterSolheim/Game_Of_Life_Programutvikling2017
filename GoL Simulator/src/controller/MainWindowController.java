@@ -342,7 +342,7 @@ public class MainWindowController implements Initializable {
                 new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
                 new FileChooser.ExtensionFilter("Plaintext", "*.cells")
         );
-        
+
         return fileChooser;
     }
 
@@ -462,7 +462,13 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     public void createNextGeneration() {
-        board.nextGeneration();
+        // ensure board is large enough that threads make a difference as 
+        // creation of threads will also consume performance.
+        if (board.getNumberOfCells() > 80000) {
+            board.nextGenerationConcurrent();
+        } else {
+            board.nextGeneration();
+        }
         // only draw cells that changed during last generational shift.
         for (int row = 0; row < board.getChangedCells().size(); row++) {
             for (int col = 0; col < board.getChangedCells().get(0).size(); col++) {
