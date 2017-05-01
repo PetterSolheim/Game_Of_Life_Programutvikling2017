@@ -30,7 +30,8 @@ public class BoardSound extends BoardDynamic implements Runnable {
     static MidiChannel midiChannels[];
     static Instrument instruments[];
     private long audioLength;
-
+    private Rules rules = Rules.getInstance();
+    
     public BoardSound(BoardDynamic b) {
         isActive = true;
         try {
