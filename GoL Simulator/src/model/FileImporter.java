@@ -14,9 +14,24 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Class for converting external Game of Life pattern files to a byte[][] array
- * and loading of game rules. Class currently supports reading of RLE files, but
- * has been written so as to be easily extendable to support additional formats.
+ * <p>
+ * Class for converting external Game of Life pattern files to
+ * {@link model.BoardDynamic} objects. Parses both the board and the pattern
+ * files metadata. Class currently supports PlainText, Life 1.05, Life 1.06 and
+ * RLE file formats.</p>
+ *
+ * <p>
+ * Class was based on the file definitions outlined at
+ * <a href="http://www.conwaylife.com" target="_blank">conwaylife.com</a>. Links
+ * to file definitions included bellow.</p>
+ *
+ * @see
+ * <a href="http://www.conwaylife.com/wiki/Plaintext" target="_blank">PlainText</a>
+ * @see <a href="http://www.conwaylife.com/wiki/Life_1.05" target="_blank">Life
+ * 1.05</a>
+ * @see <a href="http://www.conwaylife.com/wiki/Life_1.06" target="_blank">Life
+ * 1.06</a>
+ * @see <a href="http://www.conwaylife.com/wiki/Rle" target="_blank">RLE</a>
  */
 public class FileImporter {
 
@@ -28,13 +43,17 @@ public class FileImporter {
     private Rules rules = Rules.getInstance();
 
     /**
-     * Reads a pattern file from disk and parses it. Returns a byte[][] array
-     * containing the pattern, and sets the rules specified by the pattern file.
+     * Reads a pattern file from disk, and returns a {@link model.BoardDynamic}
+     * object containing the pattern and its metadata (if any is found).
      *
-     * @param f the file object containing the pattern to be read.
-     * @return a <code>byte[][]</code> containing the parsed pattern.
-     * @throws IOException if there are errors reading the file.
-     * @throws PatternFormatException if pattern could not be parsed.
+     * @param f the File object containing the pattern file.
+     * @return a {@link model.BoardDynamic} object containing the pattern and
+     * its metadata. Values in {@link model.Rules} are also set according to the
+     * rules defined in the pattern file.
+     *
+     * @throws IOException
+     * @throws PatternFormatException if FileImporter was unable to parse the
+     * given file.
      */
     public BoardDynamic readGameBoardFromDisk(File f) throws IOException, PatternFormatException {
         String fileExtension = getFileExtension(f); // determine the filetype
@@ -43,13 +62,17 @@ public class FileImporter {
     }
 
     /**
-     * Reads a pattern file from an URL and parses it. Returns a byte[][] array
-     * containing the pattern, and sets the rules specified by the pattern file.
+     * Reads a pattern file from an URL and parses it. Returns a
+     * {@link model.BoardDynamic} object containing the pattern and its
+     * metadata. Values in {@link model.Rules} are also set according to the
+     * rules defined in the pattern file.
      *
-     * @param url a <code>String</code> containing the URL of the pattern file.
-     * @return a <code>byte[][]</code> containing the parsed pattern.
-     * @throws IOException if there are errors reading the file.
-     * @throws PatternFormatException if the pattern could not be parsed.
+     * @param url a <code>String</code> specifying the URL to the pattern file.
+     * @return a {@link model.BoardDynamic} object containing the pattern and
+     * its metadata.
+     * @throws IOException
+     * @throws PatternFormatException if FileImporter was unable to parse the
+     * given file.
      */
     public BoardDynamic readGameBoardFromUrl(String url) throws IOException, PatternFormatException {
         String fileExtension = getFileExtension(url); // determin the filetype
@@ -60,16 +83,17 @@ public class FileImporter {
     }
 
     /**
-     * Pass the pattern file to the appropriate parser based on file type
-     * extension.
+     * Selects the appropriate file parser based on file type.
      *
-     * @param r
-     * @param fileExtension the extension of the pattern file (for instance RLE)
-     * @throws IOException if there are errors reading the file.
-     * @throws PatternFormatException if the pattern could not be parsed.
+     * @param r the Reader object used to read the file.
+     * @param fileExtension a String specifying the file extension of the file
+     * being parsed.
+     * @throws IOException
+     * @throws PatternFormatException if the file type extension is not one of
+     * the recognised types.
      */
-    private void readGameBoard(Reader r, String fileExtension) throws PatternFormatException, IOException {
-        switch (fileExtension.toLowerCase()) {
+    private void readGameBoard(Reader r, String fileExtension) throws IOException, PatternFormatException {
+        switch (fileExtension) {
             case "rle":
                 rleReader(r);
                 break;
@@ -80,15 +104,16 @@ public class FileImporter {
                 lifReader(r);
                 break;
             default:
-                throw new PatternFormatException("Unrecognized file type.");
+                throw new PatternFormatException("The *." + fileExtension
+                        + " file format is not supported.");
         }
     }
 
     /**
      * RLE file parser.
      *
-     * @param r
-     * @throws IOException if there are errors reading the file.
+     * @param r the Reader object.
+     * @throws IOException
      * @throws PatternFormatException if the pattern could not be parsed.
      */
     private void rleReader(Reader r) throws IOException, PatternFormatException {
@@ -104,6 +129,7 @@ public class FileImporter {
                 endOfFile = true;
             }
         }
+        
         readRleComments(lineList);
         readRleBoardSize(lineList);
         readRleRules(lineList);
@@ -510,7 +536,6 @@ public class FileImporter {
         for (int i = 0; i < lineList.size(); i++) {
             m = coordinates.matcher(lineList.get(i));
             if (m.find()) {
-                System.out.println("Starting");
                 if (!m.group(1).isEmpty() && !m.group(2).isEmpty()) {
                     try {
                         capturedX = Integer.parseInt(m.group(1));
@@ -789,6 +814,7 @@ public class FileImporter {
 
     private void readCellsBoard(ArrayList<String> lineList) throws PatternFormatException {
         for (int row = 0; row < boardArray.length; row++) {
+            // empty lines symbolize a row of dead cells.
             if (lineList.get(row) != null && !lineList.get(row).equals("")) {
                 String[] boardRow = lineList.get(row).split("(?!^)");
                 for (int col = 0; col < boardRow.length; col++) {
@@ -813,9 +839,7 @@ public class FileImporter {
      * @return a <code>String</code> specifying the file extension type.
      */
     private String getFileExtension(File f) {
-        int i = f.getName().lastIndexOf(".");
-        String fileExtension = f.getName().substring(i + 1);
-        return fileExtension;
+        return getFileExtension(f.getName());
     }
 
     /**
@@ -828,6 +852,7 @@ public class FileImporter {
     private String getFileExtension(String s) {
         int i = s.lastIndexOf(".");
         String fileExtension = s.substring(i + 1);
+        fileExtension = fileExtension.toLowerCase();
         return fileExtension;
     }
 }
