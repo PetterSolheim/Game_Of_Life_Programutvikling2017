@@ -83,7 +83,7 @@ public class MainWindowController implements Initializable {
         Platform.runLater(this::defineStage); // allows easy referal to the stage.
         Platform.runLater(this::resizeCanvas); // ensures the parent node is ready before resizing the canvas.
         Platform.runLater(this::setArrowKeyEventListener); // Eventhandler for arrowkeys after stage is loaded
-        board = new BoardDynamic(100, 100);
+        board = new BoardDynamic(10, 10);
         time = new Timer(this); // used for animation timing.
 
         // set the default value of the color pickers.

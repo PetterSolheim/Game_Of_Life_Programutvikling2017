@@ -50,7 +50,7 @@ public class Statistics {
         return this.firstGeneration;
     }
 
-    public ArrayList<ArrayList> generateAudioSequence() {
+    public void AudioStatistics() {
         ArrayList<Integer> cellsPerGeneratin = new ArrayList<Integer>();
         ArrayList<Integer> populationChange = new ArrayList<Integer>();
         populationChange.add(0);
@@ -66,13 +66,14 @@ public class Statistics {
             averageLivingCells += b.getLivingCellCount();
             populationChange.add(getPopulationChange(prevCellCount));
         }
+        int i = 0;
+        
         averageDeadCells = averageDeadCells / iterations;
         averageLivingCells = averageLivingCells / iterations;
         System.out.println(averageDeadCells + " " + averageLivingCells);
+        System.out.println(b.getNumberOfCells());
         ArrayList<ArrayList> data = new ArrayList<>();
-        data.add(cellsPerGeneratin);
-        data.add(populationChange);
-        return data;
+
     }
 
     public XYChart.Series[] getStatistics() {
@@ -107,7 +108,7 @@ public class Statistics {
         }
         averageLivingCells = averageLivingCells / iterations;
         averageDeadCells = averageDeadCells / iterations;
-        System.out.println ("Average living: " + averageLivingCells + " average dead" + averageDeadCells)
+        System.out.println ("Average living: " + averageLivingCells + " average dead" + averageDeadCells);
         //Populate similarity measure
         int generationCount = firstGeneration + 1;
         while (generationCount <= lastGeneration) {

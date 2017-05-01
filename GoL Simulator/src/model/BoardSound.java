@@ -100,7 +100,7 @@ public class BoardSound extends BoardDynamic implements Runnable {
                             }
                         }
                     }
-                    Thread.sleep(100);
+                    Thread.sleep(audioLength);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(BoardSound.class.getName()).log(Level.SEVERE, null, ex);
                 }

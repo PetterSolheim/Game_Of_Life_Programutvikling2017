@@ -259,10 +259,9 @@ public class AudioSettingsWindowController implements Initializable {
         }
     }
 
-    public void generateAudioSequence() {
-        int generations = Integer.parseInt(txtGenerations.getText());
-        Statistics statistics = new Statistics(mainBoard, generations);
-        statistics.generateAudioSequence();
+    public void findSong() {
+        Statistics statistics = new Statistics(mainBoard, 20);
+        statistics.AudioStatistics();
         //audioManager.generateAudioSequence();
     }
 

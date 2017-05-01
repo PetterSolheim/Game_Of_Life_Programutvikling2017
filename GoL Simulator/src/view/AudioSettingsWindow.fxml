@@ -71,9 +71,7 @@
         </VBox>
         <HBox>
             <children>
-                <Text text="Enter mount of generations to generate audio for "/>
-                <TextField fx:id="txtGenerations" prefWidth="50" />
-                <Button text="Start" onAction="#generateAudioSequence"/>
+                <Button text="Start" onAction="#findSong"/>
             </children>
         </HBox>
         <VBox>

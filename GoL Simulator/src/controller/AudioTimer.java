@@ -15,7 +15,6 @@ import model.AudioManager;
 public class AudioTimer extends AnimationTimer {
     
     private AudioSettingsWindowController controller;
-    private AudioManager audioManager = AudioManager.getSingelton();
     private long nextGeneration;
     private long timeBetweenGeneration;
     private long cellAudioTimer;
