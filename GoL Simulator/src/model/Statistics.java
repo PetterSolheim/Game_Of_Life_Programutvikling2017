@@ -158,9 +158,7 @@ public class Statistics {
             }
             i++;
         }
-        System.out.println("Floaty " + highestfloat);
         int similarity = (int) Math.floor((double) highestfloat * 100);
-        System.out.println("Mr. Int" + similarity);
         similarityMeasure.setYValue(similarity);
         similarityMeasure.setXValue(generation);
         return similarityMeasure;
