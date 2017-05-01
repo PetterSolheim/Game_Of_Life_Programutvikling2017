@@ -17,12 +17,17 @@ public class FileImporterTest {
     Rules rules = Rules.getInstance();
 
     @Test
-    public void testReadGameBoardFromDiskRle() throws Exception {
-        System.out.println("readGameBoardFromDiskRle");
+    public void testRledFromDisk() throws Exception {
+        System.out.println("Read RLE file from disk.");
 
         // RLE file test.
         FileImporter instance = new FileImporter();
-        Path path = Paths.get("test/model/testPatterns/octagon2.rle");
+
+        // alter rules for test
+        Rules rules = Rules.getInstance();
+        rules.setBirthRules(0);
+        rules.setSurviveRules(0);
+        Path path = Paths.get("test/model/testPatterns/RLE/octagon2.rle");
         File f = path.toFile();
         BoardDynamic result = new BoardDynamic();
         result = instance.readGameBoardFromDisk(f);
@@ -37,7 +42,8 @@ public class FileImporterTest {
             {1, 0, 0, 0, 0, 0, 0, 1},
             {0, 1, 0, 0, 0, 0, 1, 0},
             {0, 0, 1, 0, 0, 1, 0, 0},
-            {0, 0, 0, 1, 1, 0, 0, 0},};
+            {0, 0, 0, 1, 1, 0, 0, 0}
+        };
         expResult.setBoard(boardPattern);
 
         // set game rules to the expected result.
@@ -54,12 +60,12 @@ public class FileImporterTest {
     }
 
     @Test
-    public void testReadGameBoardFromDiskCells() throws Exception {
-        System.out.println("readGameBoardFromDiskCells");
+    public void testReadPlainTextFromDisk() throws Exception {
+        System.out.println("Testing PlainText pattern file.");
 
         // cells file test.
         FileImporter instance = new FileImporter();
-        Path path = Paths.get("test/model/testPatterns/octagon2.cells");
+        Path path = Paths.get("test/model/testPatterns/PlainText/testbox.cells");
         File f = path.toFile();
         BoardDynamic result = new BoardDynamic();
         result = instance.readGameBoardFromDisk(f);
@@ -67,16 +73,104 @@ public class FileImporterTest {
         // create a board object representing the expected result.
         BoardDynamic expResult = new BoardDynamic();
         byte[][] boardPattern = {
-            {0, 0, 0, 1, 1, 0, 0, 0},
-            {0, 0, 1, 0, 0, 1, 0, 0},
-            {0, 1, 0, 0, 0, 0, 1, 0},
-            {1, 0, 0, 0, 0, 0, 0, 1},
-            {1, 0, 0, 0, 0, 0, 0, 1},
-            {0, 1, 0, 0, 0, 0, 1, 0},
-            {0, 0, 1, 0, 0, 1, 0, 0},
-            {0, 0, 0, 1, 1, 0, 0, 0},};
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0}
+        };
         expResult.setBoard(boardPattern);
         assertEquals(expResult.getBoard(), result.getBoard());
+    }
+
+    @Test
+    public void testReadLife105WithoutRules() throws Exception {
+        System.out.println("Testing Life 1.05 file with no rules defined.");
+
+        // alter rules before test
+        Rules rules = Rules.getInstance();
+        rules.setBirthRules(0);
+        rules.setSurviveRules(0);
+
+        // create expected rules
+        ArrayList<Integer> expSurvive = new ArrayList<>();
+        expSurvive.add(0);
+        ArrayList<Integer> expBirth = new ArrayList<>();
+        expBirth.add(0);
+
+        // parse Life 1.05 file
+        FileImporter instance = new FileImporter();
+        Path path = Paths.get("test/model/testPatterns/Life105/testbox.LIF");
+        File f = path.toFile();
+        BoardDynamic result = new BoardDynamic();
+        result = instance.readGameBoardFromDisk(f);
+
+        // create a board object representing the expected result.
+        BoardDynamic expResult = new BoardDynamic();
+        byte[][] boardPattern = {
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0}
+        };
+        expResult.setBoard(boardPattern);
+        assertEquals(result.getAuthor().trim(), "Test Author");
+        assertEquals(result.getName().trim(), "Test Board");
+        assertEquals(result.getComment().trim(), "Test Comment");
+        assertEquals(expResult.getBoard(), result.getBoard());
+        assertEquals(rules.getBirthRules(), expBirth);
+        assertEquals(rules.getSurviveRules(), expSurvive);
+    }
+
+    @Test
+    public void testReadLife105WithRules() throws Exception {
+        System.out.println("Testing Life 1.05 file with S12/5 rules.");
+
+        // alter rules before test
+        Rules rules = Rules.getInstance();
+        rules.setBirthRules(0);
+        rules.setSurviveRules(0);
+
+        // create expected rules
+        ArrayList<Integer> expSurvive = new ArrayList<>();
+        expSurvive.add(1);
+        expSurvive.add(2);
+        ArrayList<Integer> expBirth = new ArrayList<>();
+        expBirth.add(5);
+
+        // parse Life 1.05 file
+        FileImporter instance = new FileImporter();
+        Path path = Paths.get("test/model/testPatterns/Life105/testboxS12B5.LIF");
+        File f = path.toFile();
+        BoardDynamic result = new BoardDynamic();
+        result = instance.readGameBoardFromDisk(f);
+
+        // create a board object representing the expected result.
+        BoardDynamic expResult = new BoardDynamic();
+        byte[][] boardPattern = {
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 1, 1, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0}
+        };
+        expResult.setBoard(boardPattern);
+        assertEquals(expResult.getBoard(), result.getBoard());
+        assertEquals(rules.getBirthRules(), expBirth);
+        assertEquals(rules.getSurviveRules(), expSurvive);
     }
 
     @Test // requires an internet connection to succeed. 
@@ -148,7 +242,7 @@ public class FileImporterTest {
     public void testFileWithInvalidCharacter() {
         Throwable caught = null;
         FileImporter instance = new FileImporter();
-        Path path = Paths.get("test/model/testPatterns/octagon2UnknownCharacter.rle");
+        Path path = Paths.get("test/model/testPatterns/RLE/octagon2UnknownCharacter.rle");
         File f = path.toFile();
         BoardDynamic result = new BoardDynamic();
         try {
@@ -165,7 +259,7 @@ public class FileImporterTest {
     @Test
     public void testEarlyEndOfFile() throws Exception {
         FileImporter instance = new FileImporter();
-        Path path = Paths.get("test/model/testPatterns/octagon2EarlyEOF.rle");
+        Path path = Paths.get("test/model/testPatterns/RLE/octagon2EarlyEOF.rle");
         File f = path.toFile();
         BoardDynamic result = new BoardDynamic();
         result = instance.readGameBoardFromDisk(f);
@@ -187,7 +281,7 @@ public class FileImporterTest {
     @Test
     public void testNoDimensions() {
         FileImporter instance = new FileImporter();
-        Path path = Paths.get("test/model/testPatterns/octagon2NoDimensions.rle");
+        Path path = Paths.get("test/model/testPatterns/RLE/octagon2NoDimensions.rle");
         File f = path.toFile();
         BoardDynamic result = new BoardDynamic();
         Throwable caught = null;

@@ -622,6 +622,7 @@ public class FileImporter {
             if (m.find()) {
                 if (!m.group(2).isEmpty()) {
                     name = m.group(2).trim();
+                    comments.remove(i);
                     i = comments.size();
                 }
             }

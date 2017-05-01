@@ -222,14 +222,13 @@ public class BoardTest {
         };
         instance.setBoard(instanceBoard);
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 4; i++) {
             instance.nextGeneration();
         }
         BoardDynamic newBoard = instance.deepCopy();
 
         // test that values are the same
         assertEquals(instance.getBoard(), newBoard.getBoard());
-        assertEquals(instance.getChangedCells(), newBoard.getChangedCells());
         assertEquals(instance.getCols(), newBoard.getCols());
         assertEquals(instance.getRows(), newBoard.getRows());
         assertEquals(instance.getGenerationCount(), newBoard.getGenerationCount());
@@ -245,15 +244,13 @@ public class BoardTest {
             {0, 0, 0, 0, 0}
         };
         newBoard.setBoard(board);
-        for (int i = 0; i < 12; i++) {
-            newBoard.nextGeneration();
-        }
+        newBoard.nextGeneration();
 
         // ensure original boards values are unchanged
         assertEquals(instance.toString(), "011011000");
         assertEquals(instance.getCols(), 3);
         assertEquals(instance.getRows(), 3);
-        assertEquals(instance.getGenerationCount(), 10);
+        assertEquals(instance.getGenerationCount(), 4);
         assertEquals(instance.getLivingCellCount(), 4);
         assertEquals(instance.getNumberOfCells(), 9);
 
