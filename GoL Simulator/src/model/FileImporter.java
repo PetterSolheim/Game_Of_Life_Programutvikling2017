@@ -391,7 +391,7 @@ public class FileImporter {
 
         Matcher m;
         boolean detectedFileType = false;
-        ArrayList<String> comments = new ArrayList<>();
+
         Pattern fileType105 = Pattern.compile("(#Life 1.05)");
         m = fileType105.matcher(lineList.get(0));
         if (m.find()) {
@@ -403,11 +403,11 @@ public class FileImporter {
 
         if (!detectedFileType) {
             Pattern fileType106 = Pattern.compile("(#Life 1.06)");
-            fileType106.matcher(lineList.get(0));
+            m = fileType106.matcher(lineList.get(0));
             if (m.find()) {
                 if (!m.group(1).isEmpty()) {
                     detectedFileType = true;
-                    throw new PatternFormatException("Life 1.06 not supported!");
+                    lif106Reader(lineList);
                 }
             }
         }
@@ -415,6 +415,116 @@ public class FileImporter {
         if (!detectedFileType) {
             throw new PatternFormatException("Lif file does not specify file"
                     + "type. Unable to read file.");
+        }
+    }
+
+    private void lif106Reader(ArrayList<String> lineList) throws PatternFormatException {
+        clearLif106Comments(lineList);
+        int[] startingLocation = readLif106Size(lineList);
+        readLif106Board(lineList, startingLocation);
+        board.setBoard(boardArray);
+    }
+
+    private void clearLif106Comments(ArrayList<String> lineList) {
+        Matcher m;
+        Pattern commentPattern = Pattern.compile("(#)");
+
+        for (int i = 0; i < lineList.size(); i++) {
+            m = commentPattern.matcher(lineList.get(i));
+            if (m.find()) {
+                lineList.remove(i);
+                i--; // indexes have shifted. Compensate.
+            }
+        }
+    }
+
+    private int[] readLif106Size(ArrayList<String> lineList) throws PatternFormatException {
+        // find lowest and highest point for x and y, and calculate board size
+        // based on this.
+        Matcher m;
+        Pattern coordinates = Pattern.compile("(-?[0-9]+)\\s(-?[0-9]+)");
+        int capturedX;
+        int capturedY;
+        int lowestX = 0;
+        int highestX = 0;
+        int lowestY = 0;
+        int highestY = 0;
+
+        for (int i = 0; i < lineList.size(); i++) {
+            m = coordinates.matcher(lineList.get(i));
+            if (m.find()) {
+                if (!m.group(1).isEmpty() && !m.group(2).isEmpty()) {
+                    try {
+                        capturedX = Integer.parseInt(m.group(1));
+                        capturedY = Integer.parseInt(m.group(2));
+                    } catch (NumberFormatException e) {
+                        throw new PatternFormatException("Unable to interpret"
+                                + "cell coordinates.");
+                    }
+                    if (capturedX > highestX) {
+                        highestX = capturedX;
+                    }
+                    if (capturedX < lowestX) {
+                        lowestX = capturedX;
+                    }
+                    if (capturedY > highestY) {
+                        highestY = capturedY;
+                    }
+                    if (capturedY < lowestY) {
+                        lowestY = capturedY;
+                    }
+                } else {
+                    throw new PatternFormatException("Unable to interpret cell"
+                            + "coordinates.");
+                }
+            }
+        }
+        int[] lowest = {lowestX, lowestY};
+        if (lowestX < 0) {
+            lowestX--;
+        }
+        if (lowestY < 0) {
+            lowestY--;
+        }
+
+        int rows = Math.abs(lowestY) + Math.abs(highestY);
+        int cols = Math.abs(lowestX) + Math.abs(highestX);
+        boardArray = new byte[rows][cols];
+        return lowest;
+    }
+
+    private void readLif106Board(ArrayList<String> lineList, int[] lowest) throws PatternFormatException {
+        int startX = lowest[0];
+        if (startX < 0) {
+            startX = startX * -1;
+        }
+        int startY = lowest[1];
+        if (startY < 0) {
+            startY = startY * -1;
+        }
+
+        Matcher m;
+        Pattern coordinates = Pattern.compile("(-?[0-9]+)\\s(-?[0-9]+)");
+        int capturedX, capturedY;
+
+        for (int i = 0; i < lineList.size(); i++) {
+            m = coordinates.matcher(lineList.get(i));
+            if (m.find()) {
+                System.out.println("Starting");
+                if (!m.group(1).isEmpty() && !m.group(2).isEmpty()) {
+                    try {
+                        capturedX = Integer.parseInt(m.group(1));
+                        capturedY = Integer.parseInt(m.group(2));
+                    } catch (NumberFormatException e) {
+                        throw new PatternFormatException("Unable to interpret"
+                                + "cell coordinates.");
+                    }
+                    boardArray[capturedY + startY][capturedX + startX] = 1;
+                } else {
+                    throw new PatternFormatException("Unable to interpret cell"
+                            + "coordinates.");
+                }
+            }
         }
     }
 
@@ -482,7 +592,7 @@ public class FileImporter {
 
     private void readLif105Rules(ArrayList<String> lineList) throws PatternFormatException {
         Matcher m;
-        Pattern rulePattern = Pattern.compile("(#N|#R)+\\s*([0-8]*\\/[0-8]*)*");
+        Pattern rulePattern = Pattern.compile("(#N|#R)+\\s*([0-8]*)\\/([0-8]*)");
         for (int i = 0; i < lineList.size(); i++) {
             m = rulePattern.matcher(lineList.get(i));
             if (m.find()) {
@@ -490,44 +600,48 @@ public class FileImporter {
                     rules.setSurviveRules(2, 3);
                     rules.setBirthRules(3);
                 } else if (m.group(1).equals("#R")) {
-                    try {
-                        String survive = m.group(2);
-                        String birth = m.group(3);
-                        String[] surviveStringArray = survive.split("");
-                        int[] survivalRules;
-                        survivalRules = new int[surviveStringArray.length];
-                        for (int j = 0; j < surviveStringArray.length; j++) {
-                            survivalRules[j] = Integer.parseInt(surviveStringArray[j]);
+                    if (!m.group(2).isEmpty() && !m.group(3).isEmpty()) {
+                        try {
+                            String survive = m.group(2);
+                            String birth = m.group(3);
+                            String[] surviveStringArray = survive.split("");
+                            int[] survivalRules;
+                            survivalRules = new int[surviveStringArray.length];
+                            for (int j = 0; j < surviveStringArray.length; j++) {
+                                survivalRules[j] = Integer.parseInt(surviveStringArray[j]);
+                            }
+
+                            rules.setSurviveRules(survivalRules);
+
+                            String[] birthStringArray = birth.split("");
+                            int[] birthRules;
+                            birthRules = new int[birthStringArray.length];
+                            for (int j = 0; j < birthStringArray.length; j++) {
+                                birthRules[j] = Integer.parseInt(birthStringArray[j]);
+                            }
+
+                            rules.setBirthRules(birthRules);
+
+                        } catch (NumberFormatException e) {
+                            throw new PatternFormatException("Failed to determin"
+                                    + "rules.");
                         }
-
-                        rules.setSurviveRules(survivalRules);
-
-                        String[] birthStringArray = birth.split("");
-                        int[] birthRules;
-                        birthRules = new int[birthStringArray.length];
-                        for (int j = 0; j < birthStringArray.length; j++) {
-                            birthRules[j] = Integer.parseInt(birthStringArray[j]);
-                        }
-
-                        rules.setBirthRules(birthRules);
-
-                    } catch (NumberFormatException e) {
-                        throw new PatternFormatException("Failed to determin"
-                                + "rules.");
+                    } else {
+                        throw new PatternFormatException("Failed to determin rules.");
                     }
                 } else {
                     throw new PatternFormatException("Failed to determin rules.");
                 }
             }
         }
-        
+
         Pattern commentPattern = Pattern.compile("(#.*)");
         // clear ArrayList of all comments
-        for(int i = 0; i < lineList.size(); i++) {
+        for (int i = 0; i < lineList.size(); i++) {
             m = commentPattern.matcher(lineList.get(i));
-            if(m.find()) {
+            if (m.find()) {
                 lineList.remove(i);
-                i--;
+                i--; // removal shifted index by negative one, compensate.
             }
         }
 

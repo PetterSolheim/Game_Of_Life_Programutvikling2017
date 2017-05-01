@@ -327,12 +327,12 @@ public class MainWindowController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose file");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Supported Formats", "*.rle", "*.cells"),
+                new FileChooser.ExtensionFilter("Supported Formats", "*.rle", "*.cells", "*.lif", "*.life"),
                 new FileChooser.ExtensionFilter("RLE", "*.rle"),
+                new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
                 new FileChooser.ExtensionFilter("Plaintext", "*.cells")
         );
         
-        //new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
         return fileChooser;
     }
 
