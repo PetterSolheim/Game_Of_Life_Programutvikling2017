@@ -558,6 +558,7 @@ public class MainWindowController implements Initializable {
             soundSettings.show();
         } catch (IOException exception) {
             DialogBoxes.ioException(exception.getMessage());
+            exception.printStackTrace();
         }
     }
 

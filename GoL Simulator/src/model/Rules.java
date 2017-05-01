@@ -15,7 +15,6 @@ import java.util.Arrays;
  * <li><b>max number of cells:</b>, defines the upper limit to how many cells
  * a dynamic board can have.</li>
  * </ul>
- * 
  */
 public class Rules {
 
