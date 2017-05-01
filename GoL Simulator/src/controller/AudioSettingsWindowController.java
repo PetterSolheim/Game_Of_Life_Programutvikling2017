@@ -117,7 +117,7 @@ public class AudioSettingsWindowController implements Initializable {
      * @see #resetPlayList
      */
     @FXML
-    private void playNextSong() {
+    public void playNextSong() {
         if (trackList.getSelectionModel().getSelectedIndex() != trackList.getItems().size() - 1) {
             trackList.getSelectionModel().select(trackList.getSelectionModel().getSelectedIndex() + 1);
         } else {
