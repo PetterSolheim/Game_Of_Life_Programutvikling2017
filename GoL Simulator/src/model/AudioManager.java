@@ -80,8 +80,7 @@ public class AudioManager {
      *
      * @see controller.AudioSettingsController#.playNextSong()
      */
-    @FXML
-    public void playNextSong() {
+    private void playNextSong() {
         controller.playNextSong();
     }
 
@@ -178,9 +177,6 @@ public class AudioManager {
      */
     private void setActiveSong(AudioInputStream song) {
         try {
-            if (activeSong.isOpen()) {
-                activeSong.close();
-            }
             activeSong.open(song);
         } catch (LineUnavailableException ex) {
             DialogBoxes.genericErrorMessage("No lines available", ex.getMessage());

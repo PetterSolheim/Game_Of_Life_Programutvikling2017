@@ -208,6 +208,7 @@ public class AudioSettingsWindowController implements Initializable {
      *
      * @see model.AudioManager#addAbsolutePath
      */
+    @FXML
     private void getAudioFile() {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Select Audio File");

@@ -10,25 +10,30 @@ public class Timer extends AnimationTimer {
 
     private MainWindowController controller;
     /**
-     * Determines when the <code>createNextGeneration</Code> is called
+     * Determines when the createNextGeneration is called
      */
-    private long nextGeneration;
+    private long nextGeneration = 0;
     /**
-     * Determines how often <code>createNextGeneration</code> is called. 
+     * Determines how often createNextGeneration is called. 
      */
     private long timeBetweenGeneration;
     /**
      * Timer constructor. Takes a reference to the main controller so it can call
      * <code>createNextGeneration</code>
-     * @param controller 
+     * @param controller <code>MainWindowController</code>
      */
     public Timer(MainWindowController controller) {
         this.controller = controller;
     }
 
+    /**
+     * This method is called every frame and checks whether or not it is time to call <code>createNextGeneration</code>
+     * @param currentTime 
+     */
     @Override
     public void handle(long currentTime) {
         if (nextGeneration < currentTime) {
+            System.out.println(currentTime);
             nextGeneration = currentTime + timeBetweenGeneration;
             controller.createNextGeneration();
         }
@@ -39,8 +44,20 @@ public class Timer extends AnimationTimer {
      *
      * @param timeInNanoSeconds
      */
-    public void setFps(long timeInNanoSeconds) {
-        this.timeBetweenGeneration = timeInNanoSeconds;
+    public void setFps(double desiredFramesPerSecond) {
+        long timeBetweenGenerations = (long) (1000000000 / desiredFramesPerSecond);
+        this.timeBetweenGeneration = timeBetweenGenerations;
     }
-
+    /**
+     * Used for testing
+    */
+    public long getTimeBetweenGenerations (){
+        return this.timeBetweenGeneration;
+    }
+    /** 
+     * Used for testing
+     */
+    public long getNextGeneration (){
+        return this.nextGeneration;
+    }
 }

@@ -438,8 +438,7 @@ public class MainWindowController implements Initializable {
      * TODO: change method to accept value, rather than collect value.
      */
     private void setFps() {
-        long newTimer = (long) (1000000000 / fpsSlider.getValue());
-        time.setFps(newTimer);
+        time.setFps(fpsSlider.getValue());
     }
 
     /**
