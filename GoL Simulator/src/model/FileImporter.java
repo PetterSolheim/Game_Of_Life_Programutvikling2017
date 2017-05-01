@@ -69,7 +69,7 @@ public class FileImporter {
      * @throws PatternFormatException if the pattern could not be parsed.
      */
     private void readGameBoard(Reader r, String fileExtension) throws PatternFormatException, IOException {
-        switch (fileExtension) {
+        switch (fileExtension.toLowerCase()) {
             case "rle":
                 rleReader(r);
                 break;
@@ -770,9 +770,6 @@ public class FileImporter {
     }
 
     private void readCellsSize(ArrayList<String> lineList) throws PatternFormatException {
-        // remove blanc lines
-        lineList.removeAll(Arrays.asList(null, ""));
-
         int rows = lineList.size();
         int cols = 0;
 
@@ -792,15 +789,17 @@ public class FileImporter {
 
     private void readCellsBoard(ArrayList<String> lineList) throws PatternFormatException {
         for (int row = 0; row < boardArray.length; row++) {
-            String[] boardRow = lineList.get(row).split("(?!^)");
-            for (int col = 0; col < boardRow.length; col++) {
-                if (boardRow[col].equals(".")) {
-                    boardArray[row][col] = 0;
-                } else if (boardRow[col].equals("O")) {
-                    boardArray[row][col] = 1;
-                } else {
-                    throw new PatternFormatException("Unrecognized character in"
-                            + "board definition");
+            if (lineList.get(row) != null && !lineList.get(row).equals("")) {
+                String[] boardRow = lineList.get(row).split("(?!^)");
+                for (int col = 0; col < boardRow.length; col++) {
+                    if (boardRow[col].equals(".")) {
+                        boardArray[row][col] = 0;
+                    } else if (boardRow[col].equals("O")) {
+                        boardArray[row][col] = 1;
+                    } else {
+                        throw new PatternFormatException("Unrecognized character in"
+                                + "board definition");
+                    }
                 }
             }
         }
