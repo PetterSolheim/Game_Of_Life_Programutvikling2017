@@ -33,6 +33,14 @@ public class DialogBoxes {
         alert.setContentText(message);
         alert.showAndWait();
     }
+
+    public static void genericErrorMessage (String headerText, String message){
+        Alert a = new Alert(Alert.AlertType.ERROR);
+        a.setHeaderText(headerText);
+        a.setContentText(message);
+        a.showAndWait();
+    }
+
     
     /**
      * A simple dialog box for displaying input errors.
@@ -65,6 +73,7 @@ public class DialogBoxes {
             return false;
         }
     }
+
     
     /**
      * A simple dialog box.
@@ -80,5 +89,4 @@ public class DialogBoxes {
         alert.setContentText(message);
         alert.showAndWait();
     }
-
 }

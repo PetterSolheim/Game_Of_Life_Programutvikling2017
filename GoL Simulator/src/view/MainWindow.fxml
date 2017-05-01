@@ -33,10 +33,17 @@
                         </Menu>
                     </items>
                     <items>
+
+                        <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Board Settings" />
+
                         <MenuItem mnemonicParsing="false" onAction="#showMetadata" text="Display Metadata" />
+
                     </items>
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="Statistics" />
+                    </items>
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showAudioSettingsWindow" text="Audio Settings" />
                     </items>
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#quit" text="Exit" />
@@ -50,29 +57,38 @@
                 </Menu>
             </menus>
         </MenuBar>
-        <ToolBar layoutY="27.0" prefHeight="40.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="27.0">
+        <ToolBar fx:id="toolbar" layoutY="27.0" prefHeight="0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="27.0">
             <items>
-                <Button fx:id="btnReset" onAction="#reset" text="Reset">
+                <Button fx:id="btnDelete" onAction="#delete">
                     <graphic>
-                        <ImageView fitHeight="19.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../img/delete.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
+                <Button fx:id="btnReset" onAction="#reset">
+                    <graphic>
+                        <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../img/reset.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="btnPlay" onAction="#togglePlayPause" text="Play">
+                <Button fx:id="btnPlay" onAction="#togglePlayPause" prefHeight="25">
                     <graphic>
-                        <ImageView fx:id="imgPlayPause" fitHeight="19.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="imgPlayPause" fitHeight="25" pickOnBounds="false" preserveRatio="true">
                             <image>
                                 <Image url="@../img/play.png" />
                             </image>
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="btnNext" onAction="#createNextGeneration" text="Next Generation">
+                <Button fx:id="btnNext" onAction="#createNextGeneration">
                     <graphic>
-                        <ImageView fitHeight="19.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../img/next.png" />
                             </image>
@@ -80,9 +96,9 @@
                     </graphic>
                 </Button>
                 <Button fx:id="btnCenter" onAction="#centreBoardOnCanvas" text="Centre"/>
-                <Button fx:id="btnRules" onAction="#showGameRulesWindow" text="Settings">
+                <Button fx:id="btnRules" onAction="#showGameRulesWindow">
                     <graphic>
-                        <ImageView fitHeight="19.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
                             <image>
                                 <Image url="@../img/settings.png" />
                             </image>
@@ -102,11 +118,11 @@
                 <ColorPicker fx:id="backgroundColorPicker" onAction="#changeBackgroundColor" prefWidth="30.0" />
             </items>
         </ToolBar>
-      <AnchorPane fx:id="canvasAnchor" layoutY="67.0" prefHeight="302.0" prefWidth="600.0" AnchorPane.bottomAnchor="31.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="67.0">
-         <children>
-                 <GameCanvas fx:id="canvas" onMouseDragged="#canvasDragEvent" onMousePressed="#canvasClickEvent" onMouseReleased="#canvasDragEnded" />
-         </children>
-      </AnchorPane>
+        <AnchorPane fx:id="canvasAnchor" layoutY="74.0" prefHeight="302.0" prefWidth="600.0" AnchorPane.bottomAnchor="31.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="74.0">
+            <children>
+                <GameCanvas fx:id="canvas" onMouseDragged="#canvasDragEvent" onMousePressed="#canvasClickEvent" onMouseReleased="#canvasDragEnded" />
+            </children>
+        </AnchorPane>
         <HBox layoutY="374.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
             <HBox alignment="CENTER_LEFT" spacing="10">
                 <HBox.margin>
@@ -116,7 +132,8 @@
                     <Text text="Zoom: " />
                     <Slider fx:id="cellSizeSlider" majorTickUnit="1.0" max = "20.0" min ="1.0" minorTickCount="0" snapToTicks="true" value="4.0"/>
                     <Text text="Animation speed: " />
-                    <Slider fx:id="fpsSlider" majorTickUnit="1.0" max="60.0" min="1.0" minorTickCount="0" snapToTicks="true" value="4.0" />                                 </children>
+                    <Slider fx:id="fpsSlider" majorTickUnit="1.0" max="60.0" min="1.0" minorTickCount="0" snapToTicks="true" value="4.0" />                                 
+                </children>
             </HBox>
             <HBox alignment="CENTER_RIGHT" spacing="10" HBox.hgrow="ALWAYS">
                 <HBox.margin>

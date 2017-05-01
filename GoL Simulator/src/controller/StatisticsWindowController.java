@@ -144,7 +144,7 @@ public class StatisticsWindowController {
         } else {
             chart.getData().clear();
             xAxis.setUpperBound(b.getGenerationCount() + Integer.parseInt(txtIterations.getText()));
-            s.setIterations(Integer.parseInt(txtIterations.getText()));
+            s.setIterationsAndLastGeneration(Integer.parseInt(txtIterations.getText()));
             getStatistics();
             populateComboBoxes();
         }

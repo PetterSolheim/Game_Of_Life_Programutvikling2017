@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import javafx.scene.chart.XYChart;
 
@@ -13,12 +14,13 @@ public class Statistics {
     private int iterations;
     private int firstGeneration;
     private int lastGeneration;
+    private float averageDeadCells, averageLivingCells;
     private HashMap<Integer, Float> floatBoards;
     private HashMap<Integer, Integer> livingCellsPerGeneration;
     private HashMap<Integer, BoardDynamic> generations;
 
     public Statistics(BoardDynamic b, int iterations) {
-        this.b = b;
+        this.b = b.deepCopy();
         firstGeneration = b.getGenerationCount();
         this.iterations = iterations;
         livingCellsPerGeneration = new HashMap<Integer, Integer>();
@@ -35,7 +37,7 @@ public class Statistics {
         return this.lastGeneration;
     }
 
-    public void setIterations(int i) {
+    public void setIterationsAndLastGeneration(int i) {
         this.iterations = i;
         setLastGeneration();
     }
@@ -46,6 +48,32 @@ public class Statistics {
 
     public int getFirstGeneration() {
         return this.firstGeneration;
+    }
+
+    public void AudioStatistics() {
+        ArrayList<Integer> cellsPerGeneratin = new ArrayList<Integer>();
+        ArrayList<Integer> populationChange = new ArrayList<Integer>();
+        populationChange.add(0);
+        int totalCells = b.getNumberOfCells();
+        averageDeadCells = totalCells - b.getLivingCellCount();
+        averageLivingCells = b.getLivingCellCount();
+        int prevCellCount = 0;
+        while (b.getGenerationCount() <= lastGeneration) {
+            cellsPerGeneratin.add(b.getLivingCellCount());
+            prevCellCount = b.getLivingCellCount();
+            b.nextGeneration();
+            averageDeadCells += (totalCells - b.getLivingCellCount());
+            averageLivingCells += b.getLivingCellCount();
+            populationChange.add(getPopulationChange(prevCellCount));
+        }
+        int i = 0;
+        
+        averageDeadCells = averageDeadCells / iterations;
+        averageLivingCells = averageLivingCells / iterations;
+        System.out.println(averageDeadCells + " " + averageLivingCells);
+        System.out.println(b.getNumberOfCells());
+        ArrayList<ArrayList> data = new ArrayList<>();
+
     }
 
     public XYChart.Series[] getStatistics() {
@@ -64,17 +92,23 @@ public class Statistics {
         //Needs initial generation data.
         livingCellsPerGeneration.put(b.getGenerationCount(), b.getLivingCellCount());
         generations.put(b.getGenerationCount(), new BoardDynamic(b.getBoard()));
-        //Populate living Cells and populationChange
-        while (b.getGenerationCount() < lastGeneration) {
+        averageLivingCells = b.getLivingCellCount();
+        averageDeadCells = b.getNumberOfCells() - b.getLivingCellCount();
+        //This loop populates living Cells and populationChange series
+        while (b.getGenerationCount() <= lastGeneration) {
             int prevPopulation = b.getLivingCellCount();
             b.nextGeneration();
+            averageLivingCells += b.getLivingCellCount();
+            averageDeadCells += (b.getNumberOfCells() - b.getLivingCellCount());
             generations.put(b.getGenerationCount(), new BoardDynamic(b.getBoard()));
             livingCellsPerGeneration.put(b.getGenerationCount(), b.getLivingCellCount());
             livingCells.getData().add(getLivingCells());
-            popluationChange.getData().add(getPopulationChange(prevPopulation));
+            popluationChange.getData().add(new XYChart.Data(b.getGenerationCount(), getPopulationChange(prevPopulation)));
             floatBoards.put(b.getGenerationCount(), convertBoardToFloat(b.getGenerationCount()));
         }
-
+        averageLivingCells = averageLivingCells / iterations;
+        averageDeadCells = averageDeadCells / iterations;
+        System.out.println ("Average living: " + averageLivingCells + " average dead" + averageDeadCells);
         //Populate similarity measure
         int generationCount = firstGeneration + 1;
         while (generationCount <= lastGeneration) {
@@ -94,19 +128,19 @@ public class Statistics {
         return new XYChart.Data(b.getGenerationCount(), b.getLivingCellCount());
     }
 
-    private XYChart.Data getPopulationChange(int prevPopulation) {
+    private int getPopulationChange(int prevPopulation) {
         int diff = b.getLivingCellCount() - prevPopulation;
-        XYChart.Data populationChange = new XYChart.Data(b.getGenerationCount(), diff);
-        return populationChange;
+        return diff;
     }
 
     private float convertBoardToFloat(int currentGeneration) {
-        float a = 0.5f, be = 0.95f, y = 0.25f;
+        float a = 0.5f, be = 0.85f, y = 0.25f;
         float af = a * b.getLivingCellCount();
         float bf = be * (b.getLivingCellCount() - livingCellsPerGeneration.get(currentGeneration - 1));
-        System.out.println("bf" + bf);
+        System.out.println("IndexSum: " + b.getIndexSum());
         float yg = y * b.getIndexSum();
         float board = af + bf + yg;
+        System.out.println("floatBoard: " + board);
         return board;
     }
 
@@ -115,7 +149,7 @@ public class Statistics {
         float highestfloat = 0;
         int i = firstGeneration + 1; // First generation can not have a similarity measure because floatboards use current generation - 1 as part of the calculation.
         float floatConstat = floatBoards.get(generation);
-        while (i < iterations) {
+        while (i <= lastGeneration) {
             if (i != generation) {
                 float newFloat = Float.min(floatConstat, floatBoards.get(i).floatValue()) / Float.max(floatConstat, floatBoards.get(i).floatValue());
                 if (newFloat > highestfloat) {
@@ -131,13 +165,13 @@ public class Statistics {
         similarityMeasure.setXValue(generation);
         return similarityMeasure;
     }
-    
+
     public int findMostSimilar(int generation) {
         float generationToCompare = floatBoards.get(generation);
         float highestfloat = 0f;
         int mostSimilarGeneration = 0;
         int i = this.firstGeneration + 1;
-        while (i < this.lastGeneration) {
+        while (i <= this.lastGeneration) {
             if (i != generation) {
                 float newFloat = Float.min(generationToCompare, floatBoards.get(i).floatValue()) / Float.max(generationToCompare, floatBoards.get(i).floatValue());
                 if (newFloat > highestfloat) {
@@ -149,7 +183,7 @@ public class Statistics {
         }
         return mostSimilarGeneration;
     }
-    
+
     public BoardDynamic getSelectedIteration(int generation) {
         return generations.get(generation);
     }

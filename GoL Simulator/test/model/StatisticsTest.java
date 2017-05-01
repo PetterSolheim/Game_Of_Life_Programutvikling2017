@@ -53,14 +53,14 @@ public class StatisticsTest {
     }
 
     /**
-     * Test of setIterations method, of class Statistics.
+     * Test of setIterationsAndLastGeneration method, of class Statistics.
      */
     @org.junit.Test
     public void testSetIterations() {
         System.out.println("setIterations");
         int i = 0;
         Statistics instance = null;
-        instance.setIterations(i);
+        instance.setIterationsAndLastGeneration(i);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

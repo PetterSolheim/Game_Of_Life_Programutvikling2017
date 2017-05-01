@@ -14,7 +14,7 @@ public class BoardDynamic {
      * Represents the game board in its current game state. 1 represents live
      * cells, 0 represents dead cells.
      */
-    private ArrayList<ArrayList<Byte>> currentBoard;
+    protected ArrayList<ArrayList<Byte>> currentBoard;
 
     /**
      * Used to represent cells which have changed during the last generation
@@ -26,19 +26,27 @@ public class BoardDynamic {
      * Used to store the game board as it was before the game started. Allows
      * for resetting the game board.
      */
-    private ArrayList<ArrayList<Byte>> originalBoard;
+    protected ArrayList<ArrayList<Byte>> originalBoard;
 
+    /**
+     * Used to reset the generation count when the board is reset.
+     */
+    private int oldGenerationCount;
+    
     private int generationCount = 0;
-    private int livingCells = 0;
-    private final byte DEAD = 0;
-    private final byte ALLIVE = 1;
-    private final byte CHANGED = 1;
-    private int indexSum = 0;
+
+    protected int livingCells = 0;
+    protected final byte DEAD = 0;
+    protected final byte ALLIVE = 1;
+    protected final byte CHANGED = 1;
+    private float indexSum;
+
     private Rules rules = Rules.getInstance();
     private String boardAuthor = "";
     private String boardName = "";
     private String boardComment = "";
     
+
 
     /**
      * Board no-argument constructor initializes a game board consisting of 200
@@ -250,7 +258,7 @@ public class BoardDynamic {
     /**
      * Gets a deep copy of this board object.
      *
-     * @return a deep copy of the <code>Board</code> object.
+     * @return a deep copy of the <code>BoardDynamic</code> object.
      */
     public BoardDynamic deepCopy() {
         BoardDynamic b = new BoardDynamic();
@@ -258,11 +266,12 @@ public class BoardDynamic {
         b.originalBoard = duplicateBoard(this.originalBoard);
         b.generationCount = this.generationCount;
         b.countLivingCells();
+        b.indexSum = 0;
         return b;
     }
 
-    public int getIndexSum() {
-        int sum = indexSum;
+    public float getIndexSum() {
+        float sum = indexSum;
         indexSum = 0;
         return sum;
     }
@@ -295,13 +304,18 @@ public class BoardDynamic {
                     currentBoard.get(row).set(col, DEAD);
                     changedCells.get(row).set(col, CHANGED);
                     livingCells--;
-                    indexSum += (row + col);
-                } else if (testPattern.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
+                } else if (testPattern.get(row).get(col) == 1 && rules.getSurviveRules().contains(nrOfNeighbours)) {
+                    indexSum += ((row * 0.2) + (col * 0.7));
+                }
+                else if (testPattern.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
                     currentBoard.get(row).set(col, ALLIVE);
                     changedCells.get(row).set(col, CHANGED);
                     livingCells++;
+                    indexSum += ((row * 0.2) + (col * 0.7));
                 }
             }
+            
+            
         }
         generationCount++;
     }
@@ -474,7 +488,7 @@ public class BoardDynamic {
      * counted.
      * @return an <code>int</code> specifying the number of living neighbours.
      */
-    private int countNeighbours(ArrayList<ArrayList<Byte>> board, int row, int col) {
+    protected int countNeighbours(ArrayList<ArrayList<Byte>> board, int row, int col) {
         int neighbours = 0;
         int rowLastIndex = board.size() - 1;
         int colLastIndex = board.get(0).size() - 1;
@@ -550,17 +564,35 @@ public class BoardDynamic {
      */
     public void resetBoard() {
         currentBoard = duplicateBoard(originalBoard);
-        generationCount = 0;
+        generationCount = oldGenerationCount;
         countLivingCells();
     }
-
+    /**
+     * Creates an empty board with dimensions of the previously active board. Also sets the
+     * generation count and living cell count to 0.
+     */
+    public void deleteBoard (){
+        generationCount = 0;
+        livingCells = 0;
+        currentBoard = createEmptyBoard(originalBoard.size(), originalBoard.get(0).size());
+        originalBoard = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
+    }
+    /**
+     * Preserves the active board in the originalBoard <code> ArrayList<ArrayList<Byte>> originalBoard </code>
+     * so that the user can reset their board.
+     * This method is called if the user presses the play button while the timer is paused.
+     */
+    public void preserveBoard (){
+        oldGenerationCount = generationCount;
+        originalBoard = duplicateBoard(currentBoard);
+    }
     /**
      * Gets a copy of the passed game board ArrayList.
      *
      * @param original the board that you want to copy.
      * @return a <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code> copy.
      */
-    private ArrayList<ArrayList<Byte>> duplicateBoard(ArrayList<ArrayList<Byte>> original) {
+    protected ArrayList<ArrayList<Byte>> duplicateBoard(ArrayList<ArrayList<Byte>> original) {
         ArrayList<ArrayList<Byte>> boardCopy = new ArrayList<>();
         for (int row = 0; row < original.size(); row++) {
             boardCopy.add(row, new ArrayList<Byte>());

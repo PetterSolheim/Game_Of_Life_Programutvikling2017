@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+
+<VBox id="root" prefHeight="400.0" prefWidth="600.0" spacing="5" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AudioSettingsWindowController">
+
+    <children> 
+        <Label text="Audio Settings">
+            <font>
+                <Font name="System Bold" size="13.0" />
+            </font>
+        </Label>
+        <Text text="This is where you edit the audio settingsn, you can also play music within the application." />
+        <Separator prefWidth="200.0" />
+        <Label text="Music Player">
+            <font>
+                <Font name="System Bold" size="13.0" />
+            </font>
+        </Label>
+        <Button fx:id="btnReset" onAction="#getAudioFile" text="Select Song to play"/>
+        <HBox>
+            <Button onAction="#playPreviousSongOrResetActiveSong" text="">
+                <graphic>
+                    <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../img/reset.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="btnPlayMusic" onAction="#toggleMusicPlayState" text="">
+                <graphic>
+                    <ImageView fx:id="imgPlayPause" fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../img/play.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+            <Button fx:id="btnPlayNextSong" onAction="#playNextSong" text="">
+                <graphic>
+                    <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
+                        <image>
+                            <Image url="@../img/next.png" />
+                        </image>
+                    </ImageView>
+                </graphic>
+            </Button>
+        </HBox>
+        <ListView fx:id="songList" prefHeight="200"/>
+        <Separator prefWidth="200.0" />
+        <Label text="Miscellanous">
+            <font>
+                <Font name="System Bold" size="13.0" />
+            </font>
+        </Label>
+        <VBox>
+            <children>
+                <Text text="Generate audio for the currently active board."/>
+            </children>
+        </VBox>
+        <HBox>
+            <children>
+                <Button text="Start" onAction="#findSong"/>
+            </children>
+        </HBox>
+        <VBox>
+            <children>
+                <Text text="Volume " />
+                <Slider fx:id="volumeSlider" max = "100.0" min ="0.0" minorTickCount="0" snapToTicks="true" majorTickUnit="1.0" value="100.0"/>
+            </children>
+        </VBox>
+        <Label text="Represent board with sound">
+            <font>
+                <Font name="System Bold" size="13.0" />
+            </font>
+        </Label>
+        <CheckBox fx:id="generationAudio" mnemonicParsing="false" text="Audio after each generation." />
+        <CheckBox fx:id="cellAudio" mnemonicParsing="false" text="Audio for each cell state" />
+        <HBox>
+            <children>
+                <Slider fx:id="audioBoardSlider" max = "5" min ="0.1" minorTickCount="0"  value="1"/>
+                <Button fx:id="btnResetBoard" onAction="#resetBoard" text="Reset Board"/>
+                <Button fx:id="btnPlayBoard" onAction="#toggleAudioBoardPlayState" text="Play"/>
+            </children>
+            <padding>
+                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+            </padding>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+    </padding>
+</VBox>

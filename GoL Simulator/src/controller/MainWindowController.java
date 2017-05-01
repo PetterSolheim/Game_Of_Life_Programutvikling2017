@@ -24,6 +24,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
+import javafx.scene.control.ToolBar;
 import javafx.scene.image.Image;
 import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
@@ -36,9 +37,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
+import javafx.stage.WindowEvent;
 import view.DialogBoxes;
 
 /**
@@ -69,11 +72,11 @@ public class MainWindowController implements Initializable {
     private ColorPicker backgroundColorPicker;
     @FXML
     private ImageView imgPlayPause;
+    @FXML
     private BoardDynamic board;
     private Timer time;
     private boolean isPaused = true;
     private Stage stage;
-    private Stage mainStage;
     private double previousXOffset;
     private double previousYOffset;
 
@@ -241,10 +244,19 @@ public class MainWindowController implements Initializable {
     @FXML
     private void togglePlayPause() {
         if (isPaused) {
+            board.preserveBoard();
             play();
         } else {
             pause();
         }
+    }
+
+    @FXML
+    private void delete() {
+        board.deleteBoard();
+        canvas.drawBoard(board.getBoard());
+        updateLivingCellCountLabel();
+        updateGenerationCountLabel();
     }
 
     private void setArrowKeyEventListener() {
@@ -252,7 +264,6 @@ public class MainWindowController implements Initializable {
             public void handle(KeyEvent ke) {
                 KeyCode k = ke.getCode();
                 if (k == KeyCode.LEFT || k == KeyCode.RIGHT || k == KeyCode.DOWN || k == KeyCode.UP) {
-
                     ke.consume(); // <-- stops passing the event to next node
                 }
                 switch (k) {
@@ -284,7 +295,7 @@ public class MainWindowController implements Initializable {
         Image imgPause = new Image("/img/pause.png");
         isPaused = false;
         imgPlayPause.setImage(imgPause);
-        btnPlay.setText("Pause");
+        //btnPlay.setText("Pause");
         time.start();
     }
 
@@ -296,7 +307,7 @@ public class MainWindowController implements Initializable {
         Image imgPlay = new Image("/img/play.png");
         isPaused = true;
         imgPlayPause.setImage(imgPlay);
-        btnPlay.setText("Play");
+        //btnPlay.setText("Play");
         time.stop();
     }
 
@@ -352,7 +363,6 @@ public class MainWindowController implements Initializable {
                 centreBoardOnCanvas();
                 canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
-
             } catch (FileNotFoundException e) {
                 DialogBoxes.ioException("No file found at: " + e.getMessage());
             } catch (IOException e) {
@@ -454,7 +464,6 @@ public class MainWindowController implements Initializable {
     @FXML
     public void createNextGeneration() {
         board.nextGeneration();
-
         // only draw cells that changed during last generational shift.
         for (int row = 0; row < board.getChangedCells().size(); row++) {
             for (int col = 0; col < board.getChangedCells().get(0).size(); col++) {
@@ -493,28 +502,59 @@ public class MainWindowController implements Initializable {
         }
     }
 
-    public void showStatistics() throws IOException {
-        Stage statistics = new Stage();
+    /**
+     * Displays the statistics window where the user can see information on
+     * future generations of the <bold>active</bold> board.
+     */
+    public void showStatistics() {
+        try {
+            Stage statistics = new Stage();
+            statistics.setWidth(800);
+            statistics.setHeight(800);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/StatisticsWindow.fxml"));
+            FlowPane root = loader.load();
+            StatisticsWindowController controller = loader.getController();
+            controller.setBoard(board.deepCopy());
+            Scene scene = new Scene(root);
+            statistics.setScene(scene);
+            statistics.setTitle("Game of Life Simulator - Statistics");
+            statistics.initModality(Modality.APPLICATION_MODAL);
+            statistics.show();
+        } catch (IOException exception) {
+            DialogBoxes.ioException(exception.getMessage());
+        }
+    }
 
-        statistics.setWidth(800);
-
-        statistics.setHeight(800);
-
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/StatisticsWindow.fxml"));
-
-        FlowPane root = loader.load();
-
-        StatisticsWindowController controller = loader.getController();
-
-        controller.setBoard(board.deepCopy());
-
-        Scene scene = new Scene(root);
-
-        statistics.setScene(scene);
-
-        statistics.setTitle("Statistics");
-
-        statistics.show();
+    /**
+     * Displays the audio settings window where the user can see information on
+     * future generations of the <bold>active/CurrentBoard</bold> board.
+     */
+    public void showAudioSettingsWindow() {
+        try {
+            Stage soundSettings = new Stage();
+            soundSettings.setHeight(700);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AudioSettingsWindow.fxml"));
+            VBox root = loader.load();
+            AudioSettingsWindowController c = loader.getController();
+            c.setThisStage(soundSettings);
+            c.initializeBoardSound(board);
+            c.setMainBoard(board);
+            Scene scene = new Scene(root);
+            soundSettings.setScene(scene);
+            soundSettings.setTitle("Game of Life Simulator - Audio Settings");
+            soundSettings.initModality(Modality.APPLICATION_MODAL);
+            //Stop audioplaybak of BoardSound if window is closed.
+            soundSettings.setOnCloseRequest(new EventHandler<WindowEvent>() {
+                @Override
+                public void handle(WindowEvent we) {
+                    c.setIsPlaying(false);
+                    c.setBoardIsActive(false);
+                }
+            });
+            soundSettings.show();
+        } catch (IOException exception) {
+            DialogBoxes.ioException(exception.getMessage());
+        }
     }
 
     /**
@@ -636,11 +676,8 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     private void quit() {
+        AudioManager.getSingelton().closeLines();
         Platform.exit();
-    }
-
-    public void setMainStage(Stage s) {
-        this.mainStage = s;
     }
 
     /**

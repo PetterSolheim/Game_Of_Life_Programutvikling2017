@@ -10,7 +10,6 @@ public class Timer extends AnimationTimer {
     private MainWindowController controller;
     private long nextGeneration;
     private long timeBetweenGeneration;
-    
     public Timer(MainWindowController controller) {
         this.controller = controller;
     }
