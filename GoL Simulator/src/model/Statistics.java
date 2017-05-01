@@ -94,7 +94,7 @@ public class Statistics {
         averageLivingCells = b.getLivingCellCount();
         averageDeadCells = b.getNumberOfCells() - b.getLivingCellCount();
         //This loop populates living Cells and populationChange series
-        while (b.getGenerationCount() < lastGeneration) {
+        while (b.getGenerationCount() <= lastGeneration) {
             int prevPopulation = b.getLivingCellCount();
             b.nextGeneration();
             averageLivingCells += b.getLivingCellCount();
@@ -107,6 +107,7 @@ public class Statistics {
         }
         averageLivingCells = averageLivingCells / iterations;
         averageDeadCells = averageDeadCells / iterations;
+        System.out.println ("Average living: " + averageLivingCells + " average dead" + averageDeadCells)
         //Populate similarity measure
         int generationCount = firstGeneration + 1;
         while (generationCount <= lastGeneration) {
@@ -131,19 +132,14 @@ public class Statistics {
         return diff;
     }
 
-    public void getAverage() {
-        for (int i = 0; i < iterations; i++) {
-
-        }
-    }
-
     private float convertBoardToFloat(int currentGeneration) {
-        float a = 0.5f, be = 0.95f, y = 0.25f;
+        float a = 0.5f, be = 0.85f, y = 0.25f;
         float af = a * b.getLivingCellCount();
         float bf = be * (b.getLivingCellCount() - livingCellsPerGeneration.get(currentGeneration - 1));
-        System.out.println("bf" + bf);
+        System.out.println("IndexSum: " + b.getIndexSum());
         float yg = y * b.getIndexSum();
         float board = af + bf + yg;
+        System.out.println("floatBoard: " + board);
         return board;
     }
 
@@ -174,7 +170,7 @@ public class Statistics {
         float highestfloat = 0f;
         int mostSimilarGeneration = 0;
         int i = this.firstGeneration + 1;
-        while (i < this.lastGeneration) {
+        while (i <= this.lastGeneration) {
             if (i != generation) {
                 float newFloat = Float.min(generationToCompare, floatBoards.get(i).floatValue()) / Float.max(generationToCompare, floatBoards.get(i).floatValue());
                 if (newFloat > highestfloat) {

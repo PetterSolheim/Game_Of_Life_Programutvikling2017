@@ -18,7 +18,6 @@ import view.DialogBoxes;
 
 /**
  *
- * @author Even
  */
 public class BoardSound extends BoardDynamic implements Runnable {
 
