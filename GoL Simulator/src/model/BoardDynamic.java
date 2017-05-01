@@ -578,7 +578,7 @@ public class BoardDynamic {
         originalBoard = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
     }
     /**
-     * Preserves the active board in the originalBoard <code> ArrayList<ArrayList<Byte>> originalBoard </code>
+     * Preserves the active board in the originalBoard variable
      * so that the user can reset their board.
      * This method is called if the user presses the play button while the timer is paused.
      */

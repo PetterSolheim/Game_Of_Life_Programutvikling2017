@@ -503,7 +503,7 @@ public class MainWindowController implements Initializable {
 
     /**
      * Displays the statistics window where the user can see information on
-     * future generations of the <bold>active</bold> board.
+     * future generations of the <strong>active</strong> board.
      */
     public void showStatistics() {
         try {
@@ -525,8 +525,7 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Displays the audio settings window where the user can see information on
-     * future generations of the <bold>active/CurrentBoard</bold> board.
+     * Displays the audio settings window where the user can access sound options.
      */
     public void showAudioSettingsWindow() {
         try {
