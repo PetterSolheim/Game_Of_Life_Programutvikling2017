@@ -228,7 +228,6 @@ public class MainWindowController implements Initializable {
      * Sets the board back to its original state, and reset counters.
      */
     @FXML
-
     private void reset() {
         pause();
         board.resetBoard();
@@ -242,8 +241,10 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     private void togglePlayPause() {
-        if (isPaused) {
+        if(board.getGenerationCount() == 0) {
             board.preserveBoard();
+        }
+        if (isPaused) {
             play();
         } else {
             pause();
@@ -263,7 +264,7 @@ public class MainWindowController implements Initializable {
             public void handle(KeyEvent ke) {
                 KeyCode k = ke.getCode();
                 if (k == KeyCode.LEFT || k == KeyCode.RIGHT || k == KeyCode.DOWN || k == KeyCode.UP) {
-                    ke.consume(); // <-- stops passing the event to next node
+                        ke.consume(); // <-- stops passing the event to next node
                 }
                 switch (k) {
                     case LEFT:
@@ -531,7 +532,8 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Displays the audio settings window where the user can access sound options.
+     * Displays the audio settings window where the user can access sound
+     * options.
      */
     public void showAudioSettingsWindow() {
         try {

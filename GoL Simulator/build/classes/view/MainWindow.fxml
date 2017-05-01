@@ -12,47 +12,63 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.control.Tooltip?>
 <?import view.GameCanvas?>
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
+<?import javafx.scene.input.KeyCodeCombination?>
 
 <AnchorPane fx:id="rootNode" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.111" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
     <children>
         <MenuBar fx:id="menuBar" layoutY="2.0" prefHeight="25.0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="2.0">
             <menus>
-                <Menu mnemonicParsing="false" text="File">
+                <Menu mnemonicParsing="true" text="_File">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#newBoard" text="New" />
-                    </items>
-                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#newBoard" text="New">
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="N" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                            </accelerator>
+                        </MenuItem>
                         <Menu mnemonicParsing="false" text="Open">
                             <items>
-                                <MenuItem mnemonicParsing="false" onAction="#openFromDisk" text="from disk" />
-                                <MenuItem mnemonicParsing="false" onAction="#openFromUrl" text="from URL" />
+                                <MenuItem mnemonicParsing="false" onAction="#openFromDisk" text="from disk">
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="O" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
+                                <MenuItem mnemonicParsing="false" onAction="#openFromUrl" text="from URL" >
+                                    <accelerator>
+                                        <KeyCodeCombination alt="UP" code="U" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                                    </accelerator>
+                                </MenuItem>
                             </items>
                         </Menu>
-                    </items>
-                    <items>
-
-                        <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Board Settings" />
-
-                        <MenuItem mnemonicParsing="false" onAction="#showMetadata" text="Display Metadata" />
-
-                    </items>
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="Statistics" />
-                    </items>
-                    <items>
-                        <MenuItem mnemonicParsing="false" onAction="#showAudioSettingsWindow" text="Audio Settings" />
-                    </items>
-                    <items>
                         <MenuItem mnemonicParsing="false" onAction="#quit" text="Exit" />
                     </items>
                 </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
+                <Menu mnemonicParsing="true" text="_Edit">
                     <items>
-                        <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Rules" />
-                        <MenuItem mnemonicParsing="false" onAction="#centreBoardOnCanvas" text="Centre Board" />
+                        <MenuItem mnemonicParsing="false" onAction="#centreBoardOnCanvas" text="Center Board" >
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                            </accelerator>
+                        </MenuItem>
+                        <Menu mnemonicParsing="false" text="Settings">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Rules Settings" />
+                                <MenuItem mnemonicParsing="false" onAction="#showAudioSettingsWindow" text="Audio Settings" />
+                            </items>
+                        </Menu>
+                    </items>
+                </Menu>
+                <Menu text="_View" mnemonicParsing="true">
+                    <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="Statistics" />
+                        <MenuItem mnemonicParsing="false" onAction="#showMetadata" text="Metadata">
+                            <accelerator>
+                                <KeyCodeCombination alt="UP" code="M" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
+                            </accelerator>
+                        </MenuItem>
                     </items>
                 </Menu>
             </menus>
@@ -60,6 +76,9 @@
         <ToolBar fx:id="toolbar" layoutY="27.0" prefHeight="0" prefWidth="600.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="27.0">
             <items>
                 <Button fx:id="btnDelete" onAction="#delete">
+                    <tooltip>
+                        <Tooltip text="Clear the board."/>
+                    </tooltip>
                     <graphic>
                         <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -69,6 +88,9 @@
                     </graphic>
                 </Button>
                 <Button fx:id="btnReset" onAction="#reset">
+                    <tooltip>
+                        <Tooltip text="Reset the board"/>
+                    </tooltip>
                     <graphic>
                         <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -78,6 +100,9 @@
                     </graphic>
                 </Button>
                 <Button fx:id="btnPlay" onAction="#togglePlayPause" prefHeight="25">
+                    <tooltip>
+                        <Tooltip text="Toggle Play/Pause."/>
+                    </tooltip>
                     <graphic>
                         <ImageView fx:id="imgPlayPause" fitHeight="25" pickOnBounds="false" preserveRatio="true">
                             <image>
@@ -87,6 +112,9 @@
                     </graphic>
                 </Button>
                 <Button fx:id="btnNext" onAction="#createNextGeneration">
+                    <tooltip>
+                        <Tooltip text="Iterate the board 1 generation."/>
+                    </tooltip>
                     <graphic>
                         <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -95,8 +123,22 @@
                         </ImageView>
                     </graphic>
                 </Button>
-                <Button fx:id="btnCenter" onAction="#centreBoardOnCanvas" text="Centre"/>
+                <Button fx:id="btnCenter" onAction="#centreBoardOnCanvas">
+                    <tooltip>
+                        <Tooltip text="Center the board."/>
+                    </tooltip>
+                    <graphic>
+                        <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
+                            <image>
+                                <Image url="@../img/center.png" />
+                            </image>
+                        </ImageView>
+                    </graphic>
+                </Button>
                 <Button fx:id="btnRules" onAction="#showGameRulesWindow">
+                    <tooltip>
+                        <Tooltip text="Edit the rules for the game."/>
+                    </tooltip>
                     <graphic>
                         <ImageView fitHeight="25.0" pickOnBounds="true" preserveRatio="true">
                             <image>
@@ -132,7 +174,11 @@
                     <Text text="Zoom: " />
                     <Slider fx:id="cellSizeSlider" majorTickUnit="1.0" max = "20.0" min ="1.0" minorTickCount="0" snapToTicks="true" value="4.0"/>
                     <Text text="Animation speed: " />
-                    <Slider fx:id="fpsSlider" majorTickUnit="1.0" max="60.0" min="1.0" minorTickCount="0" snapToTicks="true" value="4.0" />                                 
+                    <Slider fx:id="fpsSlider" majorTickUnit="5.0" max="120.0" min="1.0" minorTickCount="0" snapToTicks="true" value="4.0" >
+                        <HBox.margin>
+                            <Insets right="10.0" />
+                        </HBox.margin>
+                    </Slider>                                 
                 </children>
             </HBox>
             <HBox alignment="CENTER_RIGHT" spacing="10" HBox.hgrow="ALWAYS">
@@ -141,9 +187,17 @@
                 </HBox.margin>
                 <children>
                     <Text>Current Generation: </Text>
-                    <Text fx:id="txtShowGen" text="x" />
+                    <Text fx:id="txtShowGen" text="x">
+                        <HBox.margin>
+                            <Insets right="10.0" />
+                        </HBox.margin>
+                    </Text>
                     <Text>Living cells:</Text>
-                    <Text fx:id="txtShowCellCount" text="x" />
+                    <Text fx:id="txtShowCellCount" text="x">
+                        <HBox.margin>
+                            <Insets right="10.0" />
+                        </HBox.margin>
+                    </Text>
                 </children>
             </HBox>
         </HBox>
