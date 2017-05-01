@@ -18,11 +18,13 @@ public class Main extends Application {
         stage.setScene(scene);
         stage.setMinHeight(600);
         stage.setMinWidth(700);
+        stage.setWidth(1100);
+        stage.setHeight(700);
         stage.setTitle("Game of Life Simulator");
         stage.show();
     }
-
+    
     public static void main(String[] args) {
         launch(args);
-    }   
+    }    
 }
