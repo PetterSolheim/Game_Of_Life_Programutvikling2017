@@ -6,8 +6,6 @@
 package model;
 
 import java.util.ArrayList;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
@@ -19,15 +17,6 @@ public class BoardDynamicTest {
 
     public BoardDynamicTest() {
 
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
     }
 
     @Test
@@ -180,11 +169,45 @@ public class BoardDynamicTest {
     @Test
     public void testDeepCopy() {
         System.out.println("deepCopy");
-        BoardDynamic instance = new BoardDynamic();
-        BoardDynamic expResult = null;
-        BoardDynamic result = instance.deepCopy();
-        assertEquals(expResult, result);
-        fail("TODO: complete test code.");
+        BoardDynamic instance = new BoardDynamic(2, 2);
+        byte[][] instanceBoard = {
+            {0, 1, 1},
+            {0, 1, 1},
+            {0, 0, 0}
+        };
+        instance.setBoard(instanceBoard);
+        
+        for (int i = 0; i < 4; i++) {
+            instance.nextGeneration();
+        }
+        BoardDynamic newBoard = instance.deepCopy();
+
+        // test that values are the same
+        assertEquals(instance.getBoard(), newBoard.getBoard());
+        assertEquals(instance.getCols(), newBoard.getCols());
+        assertEquals(instance.getRows(), newBoard.getRows());
+        assertEquals(instance.getGenerationCount(), newBoard.getGenerationCount());
+        assertEquals(instance.getLivingCellCount(), newBoard.getLivingCellCount());
+        assertEquals(instance.getNumberOfCells(), newBoard.getNumberOfCells());
+
+        // make changes to the new board
+        byte[][] board = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 1, 0, 0},
+            {0, 0, 1, 0, 0},
+            {0, 0, 1, 0, 0},
+            {0, 0, 0, 0, 0}
+        };
+        newBoard.setBoard(board);
+        newBoard.nextGeneration();
+
+        // ensure original boards values are unchanged
+        assertEquals(instance.toString(), "011011000");
+        assertEquals(instance.getCols(), 3);
+        assertEquals(instance.getRows(), 3);
+        assertEquals(instance.getGenerationCount(), 4);
+        assertEquals(instance.getLivingCellCount(), 4);
+        assertEquals(instance.getNumberOfCells(), 9);
     }
 
     @Test
@@ -316,6 +339,7 @@ public class BoardDynamicTest {
         byte[][] testBoard = {{0, 1, 0}, {0, 1, 0}, {0, 1, 0}};
         instance.setBoard(testBoard);
         instance.nextGeneration();
+        assertEquals("000111000", instance.toString());
         instance.resetBoard();
         assertEquals("010010010", instance.toString());
     }
@@ -333,4 +357,27 @@ public class BoardDynamicTest {
         assertEquals("101101101", instance.toString());
     }
 
+    /**
+     * Test of getRows method, of class BoardDynamic.
+     */
+    @Test
+    public void testGetRows() {
+        System.out.println("getRows");
+        BoardDynamic instance = new BoardDynamic(10, 11);
+        int expResult = 10;
+        int result = instance.getRows();
+        assertEquals(expResult, result);
+    }
+
+    /**
+     * Test of getCols method, of class BoardDynamic.
+     */
+    @Test
+    public void testGetCols() {
+        System.out.println("getCols");
+        BoardDynamic instance = new BoardDynamic(10, 11);
+        int expResult = 11;
+        int result = instance.getCols();
+        assertEquals(expResult, result);
+    }
 }

@@ -35,6 +35,10 @@ public class BoardDynamic {
     private final byte CHANGED = 1;
     private int indexSum = 0;
     private Rules rules = Rules.getInstance();
+    private String boardAuthor = "";
+    private String boardName = "";
+    private String boardComment = "";
+    
 
     /**
      * Board no-argument constructor initializes a game board consisting of 200
@@ -46,6 +50,13 @@ public class BoardDynamic {
         changedCells = createEmptyBoard(200, 200);
     }
 
+    /**
+     * Board constructor. Accepts an <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>
+     * representing a board which is used as the starting board for the
+     * DynamicBoard object.
+     * @param board an <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>
+     * representing the starting board.
+     */
     public BoardDynamic(ArrayList<ArrayList<Byte>> board) {
         originalBoard = duplicateBoard(board);
         currentBoard = duplicateBoard(board);
@@ -69,6 +80,42 @@ public class BoardDynamic {
         originalBoard = createEmptyBoard(row, col);
         currentBoard = duplicateBoard(originalBoard);
         changedCells = createEmptyBoard(row, col);
+    }
+    
+    /**
+     * Set the metadata for the board. Three Strings expected.
+     * @param author a <code>String</code> specifying the author of the board.
+     * @param name a <code>String</code> specifying the name of the board.
+     * @param comment a <code>String</code> specifying the comments for the board.
+     */
+    public void setMetadata(String author, String name, String comment) {
+        boardAuthor = author;
+        boardName = name;
+        boardComment = comment;
+    }
+    
+    /**
+     * Gets the name of the boards author.
+     * @return a <code>String</code> specifying the boards author.
+     */
+    public String getAuthor() {
+        return boardAuthor;
+    }
+    
+    /**
+     * Gets the name of the board.
+     * @return a <code>String</code> specifying the boards name.
+     */
+    public String getName() {
+        return boardName;
+    }
+    
+    /**
+     * Gets the boards comments.
+     * @return a <code>String</code> specifying the boards comments.
+     */
+    public String getComment() {
+        return boardComment;
     }
     
     /**
