@@ -727,10 +727,11 @@ public class BoardDynamic {
     }
 
     /**
-     * Preserves the active board in the originalBoard
-     * <code> ArrayList<ArrayList<Byte>> originalBoard </code> so that the user
-     * can reset their board. This method is called if the user presses the play
-     * button while the timer is paused.
+
+     * Preserves the active board in the originalBoard variable
+     * so that the user can reset their board.
+     * This method is called if the user presses the play button while the timer is paused.
+
      */
     public void preserveBoard() {
         oldGenerationCount = generationCount;
