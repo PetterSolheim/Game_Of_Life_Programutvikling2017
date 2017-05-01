@@ -112,6 +112,7 @@ public class FileImporter {
     /**
      * Converts a pattern file from a Reader object into a String ArrayList
      * where each line of the pattern file is an index of the ArrayList.
+     *
      * @param r
      * @return a String ArrayList containing the pattern.
      * @throws IOException
@@ -149,6 +150,7 @@ public class FileImporter {
 
     /**
      * Reads and sets the patterns comments (name of author, board, etc).
+     *
      * @param lineList the pattern.
      */
     private void readRleComments(ArrayList<String> lineList) {
@@ -528,12 +530,8 @@ public class FileImporter {
             }
         }
         int[] lowest = {lowestX, lowestY};
-        if (lowestX < 0) {
-            lowestX--;
-        }
-        if (lowestY < 0) {
-            lowestY--;
-        }
+        lowestX--;
+        lowestY--;
 
         int rows = Math.abs(lowestY) + Math.abs(highestY);
         int cols = Math.abs(lowestX) + Math.abs(highestX);
@@ -559,7 +557,7 @@ public class FileImporter {
         }
 
         Matcher m;
-        Pattern coordinates = Pattern.compile("(-?[0-9]+)\\s(-?[0-9]+)");
+        Pattern coordinates = Pattern.compile("(-?[0-9]?)\\s(-?[0-9]?)");
         int capturedX, capturedY;
 
         for (int i = 0; i < lineList.size(); i++) {
