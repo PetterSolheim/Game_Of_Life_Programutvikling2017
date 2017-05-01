@@ -33,7 +33,11 @@
                         </Menu>
                     </items>
                     <items>
+
                         <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Board Settings" />
+
+                        <MenuItem mnemonicParsing="false" onAction="#showMetadata" text="Display Metadata" />
+
                     </items>
                     <items>
                         <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="Statistics" />

@@ -143,6 +143,16 @@ public class MainWindowController implements Initializable {
     }
 
     /**
+     * Display a simple info dialog box displaying the boards metadata.
+     */
+    @FXML
+    private void showMetadata() {
+        DialogBoxes.info("Author:\n" + board.getAuthor() + "\n\n"
+                + "Board Name:\n" + board.getName() + "\n\n"
+                + "Comments:\n" + board.getComment(), "Metadata");
+    }
+
+    /**
      * Creates a new blank board of a user defined size. User is presented with
      * a dialog box asking for board size.
      */
@@ -190,7 +200,7 @@ public class MainWindowController implements Initializable {
                 int row = Integer.parseInt(consumer.get(0));
                 int col = Integer.parseInt(consumer.get(1));
                 boolean isOk = true;
-                
+
                 // check that the user defined size is within reasonable limits.
                 // Warn them if it is not, and give them the chance to change
                 // their mind.
@@ -199,7 +209,7 @@ public class MainWindowController implements Initializable {
                             + " to slow performance. Are you sure you wish to"
                             + " continue?");
                 }
-                
+
                 // if all is ok, create and display the new board.
                 if (isOk) {
                     BoardDynamic newBoard = new BoardDynamic(row, col);
@@ -328,10 +338,12 @@ public class MainWindowController implements Initializable {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Choose file");
         fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Supported Formats", "*.rle"/*, "*.lif", "*.life", "*.cells"*/),
-                new FileChooser.ExtensionFilter("RLE", "*.rle"));
-        //new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
-        //new FileChooser.ExtensionFilter("Plaintext", "*.cells")),
+                new FileChooser.ExtensionFilter("Supported Formats", "*.rle", "*.cells", "*.lif", "*.life"),
+                new FileChooser.ExtensionFilter("RLE", "*.rle"),
+                new FileChooser.ExtensionFilter("Life 1.05/1.06", "*.lif", "*.life"),
+                new FileChooser.ExtensionFilter("Plaintext", "*.cells")
+        );
+        
         return fileChooser;
     }
 
@@ -347,7 +359,7 @@ public class MainWindowController implements Initializable {
         File file = fileChooser.showOpenDialog(stage);
         if (file != null && file.exists()) {
             try {
-                board.setBoard(fileImporter.readGameBoardFromDisk(file));
+                board = fileImporter.readGameBoardFromDisk(file);
                 centreBoardOnCanvas();
                 canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
@@ -356,7 +368,7 @@ public class MainWindowController implements Initializable {
             } catch (IOException e) {
                 DialogBoxes.ioException("There was a problem reading the file: " + e.getMessage());
             } catch (PatternFormatException e) {
-                DialogBoxes.patternFormatException("There was an error parsing the file: " + e.getMessage());
+                DialogBoxes.patternFormatError("There was an error parsing the file: " + e.getMessage());
             }
         }
     }
@@ -376,7 +388,7 @@ public class MainWindowController implements Initializable {
         Optional<String> url = inputDialog.showAndWait();
         if (url.isPresent()) {
             try {
-                board.setBoard(fileImporter.readGameBoardFromUrl(url.get()));
+                board = fileImporter.readGameBoardFromUrl(url.get());
                 centreBoardOnCanvas();
                 canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
@@ -387,7 +399,7 @@ public class MainWindowController implements Initializable {
             } catch (IOException e) {
                 DialogBoxes.ioException("File not found at: " + e.getMessage());
             } catch (PatternFormatException e) {
-                DialogBoxes.patternFormatException("There was an error parsing the file: " + e.getMessage());
+                DialogBoxes.patternFormatError("There was an error parsing the file: " + e.getMessage());
             }
         }
     }

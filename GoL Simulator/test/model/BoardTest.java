@@ -5,13 +5,9 @@
  */
 package model;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import org.junit.AfterClass;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -19,14 +15,6 @@ import org.junit.Test;
  * @author aleks
  */
 public class BoardTest {
-
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
 
     @Test
     public void testNextGeneration() {
@@ -226,35 +214,45 @@ public class BoardTest {
     @Test
     public void testDeepCopy() {
         System.out.println("deepCopy");
-
-        // create the board to be copied
-        Board originalBoard = new Board();
-        byte[][] origBoard = {
-            {0, 1, 0},
-            {0, 1, 0},
-            {0, 1, 0}
+        BoardDynamic instance = new BoardDynamic(2, 2);
+        byte[][] instanceBoard = {
+            {0, 1, 1},
+            {0, 1, 1},
+            {0, 0, 0}
         };
-        originalBoard.setBoard(origBoard);
-        originalBoard.nextGeneration();
+        instance.setBoard(instanceBoard);
 
-        // create a deep copy of originalBoard.
-        Board deepCopy = originalBoard.deepCopy();
+        for (int i = 0; i < 4; i++) {
+            instance.nextGeneration();
+        }
+        BoardDynamic newBoard = instance.deepCopy();
 
-        // ensure that the deepCopy is identical.
-        assertArrayEquals(originalBoard.getBoard(), deepCopy.getBoard());
-        assertArrayEquals(originalBoard.getChangedCells(), deepCopy.getChangedCells());
-        assertEquals(originalBoard.getGenerationCount(), deepCopy.getGenerationCount());
-        assertEquals(originalBoard.getLivingCellCount(), deepCopy.getLivingCellCount());
-        assertEquals(originalBoard.getNumberOfCells(), deepCopy.getNumberOfCells());
+        // test that values are the same
+        assertEquals(instance.getBoard(), newBoard.getBoard());
+        assertEquals(instance.getCols(), newBoard.getCols());
+        assertEquals(instance.getRows(), newBoard.getRows());
+        assertEquals(instance.getGenerationCount(), newBoard.getGenerationCount());
+        assertEquals(instance.getLivingCellCount(), newBoard.getLivingCellCount());
+        assertEquals(instance.getNumberOfCells(), newBoard.getNumberOfCells());
 
-        // make changes to the deepCopy.
-        byte[][] newBoard = {
-            {1, 0, 1},
-            {1, 0, 1},
-            {1, 0, 1}
+        // make changes to the new board
+        byte[][] board = {
+            {0, 0, 0, 0, 0},
+            {0, 0, 1, 0, 0},
+            {0, 0, 1, 0, 0},
+            {0, 0, 1, 0, 0},
+            {0, 0, 0, 0, 0}
         };
-        deepCopy.setBoard(newBoard);
-        fail("TODO: complete test code.");
+        newBoard.setBoard(board);
+        newBoard.nextGeneration();
+
+        // ensure original boards values are unchanged
+        assertEquals(instance.toString(), "011011000");
+        assertEquals(instance.getCols(), 3);
+        assertEquals(instance.getRows(), 3);
+        assertEquals(instance.getGenerationCount(), 4);
+        assertEquals(instance.getLivingCellCount(), 4);
+        assertEquals(instance.getNumberOfCells(), 9);
 
     }
 
