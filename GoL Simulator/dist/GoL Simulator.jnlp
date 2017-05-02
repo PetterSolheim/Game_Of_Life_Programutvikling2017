@@ -8,6 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" java-vm-args="-Xms2000m "  href="http://java.sun.com/products/autodl/j2se"/>
+    <jar href="lib\junit-4.12.jar" size="316791" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="GoL Simulator" >
     <param name="requiredFXVersion" value="8.0+"/>

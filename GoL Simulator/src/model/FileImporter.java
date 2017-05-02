@@ -557,7 +557,7 @@ public class FileImporter {
         }
 
         Matcher m;
-        Pattern coordinates = Pattern.compile("(-?[0-9]?)\\s(-?[0-9]?)");
+        Pattern coordinates = Pattern.compile("(-?[0-9]*)?\\s(-?[0-9]*)?");
         int capturedX, capturedY;
 
         for (int i = 0; i < lineList.size(); i++) {
@@ -571,6 +571,8 @@ public class FileImporter {
                         throw new PatternFormatException("Unable to interpret"
                                 + "cell coordinates.");
                     }
+                    int printY = capturedY + startY;
+                    int printX = capturedX + startX;
                     boardArray[capturedY + startY][capturedX + startX] = 1;
                 } else {
                     throw new PatternFormatException("Unable to interpret cell"
