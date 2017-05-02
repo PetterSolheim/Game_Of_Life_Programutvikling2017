@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.application.Platform;
@@ -32,8 +33,11 @@ import javafx.stage.Stage;
 import model.*;
 import view.GameCanvas;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.DragEvent;
+import javafx.scene.input.Dragboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.TransferMode;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.VBox;
@@ -223,6 +227,57 @@ public class MainWindowController implements Initializable {
             }
         });
     }
+    
+    /**
+     * Instructs the node calling this method that the user is to be allowed
+     * to drag (and thereby drop) files over it.
+     * @param event a DragEvent
+     */
+    @FXML
+    private void prepareFileDrop(DragEvent event) {
+        if(event.getDragboard().hasFiles()) {
+            event.acceptTransferModes(TransferMode.ANY);
+        }
+    }
+
+    /**
+     * Handles dropping of files on the node which calls this method. If file
+     * is valid and supported pattern file, file will be opened. Error message
+     * is displayed to user if file is either not valid, or not supported.
+     * 
+     * @param event a DragEvent
+     */
+    @FXML
+    private void fileDrop(DragEvent event) {
+        Dragboard dragEvent = event.getDragboard();
+        File patternFile = null;
+
+        if (dragEvent.hasFiles()) {
+            FileImporter fileImporter = new FileImporter();
+            List<File> fileList = dragEvent.getFiles();
+            if (fileList.size() != 1) {
+                DialogBoxes.ioException("Please select only one file!");
+            } else {
+                patternFile = fileList.get(0);
+            }
+        }
+
+        if (patternFile != null && patternFile.exists()) {
+            FileImporter fileImporter = new FileImporter();
+            try {
+                board = fileImporter.readGameBoardFromDisk(patternFile);
+                centreBoardOnCanvas();
+                canvas.drawBoard(board.getBoard());
+                updateLivingCellCountLabel();
+            } catch (FileNotFoundException e) {
+                DialogBoxes.ioException("No file found at: " + e.getMessage());
+            } catch (IOException e) {
+                DialogBoxes.ioException("There was a problem reading the file: " + e.getMessage());
+            } catch (PatternFormatException e) {
+                DialogBoxes.patternFormatError("There was an error parsing the file: " + e.getMessage());
+            }
+        }
+    }
 
     /**
      * Sets the board back to its original state, and reset counters.
@@ -241,7 +296,7 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     private void togglePlayPause() {
-        if(board.getGenerationCount() == 0) {
+        if (board.getGenerationCount() == 0) {
             board.preserveBoard();
         }
         if (isPaused) {
@@ -264,7 +319,7 @@ public class MainWindowController implements Initializable {
             public void handle(KeyEvent ke) {
                 KeyCode k = ke.getCode();
                 if (k == KeyCode.LEFT || k == KeyCode.RIGHT || k == KeyCode.DOWN || k == KeyCode.UP) {
-                        ke.consume(); // <-- stops passing the event to next node
+                    ke.consume(); // <-- stops passing the event to next node
                 }
                 switch (k) {
                     case LEFT:
