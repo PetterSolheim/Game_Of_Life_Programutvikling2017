@@ -31,20 +31,32 @@
                 <HBox fx:id="findSimilarIteration">
                     <children>
                         <Text text="Below you can select an iteration and display the most simillar iteration."></Text>
-                        <ComboBox fx:id="findSimilarComboBox"/>
+                        <ComboBox fx:id="findSimilarComboBox">
+                            <tooltip>
+                                <Tooltip text="Select a generation to find it's most similar generation"/>
+                            </tooltip>
+                        </ComboBox>
                     </children>
                 </HBox>
                 <HBox>
                     <children>
                         <VBox fx:id="leftCanvasGroup">
                             <children>
-                                <ComboBox fx:id="leftCanvasComboBox"/>
+                                <ComboBox fx:id="leftCanvasComboBox">
+                                    <tooltip>
+                                        <Tooltip text="Select a generation to display it below"/>
+                                    </tooltip>
+                                </ComboBox>
                                 <GameCanvas fx:id="leftCanvas"></GameCanvas>
                             </children>
                         </VBox>
                         <VBox fx:id="rightCanvasGroup">
                             <children>
-                                <ComboBox fx:id="rightCanvasComboBox"/>
+                                <ComboBox fx:id="rightCanvasComboBox">
+                                    <tooltip>
+                                        <Tooltip text="Select a generation to display it below"/>
+                                    </tooltip>
+                                </ComboBox>
                                 <GameCanvas fx:id="rightCanvas"></GameCanvas>
                             </children>
                         </VBox>

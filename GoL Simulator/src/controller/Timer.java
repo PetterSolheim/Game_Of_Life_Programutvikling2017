@@ -48,13 +48,13 @@ public class Timer extends AnimationTimer {
         long timeBetweenGenerations = (long) (1000000000 / desiredFramesPerSecond);
         this.timeBetweenGeneration = timeBetweenGenerations;
     }
-    /**
+    /*
      * Used for testing
     */
     public long getTimeBetweenGenerations (){
         return this.timeBetweenGeneration;
     }
-    /** 
+    /*
      * Used for testing
      */
     public long getNextGeneration (){

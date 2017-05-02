@@ -4,7 +4,6 @@ import controller.AudioSettingsWindowController;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import javafx.fxml.FXML;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
@@ -50,7 +49,7 @@ public class AudioManager {
 
     /**
      * This method is used in AudioSettingsController to load in previously
-     * loaded songs to the tracklist.
+     * loaded songs to the trackList.
      *
      * @return <code>boolean</code> specifying if an instance is created.
      */
@@ -147,7 +146,7 @@ public class AudioManager {
      * @throws UnsupportedAudioFileException if the file is corrupted or not
      * supported
      */
-    public void loadSongFromAbsolutePath(String songName) throws UnsupportedAudioFileException {
+    public void loadSong(String songName) throws UnsupportedAudioFileException {
         for (int i = 0; i < absolutePathForLoadedSongs.size(); i++) {
             if (absolutePathForLoadedSongs.get(i).contains(songName)) {
                 try {
@@ -163,7 +162,7 @@ public class AudioManager {
     }
 
     /**
-     * sets the frame position on <code>activeSong</code> back to 0;
+     * sets the frame position on <code>Clip activeSong</code> back to 0;
      */
     public void resetSong() {
         activeSong.setFramePosition(0);
@@ -196,7 +195,7 @@ public class AudioManager {
     /**
      * Get a reference to <code>activeSong</code>
      *
-     * @return <code>Clip</code>a reference to <code>activeSong</code>
+     * @return <code>Clip</code>a reference to <code>activeSong</code> that is responsible for playing music.
      */
     public Clip getActiveSong() {
         return activeSong;
@@ -204,6 +203,7 @@ public class AudioManager {
 
     /**
      * Toggles the playstate of <code>activeSong</code>
+     * It can either be active, engaging in I/O activity, or not.
      */
     public void playPauseMusicPlayer() {
         if (activeSong.isActive()) {
