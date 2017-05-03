@@ -114,9 +114,6 @@ public class MainWindowController implements Initializable {
             int yOffsetAdjust = ((oldValue - newValue) * board.getRows()) / 2;
             int xOffsetAdjust = ((oldValue - newValue) * board.getCols()) / 2;
             canvas.adjustOffset(xOffsetAdjust, yOffsetAdjust);
-
-            canvas.drawBoard(board.getBoard());
-
         });
 
         canvas.setCellSize((int) cellSizeSlider.getValue());
@@ -130,10 +127,13 @@ public class MainWindowController implements Initializable {
         canvasAnchor.widthProperty().addListener((observable) -> {
             resizeCanvas();
         });
+        
         // update the labels for the living cell count and generation count.
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
-        Platform.runLater(this::centreBoardOnCanvas);
+        
+        // draw the starting board once everything else has finished initializing.
+        Platform.runLater(this::centerAndDrawBoard);
     }
 
     /**
@@ -217,7 +217,7 @@ public class MainWindowController implements Initializable {
                 if (isOk) {
                     BoardDynamic newBoard = new BoardDynamic(row, col);
                     board = newBoard;
-                    centreBoardOnCanvas();
+                    centerAndDrawBoard();
                     canvas.drawBoard(board.getBoard());
                 }
 
@@ -267,7 +267,7 @@ public class MainWindowController implements Initializable {
             FileImporter fileImporter = new FileImporter();
             try {
                 board = fileImporter.readGameBoardFromDisk(patternFile);
-                centreBoardOnCanvas();
+                centerAndDrawBoard();
                 canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
             } catch (FileNotFoundException e) {
@@ -290,6 +290,7 @@ public class MainWindowController implements Initializable {
         canvas.drawBoard(board.getBoard());
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
+        centerAndDrawBoard();
     }
 
     /**
@@ -309,8 +310,10 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void delete() {
-        board.deleteBoard();
+        pause();
+        board.clearBoard();
         canvas.drawBoard(board.getBoard());
+        centerAndDrawBoard();
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
     }
@@ -368,10 +371,11 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Centres the board on the canvas.
+     * Calculates and sets the offset needed for the current board to be centered
+     * on the user visible part of the canvas, and then draws the board.
      */
     @FXML
-    private void centreBoardOnCanvas() {
+    private void centerAndDrawBoard() {
         double boardWidthCenter = (board.getBoard().get(0).size() * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
         double boardHeightCenter = (board.getBoard().size() * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
         double canvasWidthCenter = (canvas.getWidth() / 2);
@@ -416,7 +420,7 @@ public class MainWindowController implements Initializable {
         if (file != null && file.exists()) {
             try {
                 board = fileImporter.readGameBoardFromDisk(file);
-                centreBoardOnCanvas();
+                centerAndDrawBoard();
                 canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
             } catch (FileNotFoundException e) {
@@ -445,7 +449,7 @@ public class MainWindowController implements Initializable {
         if (url.isPresent()) {
             try {
                 board = fileImporter.readGameBoardFromUrl(url.get());
-                centreBoardOnCanvas();
+                centerAndDrawBoard();
                 canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
             } catch (MalformedURLException e) {
@@ -539,14 +543,7 @@ public class MainWindowController implements Initializable {
             canvas.drawBoard(board.getBoard());
         } else {
             // only draw cells that changed during last generational shift.
-            for (int row = 0; row < board.getChangedCells().size(); row++) {
-                for (int col = 0; col < board.getChangedCells().get(0).size(); col++) {
-                    // cells that have changed are symbolised by the number 1.
-                    if (board.getChangedCells().get(row).get(col) == 1) {
-                        canvas.drawCell(board.getBoard(), row, col);
-                    }
-                }
-            }
+            canvas.drawSpecificCells(board.getChangedCells());
         }
         updateLivingCellCountLabel();
         updateGenerationCountLabel();

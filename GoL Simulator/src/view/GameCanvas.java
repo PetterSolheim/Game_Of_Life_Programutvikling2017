@@ -41,9 +41,10 @@ public class GameCanvas extends Canvas {
         this.xOffset = xOffset;
         this.yOffset = yOffset;
     }
-    
+
     /**
      * Adjust the offset by adding a value to increase the offset with.
+     *
      * @param xOffset an <code>int</code> specifying the amount to increase the
      * xOffset.
      * @param yOffset an <code>int</code> specifying the amount to increase the
@@ -118,6 +119,17 @@ public class GameCanvas extends Canvas {
         for (int row = 0; row < board.size(); row++) {
             for (int col = 0; col < board.get(0).size(); col++) {
                 drawCell(board, row, col);
+            }
+        }
+    }
+
+    public void drawSpecificCells(ArrayList<ArrayList<Byte>> board) {
+        for (int row = 0; row < board.size(); row++) {
+            for (int col = 0; col < board.get(0).size(); col++) {
+                // cells that have changed are symbolised by the number 1.
+                if (board.get(row).get(col) == 1) {
+                    drawCell(board, row, col);
+                }
             }
         }
     }

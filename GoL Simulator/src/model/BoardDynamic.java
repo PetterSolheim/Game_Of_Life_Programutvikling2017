@@ -745,7 +745,7 @@ public class BoardDynamic {
      * Creates an empty board with dimensions of the previously active board.
      * Also sets the generation count and living cell count to 0.
      */
-    public void deleteBoard() {
+    public void clearBoard() {
         generationCount = 0;
         livingCells = 0;
         currentBoard = createEmptyBoard(originalBoard.size(), originalBoard.get(0).size());
