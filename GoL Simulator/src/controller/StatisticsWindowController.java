@@ -124,7 +124,7 @@ public class StatisticsWindowController {
      */
     private void populateComboBoxes() {
         int i = s.getFirstGeneration();
-        while (i < s.getIterations() + s.getFirstGeneration()) {
+        while (i < s.getLastGeneration()) {
             String o = Integer.toString(i);
             leftCanvasComboBox.getItems().add(o);
             rightCanvasComboBox.getItems().add(o);

@@ -53,7 +53,8 @@ public class Statistics {
      * affected by the data generation.
      *
      * @param b <code>BoardDynamic</code> to generate statistics from.
-     * @param iterations <code>int</code> the amount of iterations to create data from.
+     * @param iterations <code>int</code> the amount of iterations to create
+     * data from.
      */
     public Statistics(BoardDynamic b, int iterations) {
         this.b = b.deepCopy();
@@ -151,8 +152,7 @@ public class Statistics {
      * <strong>It uses many helper methods to perform it's computation. Some of
      * these are:</strong>
      *
-     * <code>getPopulationChange()</code>,
-     * <code>convertBoardToFloat()</code>,
+     * <code>getPopulationChange()</code>, <code>convertBoardToFloat()</code>,
      * <code>getSimilairtyMeasure()</code>,
      *
      * @return <code>XYChart.Series[]</code> an array with 3 series containing
@@ -230,17 +230,17 @@ public class Statistics {
 
     /**
      *
-     * @param currentGeneration <code>int</code> the generation that is going to
-     * be converted
-     * @return <code>BoardDynamic</code> as a <code>float</code>
+     * @param currentGeneration int, the generation that is going to be converted
+     * @return BoardDynamic as a float
      */
     private float convertBoardToFloat(int currentGeneration) {
-        float a = 0.5f, be = 0.85f, y = 0.25f;
+        float a = 0.5f, be = 0.85f, y = 0.4f;
         float af = a * b.getLivingCellCount();
         float bf = be * (b.getLivingCellCount() - livingCellsPerGeneration.get(currentGeneration - 1));
         System.out.println("IndexSum: " + b.getIndexSum());
-        float yg = y * b.getIndexSum();
-        float board = af + bf + yg;
+        long geometricFactor = (long)y * (long)b.getIndexSum();
+        System.out.println("Geomtric factor " + geometricFactor);
+        float board = af + bf + geometricFactor;
         System.out.println("floatBoard: " + board);
         return board;
     }

@@ -27,7 +27,7 @@ public class BoardDynamic {
      * for resetting the game board.
      */
     protected ArrayList<ArrayList<Byte>> originalBoard;
-    
+
     private ArrayList<ArrayList<Byte>> nextGeneration;
 
     /**
@@ -44,12 +44,11 @@ public class BoardDynamic {
     private float indexSum;
 
     private Rules rules = Rules.getInstance();
-    
+
     private String boardAuthor = "";
     private String boardName = "";
     private String boardComment = "";
-    
-    
+
     private int numWorkers = Runtime.getRuntime().availableProcessors();
     private ArrayList<Thread> workers = new ArrayList<Thread>();
 
@@ -323,7 +322,9 @@ public class BoardDynamic {
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.
         nextGeneration = duplicateBoard(currentBoard);
-
+        boolean firstLivingCell = false;
+        int lastLivingCellRow = 0;
+        int lastLivingCellCol = 0;
         // iterate through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
         for (int row = 0; row < nextGeneration.size(); row++) {
@@ -335,16 +336,31 @@ public class BoardDynamic {
                     changedCells.get(row).set(col, CHANGED);
                     livingCells--;
                 } else if (currentBoard.get(row).get(col) == 1 && rules.getSurviveRules().contains(nrOfNeighbours)) {
-                    indexSum += ((row * 0.2) + (col * 0.7));
+                    if (firstLivingCell == false) {
+                        addToIndexSum((row * col) + col);
+                        firstLivingCell = true;
+                    } else {
+                        lastLivingCellRow = row;
+                        lastLivingCellCol = col;
+                        addToIndexSum(col + row);
+                    }
                 } else if (currentBoard.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
                     nextGeneration.get(row).set(col, ALLIVE);
                     changedCells.get(row).set(col, CHANGED);
                     livingCells++;
-                    indexSum += ((row * 0.2) + (col * 0.7));
+                    if (firstLivingCell == false) {
+                        addToIndexSum((row * col) + col);
+                        firstLivingCell = true;
+                    } else {
+                        lastLivingCellRow = row;
+                        lastLivingCellCol = col;
+                        addToIndexSum(row + col);
+                    }
                 }
             }
-
         }
+        addToIndexSum(-(lastLivingCellRow + lastLivingCellCol));
+        addToIndexSum((lastLivingCellCol * lastLivingCellRow) + lastLivingCellRow);
         currentBoard = nextGeneration;
         generationCount++;
     }
@@ -465,6 +481,10 @@ public class BoardDynamic {
 
         livingCells += i;
 
+    }
+
+    private synchronized void addToIndexSum(int i) {
+        indexSum += i;
     }
 
     /**
@@ -727,10 +747,10 @@ public class BoardDynamic {
     }
 
     /**
-     * Preserves the active board in the originalBoard variable
-     * so that the user can reset their board.
-     * This method is called if the user presses the play button while the timer is paused.
-
+     * Preserves the active board in the originalBoard variable so that the user
+     * can reset their board. This method is called if the user presses the play
+     * button while the timer is paused.
+     *
      */
     public void preserveBoard() {
         originalBoard = duplicateBoard(currentBoard);
