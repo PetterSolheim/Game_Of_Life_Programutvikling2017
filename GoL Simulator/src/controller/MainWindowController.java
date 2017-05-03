@@ -114,6 +114,7 @@ public class MainWindowController implements Initializable {
             int yOffsetAdjust = ((oldValue - newValue) * board.getRows()) / 2;
             int xOffsetAdjust = ((oldValue - newValue) * board.getCols()) / 2;
             canvas.adjustOffset(xOffsetAdjust, yOffsetAdjust);
+            canvas.drawBoard(board.getBoard());
         });
 
         canvas.setCellSize((int) cellSizeSlider.getValue());

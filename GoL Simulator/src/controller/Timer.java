@@ -33,7 +33,6 @@ public class Timer extends AnimationTimer {
     @Override
     public void handle(long currentTime) {
         if (nextGeneration < currentTime) {
-            System.out.println(currentTime);
             nextGeneration = currentTime + timeBetweenGeneration;
             controller.createNextGeneration();
         }

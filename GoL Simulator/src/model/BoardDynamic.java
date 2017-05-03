@@ -490,9 +490,7 @@ public class BoardDynamic {
 
         if (shouldExpandWest()) {
             expandWest();
-            System.out.println("Expanding");
             expandedWest = true;
-            System.out.println("Expanded: " + expandedWest);
             boardExpanded = true;
         }
         if (boardExpanded) {
