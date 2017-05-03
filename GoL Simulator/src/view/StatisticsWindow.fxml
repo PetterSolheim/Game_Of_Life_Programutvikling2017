@@ -30,7 +30,7 @@
             <children>
                 <HBox fx:id="findSimilarIteration">
                     <children>
-                        <Text text="Below you can select an iteration and display the most simillar iteration."></Text>
+                        <Text text="Select a generation on the right to display it's most similar generation. "></Text>
                         <ComboBox fx:id="findSimilarComboBox">
                             <tooltip>
                                 <Tooltip text="Select a generation to find it's most similar generation"/>
@@ -38,6 +38,7 @@
                         </ComboBox>
                     </children>
                 </HBox>
+                <Text fx:id="similarityMeasure" text="" />
                 <HBox>
                     <children>
                         <VBox fx:id="leftCanvasGroup">

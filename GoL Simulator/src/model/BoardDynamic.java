@@ -283,8 +283,28 @@ public class BoardDynamic {
     }
 
     public float getIndexSum() {
-        float sum = indexSum;
-        indexSum = 0;
+        int divider = (int) rows.size();
+        float sum = 0;
+        for (int i = 0; i < rows.size(); i++) {
+            float row, col;
+            row = rows.get(i);
+            col = cols.get(i);
+            if (i == 0 || i == rows.size() - 1) {
+                if(i == 0){
+                    sum += (row * col) + row;
+                } else {
+                    sum += (row * col) + col;
+                }
+            } else {
+                if (i < divider) {
+                    sum += (row * col) + (row * row);
+                } else {
+                    sum += (row * col) + (col * col);
+                }
+            }
+        }
+        rows.clear();
+        cols.clear();
         return sum;
     }
 
@@ -336,6 +356,7 @@ public class BoardDynamic {
                     changedCells.get(row).set(col, CHANGED);
                     livingCells--;
                 } else if (currentBoard.get(row).get(col) == 1 && rules.getSurviveRules().contains(nrOfNeighbours)) {
+                    addToIndexSum2(row, col);
                     if (firstLivingCell == false) {
                         addToIndexSum((row * col) + col);
                         firstLivingCell = true;
@@ -345,6 +366,7 @@ public class BoardDynamic {
                         addToIndexSum(col + row);
                     }
                 } else if (currentBoard.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
+                    addToIndexSum2(row, col);
                     nextGeneration.get(row).set(col, ALLIVE);
                     changedCells.get(row).set(col, CHANGED);
                     livingCells++;
@@ -461,6 +483,9 @@ public class BoardDynamic {
                     nextGeneration.get(row).set(col, ALLIVE);
                     changedCells.get(row).set(col, CHANGED);
                     addToLivingCells(+1);
+                    addToIndexSum2(row, col);
+                } else if (currentBoard.get(row).get(col) == 1) {
+                    addToIndexSum2(row, col);
                 }
             }
         }
@@ -481,6 +506,13 @@ public class BoardDynamic {
 
         livingCells += i;
 
+    }
+    private ArrayList<Integer> rows = new ArrayList<Integer>();
+    private ArrayList<Integer> cols = new ArrayList<Integer>();
+
+    private synchronized void addToIndexSum2(int row, int col) {
+        rows.add(row);
+        cols.add(col);
     }
 
     private synchronized void addToIndexSum(int i) {

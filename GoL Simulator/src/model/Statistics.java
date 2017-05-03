@@ -150,7 +150,7 @@ public class Statistics {
      * mind because it is secretly very naughty.
      *
      * <strong>It uses many helper methods to perform it's computation. Some of
-     * these are:</strong>
+     * these are:</strong> <br>
      *
      * <code>getPopulationChange()</code>, <code>convertBoardToFloat()</code>,
      * <code>getSimilairtyMeasure()</code>,
@@ -194,7 +194,8 @@ public class Statistics {
         //Populate similarity measure series
         int generationCount = firstGeneration + 1;
         while (generationCount <= lastGeneration) {
-            similiarityMeasure.getData().add(getSimilarityMeasure(generationCount, floatBoards));
+            SimilarityMeasure measure = getSimilarityMeasure(generationCount);
+            similiarityMeasure.getData().add(new XYChart.Data(generationCount, measure.getSimilairtyValue()));
             generationCount++;
         }
 
@@ -219,7 +220,7 @@ public class Statistics {
      * Returns the population difference between the current generation and the
      * previous one.
      *
-     * @param prevPopulation <code>int</code> containt the total population of
+     * @param prevPopulation <code>int</code> contains the total population of
      * living cells to the previous generation.
      * @return <int> population difference.
      */
@@ -230,16 +231,18 @@ public class Statistics {
 
     /**
      *
-     * @param currentGeneration int, the generation that is going to be converted
+     * @param currentGeneration int, the generation that is going to be
+     * converted
      * @return BoardDynamic as a float
      */
     private float convertBoardToFloat(int currentGeneration) {
-        float a = 0.5f, be = 0.85f, y = 0.4f;
+        float a = 0.5f, be = 3f, y = 0.25f;
         float af = a * b.getLivingCellCount();
         float bf = be * (b.getLivingCellCount() - livingCellsPerGeneration.get(currentGeneration - 1));
-        System.out.println("IndexSum: " + b.getIndexSum());
-        long geometricFactor = (long)y * (long)b.getIndexSum();
-        System.out.println("Geomtric factor " + geometricFactor);
+        float indexSum = b.getIndexSum();
+        System.out.println("IndexSum: " + indexSum);
+        float geometricFactor = y * indexSum;
+        System.out.println("Geomtric factor " + geometricFactor + " " + y * indexSum);
         float board = af + bf + geometricFactor;
         System.out.println("floatBoard: " + board);
         return board;
@@ -249,54 +252,17 @@ public class Statistics {
      * Finds the highest similarity for a generation and converts that number to
      * an <code>int</code>.
      *
-     * @param generation
-     * @param floatBoards <code>ArrayList&lt;ArrayList&lt;String&gt;&gt;</code>
-     * containing the geometric value of all the boards that shall be compared.
-     * @return <code>int</code> the most similar generation
+     * @param generation generation to get similarity measure off.
+     * @return <code>int</code> representing the most similar generation
      */
-    private XYChart.Data getSimilarityMeasure(int generation, HashMap<Integer, Float> floatBoards) {
-        XYChart.Data similarityMeasure = new XYChart.Data();
+    public SimilarityMeasure getSimilarityMeasure(int generation) {
         float highestfloat = 0;
         int i = firstGeneration + 1; // First generation can not have a similarity measure because floatboards use current generation - 1 as part of the calculation.
+        int mostSimilarGeneration = 0;
         float floatConstat = floatBoards.get(generation);
         while (i <= lastGeneration) {
             if (i != generation) {
                 float newFloat = Float.min(floatConstat, floatBoards.get(i).floatValue()) / Float.max(floatConstat, floatBoards.get(i).floatValue());
-                if (newFloat > highestfloat) {
-                    highestfloat = newFloat;
-                }
-            }
-            i++;
-        }
-        int similarity = getSimilairtyFromFloat(highestfloat);
-        similarityMeasure.setYValue(similarity);
-        similarityMeasure.setXValue(generation);
-        return similarityMeasure;
-    }
-
-    /**
-     * Converts a float to integer
-     *
-     */
-    private int getSimilairtyFromFloat(float highestFloat) {
-        int similairty = (int) Math.floor((double) highestFloat * 100);
-        return similairty;
-    }
-
-    /**
-     * finds the most similar generation of a specific generation.
-     *
-     * @param generation <code>int</code> the generation that is to be compared
-     * @return <code>int</code> the most similar generation
-     */
-    public int findMostSimilar(int generation) {
-        float generationToCompare = floatBoards.get(generation);
-        float highestfloat = 0f;
-        int mostSimilarGeneration = 0;
-        int i = this.firstGeneration + 1;
-        while (i <= this.lastGeneration) {
-            if (i != generation) {
-                float newFloat = Float.min(generationToCompare, floatBoards.get(i).floatValue()) / Float.max(generationToCompare, floatBoards.get(i).floatValue());
                 if (newFloat > highestfloat) {
                     mostSimilarGeneration = i;
                     highestfloat = newFloat;
@@ -304,7 +270,18 @@ public class Statistics {
             }
             i++;
         }
-        return mostSimilarGeneration;
+        int similarity = getSimilairtyFromFloat(highestfloat);
+        SimilarityMeasure measure = new SimilarityMeasure(mostSimilarGeneration, similarity);
+        return measure;
+    }
+
+    /*
+     * Converts a float to integer representing the similarity measure in
+     * percent.
+     */
+    private int getSimilairtyFromFloat(float highestFloat) {
+        int similairty = (int) Math.floor((double) highestFloat * 100);
+        return similairty;
     }
 
     /**

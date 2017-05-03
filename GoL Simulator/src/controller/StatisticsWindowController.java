@@ -10,7 +10,9 @@ import javafx.scene.control.Tooltip;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import model.BoardDynamic;
+import model.SimilarityMeasure;
 import model.Statistics;
 import view.GameCanvas;
 
@@ -42,8 +44,14 @@ public class StatisticsWindowController {
     private TextField txtIterations;
     @FXML
     private HBox chartWrapper;
+    /**
+     * Node that contains txtIterations. This is moved to the bottom of the
+     * scene graph after calculations are made and presented.
+     */
     @FXML
     private VBox dialogWrapper;
+    @FXML
+    private Text similarityMeasure;
     @FXML
     private GameCanvas leftCanvas;
     @FXML
@@ -51,7 +59,7 @@ public class StatisticsWindowController {
     @FXML
     private VBox detailedInformation;
     /**
-     * Changing this combobox fires an event calling
+     * Changing these ComboBoxes fires various events.
      */
     @FXML
     private ComboBox<String> findSimilarComboBox;
@@ -79,12 +87,13 @@ public class StatisticsWindowController {
                 -> showSelection(rightCanvasComboBox, rightCanvas)
         );
         findSimilarComboBox.getSelectionModel().selectedItemProperty().addListener((observable, oldValue, newValue)
-                -> setSimilarCanvas()
+                -> getSimilarityMeasure()
         );
     }
 
     /*
-     * This method is called every time the width property of the root node changes
+     * This method is called every time the width property of the root node changes.
+     * Checks if s exists to avoid nullpointer exception on initialize.
      */
     private void changeWidth() {
         if (s != null) {
@@ -124,7 +133,7 @@ public class StatisticsWindowController {
      */
     private void populateComboBoxes() {
         int i = s.getFirstGeneration();
-        while (i < s.getLastGeneration()) {
+        while (i <= s.getLastGeneration()) {
             String o = Integer.toString(i);
             leftCanvasComboBox.getItems().add(o);
             rightCanvasComboBox.getItems().add(o);
@@ -152,15 +161,19 @@ public class StatisticsWindowController {
     }
 
     /*
-     * This method is called every time the value findSimilarComboBox changes
-     * and display the most similar generation for the selected generation in 
-     * the  right canvas
+     * This method is called every time the value in findSimilarComboBox changes.
+     * The most similar generation for the selected generation is displayed in 
+     * the right canvas
      */
-    private void setSimilarCanvas() {
+    private void getSimilarityMeasure() {
         Object o = findSimilarComboBox.getValue();
         int i = Integer.parseInt(o.toString());
         leftCanvasComboBox.setValue(findSimilarComboBox.getValue());
-        rightCanvasComboBox.setValue(Integer.toString(s.findMostSimilar(i)));
+        SimilarityMeasure measure = s.getSimilarityMeasure(i);
+        rightCanvasComboBox.setValue(Integer.toString(measure.getGeneration()));
+        String txt = "The most similar generation for generation " + findSimilarComboBox.getValue() + " is generation ";
+        txt +=measure.getGeneration() + " with a similarity rating of " + Integer.toString(measure.getSimilairtyValue());
+        similarityMeasure.setText(txt);
     }
 
     /*
