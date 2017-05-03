@@ -31,23 +31,29 @@ public class Statistics {
      */
     private float averageDeadCells, averageLivingCells;
     /**
-     * Used to store a generations floating point representation and the corresponding generation.
+     * Used to store a generations floating point representation and the
+     * corresponding generation.
      */
     private HashMap<Integer, Float> floatBoards;
     /**
-     * Used to store a generations total amount of living cells and the corresponding generation number.
+     * Used to store a generations total amount of living cells and the
+     * corresponding generation number.
      */
     private HashMap<Integer, Integer> livingCellsPerGeneration;
     /**
-     * Used to store an entire <code>BoardDynamic</code> and the corresponding generation number.
+     * Used to store many BoardDynamic instances and the corresponding
+     * generation number.
      */
     private HashMap<Integer, BoardDynamic> generations;
 
     /**
-     * Statistics constructor. Needs a board to generate data from and the amount of iterations to run the data generation.
-     * The constructor will create a deep copy of the board to ensure that the main window isn't affected by the data generation.
-     * @param b
-     * @param iterations
+     * Statistics constructor. Needs a board to generate data from and the
+     * amount of iterations to run the data generation. The constructor will
+     * create a deep copy of the board to ensure that the main window isn't
+     * affected by the data generation.
+     *
+     * @param b <code>BoardDynamic</code> to generate statistics from.
+     * @param iterations <code>int</code> the amount of iterations to create data from.
      */
     public Statistics(BoardDynamic b, int iterations) {
         this.b = b.deepCopy();
@@ -58,7 +64,8 @@ public class Statistics {
         generations = new HashMap<Integer, BoardDynamic>();
         setLastGeneration();
     }
-    /**
+
+    /*
      * Sets the final generations that this instance should generate statistics for.
      */
     private void setLastGeneration() {
@@ -67,23 +74,30 @@ public class Statistics {
 
     /**
      * Returns the last generation that this instance generates statistics for.
-     * @return <code>int</code> generation
+     * This method is only used to set the length of the ComboBoxes in the FXML
+     * document.
+     *
+     * @return <code>int</code> the last generation to generate statistics for.
      */
     public int getLastGeneration() {
         return this.lastGeneration;
     }
 
     /**
-     * Sets the amount of iterations to generate data for, and determines the last generation of that various loops run.
-     * @param i  <code>int</code>
+     * Sets the amount of iterations to generate data for, and calls
+     * <code>setLastGemeration</code> as well
+     *
+     * @param iterations  <code>int</code> the amount iterations
      */
-    public void setIterationsAndLastGeneration(int i) {
-        this.iterations = i;
+    public void setIterationsAndLastGeneration(int iterations) {
+        this.iterations = this.iterations + iterations;
         setLastGeneration();
     }
 
     /**
-     * returns the amount of iterations the user wished to generate statistics for.
+     * Returns the amount of iterations the user wished to generate statistics
+     * for.
+     *
      * @return <code>int</code> iterations
      */
     public int getIterations() {
@@ -91,7 +105,8 @@ public class Statistics {
     }
 
     /**
-     * returna the generation of the board that was used to crate the instance.
+     * Returns the first generation of data generation.
+     *
      * @return <code>int</code> the generation
      */
     public int getFirstGeneration() {
@@ -128,19 +143,20 @@ public class Statistics {
     }
 
     /**
-     *  This method is responsible for generating all the data for the <code>XYChart</code>. It is structured in way that prevents 
-     * iteration of the board more than once and will therefore look dirty, but it doesn't mind because it is secretly very naughty.
-     * 
-     * <strong>It uses many helper methods to perform it's computation. Some of these are:</strong>
-     * 
-     * <code>getLivingCells()</code>, 
-     * <code>getPopulationChange()</code>, 
-     * <code>getLivingCells()</code>, 
-     * <code>convertBoardToFloat()</code>, 
-     * <code>getLivingCells()</code>, 
-     * <code>getSimilairtyMeasure()</code>, 
-     * 
-     * @return <code>XYChart.Series[]</code> an array with 3 series containing all the data necessary for populating an <code>XYChart</code>
+     * This method is responsible for generating all the data for the
+     * <code>XYChart</code>. It is structured in way that prevents iteration of
+     * the board more than once and will therefore look dirty, but it doesn't
+     * mind because it is secretly very naughty.
+     *
+     * <strong>It uses many helper methods to perform it's computation. Some of
+     * these are:</strong>
+     *
+     * <code>getPopulationChange()</code>,
+     * <code>convertBoardToFloat()</code>,
+     * <code>getSimilairtyMeasure()</code>,
+     *
+     * @return <code>XYChart.Series[]</code> an array with 3 series containing
+     * all the data necessary for populating an <code>XYChart</code>
      */
     public XYChart.Series[] getStatistics() {
         //Define series to be returned
@@ -175,7 +191,7 @@ public class Statistics {
         averageLivingCells = averageLivingCells / iterations;
         averageDeadCells = averageDeadCells / iterations;
         System.out.println("Average living: " + averageLivingCells + " average dead" + averageDeadCells);
-        //Populate similarity measure
+        //Populate similarity measure series
         int generationCount = firstGeneration + 1;
         while (generationCount <= lastGeneration) {
             similiarityMeasure.getData().add(getSimilarityMeasure(generationCount, floatBoards));
@@ -189,16 +205,22 @@ public class Statistics {
         series[2] = similiarityMeasure;
         return series;
     }
-/**
- * returns the generation count and living cells of the current generation.
- * @return <code>XYChart.Data</code> 
- */
+
+    /**
+     * returns the generation count and living cells of the current generation.
+     *
+     * @return <code>XYChart.Data</code>
+     */
     private XYChart.Data getLivingCells() {
         return new XYChart.Data(b.getGenerationCount(), b.getLivingCellCount());
     }
+
     /**
-     * Returns the poplutaion difference between the current generation and the previous one.
-     * @param prevPopulation <code>int</code> containt the total population of living cells to the previous generation.
+     * Returns the population difference between the current generation and the
+     * previous one.
+     *
+     * @param prevPopulation <code>int</code> containt the total population of
+     * living cells to the previous generation.
      * @return <int> population difference.
      */
     private int getPopulationChange(int prevPopulation) {
@@ -208,8 +230,9 @@ public class Statistics {
 
     /**
      *
-     * @param currentGeneration <code>int</code> the generation that is going to be converted
-     * @return <code>BoardDynamic</code> as a <code>float</code> 
+     * @param currentGeneration <code>int</code> the generation that is going to
+     * be converted
+     * @return <code>BoardDynamic</code> as a <code>float</code>
      */
     private float convertBoardToFloat(int currentGeneration) {
         float a = 0.5f, be = 0.85f, y = 0.25f;
@@ -223,10 +246,12 @@ public class Statistics {
     }
 
     /**
-     * Finds the highest similarity for a generation and converts that number to an <code>int</code>.
+     * Finds the highest similarity for a generation and converts that number to
+     * an <code>int</code>.
      *
      * @param generation
-     * @param floatBoards <code>ArrayList&lt;ArrayList&lt;String&gt;&gt;</code> containing the geometric value of all the boards that shall be compared. 
+     * @param floatBoards <code>ArrayList&lt;ArrayList&lt;String&gt;&gt;</code>
+     * containing the geometric value of all the boards that shall be compared.
      * @return <code>int</code> the most similar generation
      */
     private XYChart.Data getSimilarityMeasure(int generation, HashMap<Integer, Float> floatBoards) {
@@ -251,13 +276,13 @@ public class Statistics {
 
     /**
      * Converts a float to integer
-     * @param highestFloat <code>float</code> float to be converted
-     * @return <code>int</code> similarity value 
+     *
      */
-    public int getSimilairtyFromFloat (float highestFloat){
+    private int getSimilairtyFromFloat(float highestFloat) {
         int similairty = (int) Math.floor((double) highestFloat * 100);
         return similairty;
     }
+
     /**
      * finds the most similar generation of a specific generation.
      *
@@ -288,7 +313,7 @@ public class Statistics {
      * @param generation <code>int</code> generation of the desired board
      * @return <code>BoardDynamic</code> reference to the desired board.
      */
-    public BoardDynamic getSelectedIteration(int generation) {
+    public BoardDynamic getSelectedGeneration(int generation) {
         return generations.get(generation);
     }
 }

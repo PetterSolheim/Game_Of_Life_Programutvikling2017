@@ -96,13 +96,14 @@ public class StatisticsWindowController {
         }
     }
 
-    /*
-     * This method is called every time the value changes in the two ComboBoxes used to change the canvas'
+    /**
+     * This method is called every time the value changes in the two ComboBoxes
+     * and changes the canvas based on the value of the ComboBox
      */
     private void showSelection(ComboBox selection, GameCanvas c) {
         Object o = selection.getValue();
         int i = Integer.parseInt(o.toString());
-        c.drawBoard(s.getSelectedIteration(i).getBoard());
+        c.drawBoard(s.getSelectedGeneration(i).getBoard());
     }
 
     /*
@@ -112,10 +113,10 @@ public class StatisticsWindowController {
     private void setInitialCanvasGeneration() {
         Object o = leftCanvasComboBox.getValue();
         int i = Integer.parseInt(o.toString());
-        leftCanvas.drawBoard(s.getSelectedIteration(i).getBoard());
+        leftCanvas.drawBoard(s.getSelectedGeneration(i).getBoard());
         o = rightCanvasComboBox.getValue();
         i = Integer.parseInt(o.toString());
-        rightCanvas.drawBoard(s.getSelectedIteration(i).getBoard());
+        rightCanvas.drawBoard(s.getSelectedGeneration(i).getBoard());
     }
 
     /*
@@ -221,8 +222,8 @@ public class StatisticsWindowController {
     }
 
     /**
-     * Used in MainWindowController to store a reference of the active board that
-     * is later used to generate data.
+     * Used in MainWindowController to store a reference of the active board
+     * that is later used to generate data.
      */
     public void setBoard(BoardDynamic b) {
         this.b = b;

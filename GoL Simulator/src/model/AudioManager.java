@@ -15,10 +15,11 @@ import view.DialogBoxes;
 /**
  * This class is responsible for handling everything related to music playback.
  * A reference of type Clip is created in the constructor to ensure that only
- * one clip is played at any given time. <br>A LineListener is also attached to this
- * clip, but it is important to note that it calls <code>playNextSong</code> in
- * AudioSettingsController once the clip finishes it's audio playback. <br>This is
- * done to ensure that the GUI always stay in sync with the audio.
+ * one clip is played at any given time. <br>A LineListener is also attached to
+ * this clip, but it is important to note that it calls
+ * <code>playNextSong</code> in AudioSettingsController once the clip finishes
+ * it's audio playback. <br>This is done to ensure that the GUI always stay in
+ * sync with the audio.
  */
 public class AudioManager {
 
@@ -51,7 +52,7 @@ public class AudioManager {
      * This method is used in AudioSettingsController to load in previously
      * loaded songs to the trackList.
      *
-     * @return <code>boolean</code> specifying if an instance is created.
+     * @return <code>boolean</code> true if an instance of AudioManager exists.
      */
     public static boolean isCreated() {
         if (instance == null) {
@@ -75,16 +76,16 @@ public class AudioManager {
     }
 
     /**
-     * Calls the <code>playNextSong</code>
-     *
-     * @see controller.AudioSettingsController#.playNextSong()
+     * Calls the playNextSong() in the controller. This method is triggered when
+     * Clip activeSong is finished playing. This means that the next song in the
+     * queue will be played.
      */
     private void playNextSong() {
         controller.playNextSong();
     }
 
     /**
-     * Sets the AudioSettingsController so <code>playNextSong</code> can be
+     * Sets the AudioSettingsController so <code>playNextSong()</code> can be
      * called.
      *
      * @param controller
@@ -94,9 +95,9 @@ public class AudioManager {
     }
 
     /**
-     * Determines the new volume, by adjusting the gain, based on user input.
-     *
-     * @param volume <code>float</code> desired volume.
+     * Determines the new volume, by adjusting the gain, based on desired volume.
+     * The new volume is relative to the system volume.
+     * @param volume float desired volume, ranging from 0 - 100.
      */
     public void volume(float volume) {
         if (activeSong.isOpen()) {
@@ -106,14 +107,14 @@ public class AudioManager {
     }
 
     /**
-     * Helper method used to convert the gain level of <code>Clip</code> to
+     * Helper method used to convert the gain level of a Clip to
      * match the desired volume.
      *
-     * @param minGain <code>float</code> minimum possible gain of the Clip
+     * @param minGain float minimum possible gain of the Clip
      * object.
-     * @param maxGain<code>float</code> maximum possible gain of the Clip
+     * @param maxGain float maximum possible gain of the Clip
      * object.
-     * @param desiredVolume <code>float</code> desired volume.
+     * @param desiredVolume float desired volume.
      * @return
      */
     private float convertGainToVolume(float minGain, float maxGain, float desiredVolume) {
@@ -124,8 +125,8 @@ public class AudioManager {
     }
 
     /**
-     *
-     * @param f
+     * Stores the path to the selected File in an ArrayList so it can be reused later.
+     * @param f the <code>File</code> to be stored.
      */
     public void addAbsolutePath(File f) {
         absolutePathForLoadedSongs.add(f.getAbsolutePath());
@@ -141,7 +142,7 @@ public class AudioManager {
     }
 
     /**
-     *
+     *  Loads the desired 
      * @param songName <code>String</code> name of the song
      * @throws UnsupportedAudioFileException if the file is corrupted or not
      * supported
@@ -195,15 +196,16 @@ public class AudioManager {
     /**
      * Get a reference to <code>activeSong</code>
      *
-     * @return <code>Clip</code>a reference to <code>activeSong</code> that is responsible for playing music.
+     * @return <code>Clip</code>a reference to <code>activeSong</code> that is
+     * responsible for playing music.
      */
     public Clip getActiveSong() {
         return activeSong;
     }
 
     /**
-     * Toggles the playstate of <code>activeSong</code>
-     * It can either be active, engaging in I/O activity, or not.
+     * Toggles the playstate of <code>activeSong</code> It can either be active,
+     * engaging in I/O activity, or not.
      */
     public void playPauseMusicPlayer() {
         if (activeSong.isActive()) {

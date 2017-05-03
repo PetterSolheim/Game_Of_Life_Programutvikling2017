@@ -41,14 +41,6 @@ public class AudioManagerTest {
         instance = AudioManager.getSingelton();
     }
 
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {;
-    }
-
     @After
     public void tearDown() {
         instance.getAllLoadedSongs().clear();
@@ -168,7 +160,7 @@ public class AudioManagerTest {
             //assert
             assertTrue(instance.getActiveSong().isActive());
         } catch (UnsupportedAudioFileException ex) {
-            Logger.getLogger(AudioManagerTest.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
     }
 
@@ -186,7 +178,7 @@ public class AudioManagerTest {
             //assert
             assertTrue(instance.getActiveSong().getFramePosition() < 1);
         } catch (UnsupportedAudioFileException ex) {
-            Logger.getLogger(AudioManagerTest.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
 
     }
@@ -213,7 +205,7 @@ public class AudioManagerTest {
             //assert
             assertNotNull(clip);
         } catch (UnsupportedAudioFileException ex) {
-            Logger.getLogger(AudioManagerTest.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
     }
 
@@ -231,7 +223,7 @@ public class AudioManagerTest {
             //assert
             assertFalse(instance.getActiveSong().isActive());
         } catch (UnsupportedAudioFileException ex) {
-            Logger.getLogger(AudioManagerTest.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
     }
 
@@ -249,7 +241,7 @@ public class AudioManagerTest {
             //asert
             assertFalse(instance.getActiveSong().isOpen());
         } catch (UnsupportedAudioFileException ex) {
-            Logger.getLogger(AudioManagerTest.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
     }
 

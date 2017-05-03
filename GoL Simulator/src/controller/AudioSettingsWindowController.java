@@ -114,11 +114,10 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     /**
-     * Sets the next item in the <code>trackList</code> as active, triggering
+     * Sets the next item in the <code>ListView</code> as active, triggering
      * it's eventListener. Calls <code>resetPlayList</code> if it is at the last
      * index.
      *
-     * @see #resetPlayList
      */
     @FXML
     public void playNextSong() {
@@ -139,8 +138,8 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     /**
-     * Sets the previous item in trackList as active on double
-     * click. On single click it calls resetSong()
+     * Sets the previous item in trackList as active on double click. On single
+     * click it calls resetSong()
      *
      * @see model.AudioManager#resetSong
      */
@@ -207,9 +206,9 @@ public class AudioSettingsWindowController implements Initializable {
 
     /**
      * Opens a FileChooser and passes the selected items to the AudioManager.
-     * This class also calls the method updateSongList which refreshes the trackList
-     * checkIfSongIsLoaded is also used here.
-     *
+     * This class also calls the method updateSongList which refreshes the
+     * trackList checkIfSongIsLoaded is also called, displaying a dialog box if
+     * the song is loaded.
      */
     @FXML
     private void getAudioFile() {
@@ -236,8 +235,8 @@ public class AudioSettingsWindowController implements Initializable {
 
     /**
      * Loads previously loaded songs back into the track list by using the
-     * absolute paths stored in the AudioManager
-     *
+     * absolute paths stored in the AudioManager. This method is called in
+     * Initialize if an instance of AudioManager exists
      */
     private void reloadSongList(ArrayList<String> absolutePaths) {
         for (int i = 0; i < absolutePaths.size(); i++) {
@@ -270,7 +269,8 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     /**
-     * This method is called when the selected item in the trackList changes.
+     * This method is called when the selected item in the trackList changes. It
+     * calls loadSong() from AudioManager that starts the audio playback.
      */
     private void playSong() {
         try {
@@ -284,9 +284,9 @@ public class AudioSettingsWindowController implements Initializable {
 
     /**
      *
-     * @param newSong
+     * @param newSong the name of the song to be displayed in ListView trackList.
      */
-    public void updateSongList(String newSong) {
+    private void updateSongList(String newSong) {
         trackList.setItems(songNames);
         trackList.getSelectionModel().select(newSong);
     }
