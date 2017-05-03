@@ -1,18 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project-private xmlns="http://www.netbeans.org/ns/project-private/1">
-    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
+    <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="1">
+        <file>
+            <url>src/model/FileImporter.java</url>
+            <bookmark id="1">
+                <name/>
+                <line>431</line>
+                <key/>
+            </bookmark>
+        </file>
+    </editor-bookmarks>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/model/BoardDynamic.java</file>
             <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/model/FileImporter.java</file>
+            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/view/package-info.java</file>
+            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/controller/Timer.java</file>
+            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/test/model/RulesTest.java</file>
+            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/model/BoardDynamic.java</file>
             <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/view/MainWindow.fxml</file>
             <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/view/GameCanvas.java</file>
             <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/controller/MainWindowController.java</file>
-            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/test/model/BoardTest.java</file>
-            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/test/model/BoardDynamicTest.java</file>
-            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/model/AudioManager.java</file>
+            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/model/Statistics.java</file>
+            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/controller/package-info.java</file>
+            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/model/package-info.java</file>
             <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/view/DialogBoxes.java</file>
-            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/model/BoardSound.java</file>
+            <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/src/model/Rules.java</file>
             <file>file:/C:/Users/aleks/Documents/NetBeansProjects/Programutvikling2/GoL%20Simulator/test/model/FileImporterTest.java</file>
         </group>
     </open-files>

@@ -6,7 +6,7 @@ import java.util.Arrays;
 /**
  * <p>Game rules are stored and altered through this class. Class is a singleton,
  * and the constructor is therefore private. A reference to the object can be
- * acquired using the static {@link getInstance()} method. The following rules 
+ * acquired using the static {@link #getInstance() } method. The following rules 
  * are currently supported;</p>
  * <ul>
  * <li><b>survival rules</b>, defines which living cells should survive.</li>

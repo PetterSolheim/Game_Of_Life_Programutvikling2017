@@ -51,7 +51,8 @@ public class FileImporter {
      * its metadata. Values in {@link model.Rules} are also set according to the
      * rules defined in the pattern file.
      *
-     * @throws IOException
+     * @throws IOException which where thrown by its helper methods during
+     * file reading.
      * @throws PatternFormatException if FileImporter was unable to parse the
      * given file.
      */
@@ -70,7 +71,7 @@ public class FileImporter {
      * @param url a <code>String</code> specifying the URL to the pattern file.
      * @return a {@link model.BoardDynamic} object containing the pattern and
      * its metadata.
-     * @throws IOException
+     * @throws IOException thrown by its helper methods.
      * @throws PatternFormatException if FileImporter was unable to parse the
      * given file.
      */

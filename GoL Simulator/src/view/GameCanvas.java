@@ -131,12 +131,51 @@ public class GameCanvas extends Canvas {
         }
     }
 
-    public void drawSpecificCells(ArrayList<ArrayList<Byte>> changes, ArrayList<ArrayList<Byte>> board) {
+    /**
+     * Draws board on canvas where board is passed as a <code>byte[][]</code>
+     * array.
+     *
+     * @param board the board to be drawn to canvas.
+     * @deprecated due to the fact that the Board class has been deprecated in
+     * favor of the BoardDynamic class. Use BoardDynamic instead as the
+     * GameCanvas draw methods for BoardDynamic are much more optimized.
+     */
+    @Deprecated
+    public void drawBoard(byte[][] board) {
+        gc.setFill(backgroundColor);
+        gc.fillRect(0, 0, this.getWidth(), this.getHeight());
+
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[row].length; col++) {
+                double xPosition = Math.floor(xOffset + (col * (cellSize + spaceBetweenCells)));
+                double yPosition = Math.floor(yOffset + (row * (cellSize + spaceBetweenCells)));
+                if (board[row][col] == 1) {
+                    gc.setFill(livingCellColor);
+                } else {
+                    gc.setFill(deadCellColor);
+                }
+                gc.fillRect(xPosition, yPosition, cellSize, cellSize);
+            }
+        }
+    }
+
+    /**
+     * Takes two <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>. One
+     * representing the board in its current state, and the other representing
+     * which of that boards cells you wish to draw. 1 represents cells you wish
+     * drawn, 0 cells that are not to be drawn. This allows faster draw
+     * operations, as one doesn't need to redraw cells that have not changed
+     * their state.
+     *
+     * @param toDraw the cells you want drawn.
+     * @param board the pattern containing the actual cells.
+     */
+    public void drawSpecificCells(ArrayList<ArrayList<Byte>> toDraw, ArrayList<ArrayList<Byte>> board) {
         determineVisibleConstraints(board);
         for (int row = firstVisibleRow; row <= lastVisibleRow; row++) {
             for (int col = firstVisibleCol; col <= lastVisibleCol; col++) {
                 // cells that have changed are symbolised by the number 1.
-                if (changes.get(row).get(col) == 1) {
+                if (toDraw.get(row).get(col) == 1) {
                     drawCell(board, row, col);
                 }
             }
