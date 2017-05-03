@@ -422,7 +422,6 @@ public class MainWindowController implements Initializable {
             try {
                 board = fileImporter.readGameBoardFromDisk(file);
                 centerAndDrawBoard();
-                canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
             } catch (FileNotFoundException e) {
                 DialogBoxes.ioException("No file found at: " + e.getMessage());
@@ -451,7 +450,6 @@ public class MainWindowController implements Initializable {
             try {
                 board = fileImporter.readGameBoardFromUrl(url.get());
                 centerAndDrawBoard();
-                canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
             } catch (MalformedURLException e) {
                 DialogBoxes.ioException("Given String is not a valid URL: " + e.getMessage());
@@ -544,7 +542,7 @@ public class MainWindowController implements Initializable {
             canvas.drawBoard(board.getBoard());
         } else {
             // only draw cells that changed during last generational shift.
-            canvas.drawSpecificCells(board.getChangedCells());
+            canvas.drawSpecificCells(board.getChangedCells(), board.getBoard());
         }
         updateLivingCellCountLabel();
         updateGenerationCountLabel();

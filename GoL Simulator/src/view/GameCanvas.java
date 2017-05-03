@@ -15,6 +15,12 @@ public class GameCanvas extends Canvas {
     private int spaceBetweenCells = 2; // the border.
     private double xOffset = 0;
     private double yOffset = 0;
+
+    private int firstVisibleRow;
+    private int lastVisibleRow;
+    private int firstVisibleCol;
+    private int lastVisibleCol;
+
     private Color backgroundColor; // also visible as the border.
     private Color livingCellColor;
     private Color deadCellColor;
@@ -116,21 +122,54 @@ public class GameCanvas extends Canvas {
         gc.setFill(backgroundColor);
         gc.fillRect(0, 0, this.getWidth(), this.getHeight());
 
-        for (int row = 0; row < board.size(); row++) {
-            for (int col = 0; col < board.get(0).size(); col++) {
+        determineVisibleConstraints(board);
+
+        for (int row = firstVisibleRow; row <= lastVisibleRow; row++) {
+            for (int col = firstVisibleCol; col <= lastVisibleCol; col++) {
                 drawCell(board, row, col);
             }
         }
     }
 
-    public void drawSpecificCells(ArrayList<ArrayList<Byte>> board) {
-        for (int row = 0; row < board.size(); row++) {
-            for (int col = 0; col < board.get(0).size(); col++) {
+    public void drawSpecificCells(ArrayList<ArrayList<Byte>> changes, ArrayList<ArrayList<Byte>> board) {
+        determineVisibleConstraints(board);
+        for (int row = firstVisibleRow; row <= lastVisibleRow; row++) {
+            for (int col = firstVisibleCol; col <= lastVisibleCol; col++) {
                 // cells that have changed are symbolised by the number 1.
-                if (board.get(row).get(col) == 1) {
+                if (changes.get(row).get(col) == 1) {
                     drawCell(board, row, col);
                 }
             }
+        }
+    }
+
+    private void determineVisibleConstraints(ArrayList<ArrayList<Byte>> board) {
+        // determine the given boards first visible row
+        firstVisibleRow = (int) ((yOffset * -1) / (cellSize + spaceBetweenCells));
+        if (firstVisibleRow < 0) {
+            firstVisibleRow = 0;
+        }
+
+        // determine the given boards last visible row
+        lastVisibleRow = (int) ((this.getHeight() - yOffset) / (cellSize + spaceBetweenCells) + 2);
+        if (lastVisibleRow >= board.size()) {
+            lastVisibleRow = board.size() - 1;
+        } else if (lastVisibleRow < 0) {
+            lastVisibleRow = 0;
+        }
+
+        // determine the given boards first visible column
+        firstVisibleCol = (int) ((xOffset * -1) / (cellSize + spaceBetweenCells));
+        if (firstVisibleCol < 0) {
+            firstVisibleCol = 0;
+        }
+
+        // determine the given boards last visible column
+        lastVisibleCol = (int) ((this.getWidth() - xOffset) / (cellSize + spaceBetweenCells) + 2);
+        if (lastVisibleCol >= board.get(0).size()) {
+            lastVisibleCol = board.get(0).size() - 1;
+        } else if (lastVisibleCol < 0) {
+            lastVisibleCol = 0;
         }
     }
 
@@ -151,16 +190,12 @@ public class GameCanvas extends Canvas {
         double xPosition = Math.floor(xOffset + (col * (cellSize + spaceBetweenCells)));
         double yPosition = Math.floor(yOffset + (row * (cellSize + spaceBetweenCells)));
 
-        // determin if the given cells position is within the canvas.
-        // If it is, draw that cell. If not, do nothing.
-        if (xPosition < this.getWidth() && yPosition < this.getHeight()) {
-            if (b.get(row).get(col) == 1) {
-                gc.setFill(livingCellColor);
-            } else {
-                gc.setFill(deadCellColor);
-            }
-            gc.fillRect(xPosition, yPosition, cellSize, cellSize);
+        if (b.get(row).get(col) == 1) {
+            gc.setFill(livingCellColor);
+        } else {
+            gc.setFill(deadCellColor);
         }
+        gc.fillRect(xPosition, yPosition, cellSize, cellSize);
     }
 
     /**
