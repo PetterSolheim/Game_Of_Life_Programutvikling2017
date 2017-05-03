@@ -30,11 +30,6 @@ public class BoardDynamic {
     
     private ArrayList<ArrayList<Byte>> nextGeneration;
 
-    /**
-     * Used to reset the generation count when the board is reset.
-     */
-    private int oldGenerationCount;
-
     private int generationCount = 0;
 
     protected int livingCells = 0;
@@ -45,6 +40,7 @@ public class BoardDynamic {
 
     private Rules rules = Rules.getInstance();
     
+    private boolean expandedNorth, expandedWest, boardExpanded; //
     private String boardAuthor = "";
     private String boardName = "";
     private String boardComment = "";
@@ -97,7 +93,8 @@ public class BoardDynamic {
     }
 
     /**
-     * Set the metadata for the board. Three Strings expected.
+     * Set the metadata for the board. Three Strings expected. Pass an empty
+     * string if no value is to be set for one of the three pieces of metadata.
      *
      * @param author a <code>String</code> specifying the author of the board.
      * @param name a <code>String</code> specifying the name of the board.
@@ -462,9 +459,7 @@ public class BoardDynamic {
      *
      */
     private synchronized void addToLivingCells(int i) {
-
         livingCells += i;
-
     }
 
     /**
@@ -473,9 +468,13 @@ public class BoardDynamic {
      * borders.
      */
     private void expandBoardIfNeeded() {
-        boolean boardExpanded = false;
+        expandedNorth = false;
+        expandedWest = false;
+        boardExpanded = false;
+        
         if (shouldExpandNorth()) {
             expandNorth();
+            expandedNorth = true;
             boardExpanded = true;
         }
 
@@ -491,6 +490,9 @@ public class BoardDynamic {
 
         if (shouldExpandWest()) {
             expandWest();
+            System.out.println("Expanding");
+            expandedWest = true;
+            System.out.println("Expanded: " + expandedWest);
             boardExpanded = true;
         }
         if (boardExpanded) {
@@ -503,6 +505,30 @@ public class BoardDynamic {
                 }
             }
         }
+    }
+    
+    /**
+     * Check if the board expanded on the north side. Can be used to determine
+     * if one should alter the offset used when drawing the board.
+     * 
+     * @return a <code>boolean</code> specifying if the board expanded north.
+     */
+    public boolean expandedNorth() {
+        return expandedNorth;
+    }
+    
+    /**
+     * Check if the board expanded on the west side. Can be used to determine
+     * if one should alter the offset used when drawing the board.
+     * 
+     * @return a <code>boolean</code> specifying if the board expanded west.
+     */
+    public boolean expandedWest() {
+        return expandedWest;
+    }
+    
+    public boolean didExpand() {
+        return boardExpanded;
     }
 
     /**
@@ -538,12 +564,12 @@ public class BoardDynamic {
     /**
      * Check the game board to see if it meets requirements for expansion on the
      * right side of the board. Requirement for this is that there is a living
-     * cell on the right most column of the game board.
+     * cell on the left most column of the game board.
      *
      * @return a <code>boolean</code> specifying weather the board meets the
      * requirements for expansion.
      */
-    private boolean shouldExpandEast() {
+    private boolean shouldExpandWest() {
         int numberOfLiveCells = 0;
         for (int i = 0; i < currentBoard.size(); i++) {
             numberOfLiveCells += currentBoard.get(i).get(0);
@@ -556,10 +582,10 @@ public class BoardDynamic {
     }
 
     /**
-     * Expand the board with a column of dead cells on the right most side of
+     * Expand the board with a column of dead cells on the left most side of
      * the board.
      */
-    private void expandEast() {
+    private void expandWest() {
         for (int i = 0; i < currentBoard.size(); i++) {
             currentBoard.get(i).add(0, DEAD);
         }
@@ -603,7 +629,7 @@ public class BoardDynamic {
      * @return a <code>boolean</code> specifying weather the board meets the
      * requirements for expansion.
      */
-    private boolean shouldExpandWest() {
+    private boolean shouldExpandEast() {
         int numberOfLiveCells = 0;
         for (int i = 0; i < currentBoard.size(); i++) {
             numberOfLiveCells += currentBoard.get(i).get(currentBoard.get(i).size() - 1);
@@ -619,7 +645,7 @@ public class BoardDynamic {
      * Expand the board with a column of dead cells on the right side of the
      * board.
      */
-    private void expandWest() {
+    private void expandEast() {
         for (int i = 0; i < currentBoard.size(); i++) {
             currentBoard.get(i).add(DEAD);
         }
@@ -711,7 +737,7 @@ public class BoardDynamic {
      */
     public void resetBoard() {
         currentBoard = duplicateBoard(originalBoard);
-        generationCount = oldGenerationCount;
+        generationCount = 0;
         countLivingCells();
     }
 
