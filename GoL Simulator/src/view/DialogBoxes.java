@@ -17,7 +17,7 @@ public class DialogBoxes {
      */
     public static void ioException(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText("File not found.");
+        alert.setHeaderText("Error reading file!");
         alert.setContentText(message);
         alert.showAndWait();
     }
@@ -29,7 +29,7 @@ public class DialogBoxes {
      */
     public static void patternFormatError(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setHeaderText("Error reading file");
+        alert.setHeaderText("Error parsing file!");
         alert.setContentText(message);
         alert.showAndWait();
     }

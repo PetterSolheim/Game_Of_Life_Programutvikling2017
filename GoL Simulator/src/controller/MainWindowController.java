@@ -428,7 +428,7 @@ public class MainWindowController implements Initializable {
             } catch (IOException e) {
                 DialogBoxes.ioException("There was a problem reading the file: " + e.getMessage());
             } catch (PatternFormatException e) {
-                DialogBoxes.patternFormatError("There was an error parsing the file: " + e.getMessage());
+                DialogBoxes.patternFormatError(e.getMessage());
             }
         }
     }
