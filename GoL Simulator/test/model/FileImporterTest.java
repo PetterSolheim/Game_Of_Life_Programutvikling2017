@@ -4,14 +4,9 @@ import java.util.ArrayList;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.nio.file.Path;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-/**
- *
- * @author aleks
- */
 public class FileImporterTest {
 
     Rules rules = Rules.getInstance();
