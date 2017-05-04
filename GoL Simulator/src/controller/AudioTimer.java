@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package controller;
 
 import javafx.animation.AnimationTimer;
@@ -10,7 +6,6 @@ import model.AudioManager;
 
 /**
  *
- * @author Even
  */
 public class AudioTimer extends AnimationTimer {
     
@@ -30,16 +25,35 @@ public class AudioTimer extends AnimationTimer {
             cellAudioTimer = currentTime + timeBetweenCellAudio;
         }
     } 
+
+    /**
+     *
+     * @param controller
+     */
     public AudioTimer (AudioSettingsWindowController controller){
         this.controller = controller;
     }
 
+    /**
+     *
+     * @param timeInNanoSeconds
+     */
     public void setFps(long timeInNanoSeconds) {
         this.timeBetweenGeneration = timeInNanoSeconds;
     }
+
+    /**
+     *
+     * @param cells
+     */
     public void setTimeBetweenCellAudioTimer (int cells){
         this.timeBetweenCellAudio = timeBetweenGeneration / cells;
     }
+
+    /**
+     *
+     * @return
+     */
     public long getTimeBetweenCellAudioTimer (){
         return this.timeBetweenCellAudio;
     }

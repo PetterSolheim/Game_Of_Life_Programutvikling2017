@@ -5,12 +5,14 @@ import java.util.HashMap;
 import javafx.scene.chart.XYChart;
 
 /**
- * This class is used to generate various statistics
- *
+ * This class is used to generate various statistics. The method that starts the
+ * generation of data is getStatistics.
  */
 public class Statistics {
 
-    
+    /**
+     * This variable is used to reset the status of dynamic board usage.
+     */
     private boolean wasDynamic;
     /**
      * A deep copy of the active board.
@@ -66,7 +68,7 @@ public class Statistics {
         floatBoards = new HashMap<Integer, Float>();
         generations = new HashMap<Integer, BoardDynamic>();
         setLastGeneration();
-        if(Rules.getInstance().isDynamic()){
+        if (Rules.getInstance().isDynamic()) {
             Rules.getInstance().setDynamic(false);
             wasDynamic = true;
         }
@@ -210,7 +212,7 @@ public class Statistics {
         series[0] = livingCells;
         series[1] = popluationChange;
         series[2] = similiarityMeasure;
-        if(wasDynamic){
+        if (wasDynamic) {
             Rules.getInstance().setDynamic(true);
         }
         return series;
