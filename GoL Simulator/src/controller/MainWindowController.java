@@ -589,7 +589,6 @@ public class MainWindowController implements Initializable {
             Scene scene = new Scene(root);
             statistics.setScene(scene);
             statistics.setTitle("Game of Life Simulator - Statistics");
-            statistics.initModality(Modality.APPLICATION_MODAL);
             statistics.show();
         } catch (IOException exception) {
             DialogBoxes.ioException(exception.getMessage());
