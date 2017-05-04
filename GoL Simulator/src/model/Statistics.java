@@ -10,6 +10,8 @@ import javafx.scene.chart.XYChart;
  */
 public class Statistics {
 
+    
+    private boolean wasDynamic;
     /**
      * A deep copy of the active board.
      */
@@ -64,6 +66,10 @@ public class Statistics {
         floatBoards = new HashMap<Integer, Float>();
         generations = new HashMap<Integer, BoardDynamic>();
         setLastGeneration();
+        if(Rules.getInstance().isDynamic()){
+            Rules.getInstance().setDynamic(false);
+            wasDynamic = true;
+        }
     }
 
     /*
@@ -204,6 +210,9 @@ public class Statistics {
         series[0] = livingCells;
         series[1] = popluationChange;
         series[2] = similiarityMeasure;
+        if(wasDynamic){
+            Rules.getInstance().setDynamic(true);
+        }
         return series;
     }
 

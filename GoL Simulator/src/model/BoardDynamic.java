@@ -284,24 +284,57 @@ public class BoardDynamic {
     }
 
     public float getIndexSum() {
-        int divider = (int) rows.size();
-        ArrayList<Integer> rowsReversed = new ArrayList<Integer>();
-        rowsReversed.addAll(rows);
-        Collections.reverse(rowsReversed);
+        int divider = (int) ((float) rows.size() * 0.5f);
+        System.out.println("Divider : " + divider);
         float sum = 0;
+        boolean middleFactor = true;
         for (int i = 0; i < rows.size(); i++) {
             float row, col;
             row = rows.get(i);
             col = cols.get(i);
-            if (i == 0 || i == rows.size() - 1) {
-                if(i == 0){
-                    sum += (row * col) + row;
+            /**
+            if (i < divider) {
+                sum += (row * col) + row;
+                System.out.println("Addition first: " + (row + col) + row);
+            } else if (i > rows.size() - 1 - divider) {
+                sum += (row * col) + col;
+                System.out.println("Addition second: " + (row + col) + col);
+            } else {
+                if (i % 2 == 0) {
+                    if (middleFactor == true) {
+                        System.out.println("middle true");
+                        sum += (row + col) + row;
+                        middleFactor = false;
+                    } else {
+                        System.out.println("Middlefalse");
+                        sum += (row + col) + col;
+                        middleFactor = true;
+                    }
                 } else {
-                    sum += (row * col) + col;
+                    System.out.println("normal sum");
+                    sum += row + col;
+                }
+            }
+            */
+            if(i % 2 == 0){
+                if(middleFactor){
+                sum += (row + col) * col;
+                middleFactor = false;
+                }else {
+                    sum += (row + col) * row;
+                    middleFactor = true;
                 }
             } else {
                 sum += row + col;
             }
+        
+        /**
+            if(i < divider){
+                sum += (row * col) + col;
+            } else {
+                sum += (row * col) + row;
+            }
+            *        * */
         }
         rows.clear();
         cols.clear();
@@ -356,7 +389,7 @@ public class BoardDynamic {
                     changedCells.get(row).set(col, CHANGED);
                     livingCells--;
                 } else if (currentBoard.get(row).get(col) == 1 && rules.getSurviveRules().contains(nrOfNeighbours)) {
-                    addToIndexSum2(row, col);
+                    addToIndexSum2(row + 1, col + 1);
                     if (firstLivingCell == false) {
                         addToIndexSum((row * col) + col);
                         firstLivingCell = true;
@@ -366,7 +399,8 @@ public class BoardDynamic {
                         addToIndexSum(col + row);
                     }
                 } else if (currentBoard.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
-                    addToIndexSum2(row, col);
+                    addToIndexSum2(row + 1, col + 1);
+                    System.out.println("vanlig next generation");
                     nextGeneration.get(row).set(col, ALLIVE);
                     changedCells.get(row).set(col, CHANGED);
                     livingCells++;
@@ -483,10 +517,7 @@ public class BoardDynamic {
                     nextGeneration.get(row).set(col, ALLIVE);
                     changedCells.get(row).set(col, CHANGED);
                     addToLivingCells(+1);
-                    addToIndexSum2(row, col);
-                } else if (currentBoard.get(row).get(col) == 1) {
-                    addToIndexSum2(row, col);
-                }
+                } 
             }
         }
     }
