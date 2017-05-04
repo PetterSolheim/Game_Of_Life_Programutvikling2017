@@ -38,7 +38,6 @@ public class BoardDynamic {
     protected final byte DEAD = 0;
     protected final byte ALLIVE = 1;
     protected final byte CHANGED = 1;
-    private float indexSum;
 
     private Rules rules = Rules.getInstance();
 
@@ -279,7 +278,6 @@ public class BoardDynamic {
         b.originalBoard = duplicateBoard(this.originalBoard);
         b.generationCount = this.generationCount;
         b.countLivingCells();
-        b.indexSum = 0;
         return b;
     }
 
@@ -315,7 +313,8 @@ public class BoardDynamic {
                     sum += row + col;
                 }
             }
-            */
+            
+            
             if(i % 2 == 0){
                 if(middleFactor){
                 sum += (row + col) * col;
@@ -328,13 +327,12 @@ public class BoardDynamic {
                 sum += row + col;
             }
         
-        /**
+        **/
             if(i < divider){
                 sum += (row * col) + col;
             } else {
                 sum += (row * col) + row;
             }
-            *        * */
         }
         rows.clear();
         cols.clear();
@@ -379,9 +377,7 @@ public class BoardDynamic {
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.
         nextGeneration = duplicateBoard(currentBoard);
-        boolean firstLivingCell = false;
-        int lastLivingCellRow = 0;
-        int lastLivingCellCol = 0;
+        
         // iterate through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
         for (int row = 0; row < nextGeneration.size(); row++) {
@@ -394,32 +390,15 @@ public class BoardDynamic {
                     livingCells--;
                 } else if (currentBoard.get(row).get(col) == 1 && rules.getSurviveRules().contains(nrOfNeighbours)) {
                     addToIndexSum2(row + 1, col + 1);
-                    if (firstLivingCell == false) {
-                        addToIndexSum((row * col) + col);
-                        firstLivingCell = true;
-                    } else {
-                        lastLivingCellRow = row;
-                        lastLivingCellCol = col;
-                        addToIndexSum(col + row);
-                    }
                 } else if (currentBoard.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
                     addToIndexSum2(row + 1, col + 1);
                     nextGeneration.get(row).set(col, ALLIVE);
                     changedCells.get(row).set(col, CHANGED);
                     livingCells++;
-                    if (firstLivingCell == false) {
-                        addToIndexSum((row * col) + col);
-                        firstLivingCell = true;
-                    } else {
-                        lastLivingCellRow = row;
-                        lastLivingCellCol = col;
-                        addToIndexSum(row + col);
-                    }
                 }
             }
         }
-        addToIndexSum(-(lastLivingCellRow + lastLivingCellCol));
-        addToIndexSum((lastLivingCellCol * lastLivingCellRow) + lastLivingCellRow);
+
         currentBoard = nextGeneration;
         generationCount++;
     }
@@ -545,10 +524,6 @@ public class BoardDynamic {
     private synchronized void addToIndexSum2(int row, int col) {
         rows.add(row);
         cols.add(col);
-    }
-
-    private synchronized void addToIndexSum(int i) {
-        indexSum += i;
     }
 
     /**
