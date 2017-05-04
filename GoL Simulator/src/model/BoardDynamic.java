@@ -29,12 +29,8 @@ public class BoardDynamic {
      */
     protected ArrayList<ArrayList<Byte>> originalBoard;
 
-    private ArrayList<ArrayList<Byte>> nextGeneration;
 
-    /**
-     * Used to reset the generation count when the board is reset.
-     */
-    private int oldGenerationCount;
+    private ArrayList<ArrayList<Byte>> nextGeneration;
 
     private int generationCount = 0;
 
@@ -45,6 +41,9 @@ public class BoardDynamic {
     private float indexSum;
 
     private Rules rules = Rules.getInstance();
+
+
+    private boolean expandedNorth, expandedWest, boardExpanded; //
 
     private String boardAuthor = "";
     private String boardName = "";
@@ -97,7 +96,8 @@ public class BoardDynamic {
     }
 
     /**
-     * Set the metadata for the board. Three Strings expected.
+     * Set the metadata for the board. Three Strings expected. Pass an empty
+     * string if no value is to be set for one of the three pieces of metadata.
      *
      * @param author a <code>String</code> specifying the author of the board.
      * @param name a <code>String</code> specifying the name of the board.
@@ -342,11 +342,11 @@ public class BoardDynamic {
     }
 
     /**
+     * Runs the non-threaded method nextGeneration() a specified number of
+     * times, and prints the time it took to complete.
      *
-     * Determines the time it takes to take a board to its next generation, and
-     *
-     * prints it to the screen.
-     *
+     * @param iterations an <code>int</code> specifying the number of iterations
+     * for the test.
      */
     public void nextGenerationPrintPerformance(int iterations) {
         long totaltime = 0;
@@ -422,8 +422,11 @@ public class BoardDynamic {
     }
 
     /**
-     * Determines the time it takes to take a board to its next generation using
-     * the thread optimized nextGenerationConcurrent().
+     * Runs the threaded method nextGenerationConcurrent() a specified number of
+     * times, and prints the time it took to complete.
+     *
+     * @param iterations an <code>int</code> specifying the number of iterations
+     * for the test.
      */
     public void nextGenerationConcurrentPrintPerformance(int iterations) {
         long totaltime = 0;
@@ -438,12 +441,8 @@ public class BoardDynamic {
     /**
      *
      * Iterates the current board to its next generation, playing by the rules
-     *
      * defined in the Rules class object. This method uses threads to improve
-     *
      * performance.
-     *
-     *
      *
      * @see model.Rules
      *
@@ -525,18 +524,13 @@ public class BoardDynamic {
     /**
      *
      * Allows for increasing of the number of living cells. Pass negative values
-     *
      * to decrease. Method is synchronized and therefore safe to threaded use.
-     *
-     *
      *
      * @param i
      *
      */
     private synchronized void addToLivingCells(int i) {
-
         livingCells += i;
-
     }
     private ArrayList<Integer> rows = new ArrayList<Integer>();
     private ArrayList<Integer> cols = new ArrayList<Integer>();
@@ -556,9 +550,13 @@ public class BoardDynamic {
      * borders.
      */
     private void expandBoardIfNeeded() {
-        boolean boardExpanded = false;
+        expandedNorth = false;
+        expandedWest = false;
+        boardExpanded = false;
+
         if (shouldExpandNorth()) {
             expandNorth();
+            expandedNorth = true;
             boardExpanded = true;
         }
 
@@ -574,6 +572,7 @@ public class BoardDynamic {
 
         if (shouldExpandWest()) {
             expandWest();
+            expandedWest = true;
             boardExpanded = true;
         }
         if (boardExpanded) {
@@ -586,6 +585,30 @@ public class BoardDynamic {
                 }
             }
         }
+    }
+
+    /**
+     * Check if the board expanded on the north side. Can be used to determine
+     * if one should alter the offset used when drawing the board.
+     *
+     * @return a <code>boolean</code> specifying if the board expanded north.
+     */
+    public boolean expandedNorth() {
+        return expandedNorth;
+    }
+
+    /**
+     * Check if the board expanded on the west side. Can be used to determine if
+     * one should alter the offset used when drawing the board.
+     *
+     * @return a <code>boolean</code> specifying if the board expanded west.
+     */
+    public boolean expandedWest() {
+        return expandedWest;
+    }
+
+    public boolean didExpand() {
+        return boardExpanded;
     }
 
     /**
@@ -621,12 +644,12 @@ public class BoardDynamic {
     /**
      * Check the game board to see if it meets requirements for expansion on the
      * right side of the board. Requirement for this is that there is a living
-     * cell on the right most column of the game board.
+     * cell on the left most column of the game board.
      *
      * @return a <code>boolean</code> specifying weather the board meets the
      * requirements for expansion.
      */
-    private boolean shouldExpandEast() {
+    private boolean shouldExpandWest() {
         int numberOfLiveCells = 0;
         for (int i = 0; i < currentBoard.size(); i++) {
             numberOfLiveCells += currentBoard.get(i).get(0);
@@ -639,10 +662,10 @@ public class BoardDynamic {
     }
 
     /**
-     * Expand the board with a column of dead cells on the right most side of
-     * the board.
+     * Expand the board with a column of dead cells on the left most side of the
+     * board.
      */
-    private void expandEast() {
+    private void expandWest() {
         for (int i = 0; i < currentBoard.size(); i++) {
             currentBoard.get(i).add(0, DEAD);
         }
@@ -686,7 +709,7 @@ public class BoardDynamic {
      * @return a <code>boolean</code> specifying weather the board meets the
      * requirements for expansion.
      */
-    private boolean shouldExpandWest() {
+    private boolean shouldExpandEast() {
         int numberOfLiveCells = 0;
         for (int i = 0; i < currentBoard.size(); i++) {
             numberOfLiveCells += currentBoard.get(i).get(currentBoard.get(i).size() - 1);
@@ -702,7 +725,7 @@ public class BoardDynamic {
      * Expand the board with a column of dead cells on the right side of the
      * board.
      */
-    private void expandWest() {
+    private void expandEast() {
         for (int i = 0; i < currentBoard.size(); i++) {
             currentBoard.get(i).add(DEAD);
         }
@@ -711,7 +734,7 @@ public class BoardDynamic {
     /**
      * Counts the number of living neighbour cells for a specified cell.
      *
-     * @param board the game board containing the cell to have neighbours its
+     * @param board the game board containing the cell to have its neighbours
      * counted.
      * @param row the row location of the cell to have its neighbours counted.
      * @param col the column location of the cell to have its neighbours
@@ -794,15 +817,16 @@ public class BoardDynamic {
      */
     public void resetBoard() {
         currentBoard = duplicateBoard(originalBoard);
-        generationCount = oldGenerationCount;
+        generationCount = 0;
         countLivingCells();
     }
 
     /**
-     * Creates an empty board with dimensions of the previously active board.
-     * Also sets the generation count and living cell count to 0.
+     * Replaces the current board with a new, empty board, of the same
+     * dimensions, effectively clearing it.
+     *
      */
-    public void deleteBoard() {
+    public void clearBoard() {
         generationCount = 0;
         livingCells = 0;
         currentBoard = createEmptyBoard(originalBoard.size(), originalBoard.get(0).size());
@@ -810,17 +834,18 @@ public class BoardDynamic {
     }
 
     /**
-     * Preserves the active board in the originalBoard variable so that the user
-     * can reset their board. This method is called if the user presses the play
-     * button while the timer is paused.
-     *
+     * Stores the current board in the originalBoard variable. This allows the
+     * current board to become the board the application resets to. Method is
+     * called if generationCount variable is 0 indicating this is the first
+     * board of the game.
      */
     public void preserveBoard() {
         originalBoard = duplicateBoard(currentBoard);
     }
 
     /**
-     * Gets a copy of the passed game board ArrayList.
+     * Gets a new copy of the passed game board ArrayList
+     * <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>.
      *
      * @param original the board that you want to copy.
      * @return a <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code> copy.
@@ -836,6 +861,14 @@ public class BoardDynamic {
         return boardCopy;
     }
 
+    /**
+     * Creates an <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>. where all
+     * values are set to 0.
+     *
+     * @param row the number of rows the list should have.
+     * @param col the number of columns the list should have.
+     * @return the finished <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>.
+     */
     private ArrayList<ArrayList<Byte>> createEmptyBoard(int row, int col) {
         ArrayList<ArrayList<Byte>> emptyBoard = new ArrayList<>();
         byte dead = 0;
@@ -848,6 +881,12 @@ public class BoardDynamic {
         return emptyBoard;
     }
 
+    /**
+     * Each row of the game board is concatenated into a single string.
+     * Primarily meant for testing purposes.
+     *
+     * @return a <code>String</code> representing the current board state.
+     */
     @Override
     public String toString() {
         StringBuilder returnValue = new StringBuilder();

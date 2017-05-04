@@ -114,9 +114,7 @@ public class MainWindowController implements Initializable {
             int yOffsetAdjust = ((oldValue - newValue) * board.getRows()) / 2;
             int xOffsetAdjust = ((oldValue - newValue) * board.getCols()) / 2;
             canvas.adjustOffset(xOffsetAdjust, yOffsetAdjust);
-
             canvas.drawBoard(board.getBoard());
-
         });
 
         canvas.setCellSize((int) cellSizeSlider.getValue());
@@ -130,10 +128,13 @@ public class MainWindowController implements Initializable {
         canvasAnchor.widthProperty().addListener((observable) -> {
             resizeCanvas();
         });
+        
         // update the labels for the living cell count and generation count.
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
-        Platform.runLater(this::centreBoardOnCanvas);
+        
+        // draw the starting board once everything else has finished initializing.
+        Platform.runLater(this::centerAndDrawBoard);
     }
 
     /**
@@ -217,7 +218,7 @@ public class MainWindowController implements Initializable {
                 if (isOk) {
                     BoardDynamic newBoard = new BoardDynamic(row, col);
                     board = newBoard;
-                    centreBoardOnCanvas();
+                    centerAndDrawBoard();
                     canvas.drawBoard(board.getBoard());
                 }
 
@@ -227,24 +228,25 @@ public class MainWindowController implements Initializable {
             }
         });
     }
-    
+
     /**
-     * Instructs the node calling this method that the user is to be allowed
-     * to drag (and thereby drop) files over it.
+     * Instructs the node calling this method that the user is to be allowed to
+     * drag (and thereby drop) files over it.
+     *
      * @param event a DragEvent
      */
     @FXML
     private void prepareFileDrop(DragEvent event) {
-        if(event.getDragboard().hasFiles()) {
+        if (event.getDragboard().hasFiles()) {
             event.acceptTransferModes(TransferMode.ANY);
         }
     }
 
     /**
-     * Handles dropping of files on the node which calls this method. If file
-     * is valid and supported pattern file, file will be opened. Error message
-     * is displayed to user if file is either not valid, or not supported.
-     * 
+     * Handles dropping of files on the node which calls this method. If file is
+     * valid and supported pattern file, file will be opened. Error message is
+     * displayed to user if file is either not valid, or not supported.
+     *
      * @param event a DragEvent
      */
     @FXML
@@ -266,7 +268,7 @@ public class MainWindowController implements Initializable {
             FileImporter fileImporter = new FileImporter();
             try {
                 board = fileImporter.readGameBoardFromDisk(patternFile);
-                centreBoardOnCanvas();
+                centerAndDrawBoard();
                 canvas.drawBoard(board.getBoard());
                 updateLivingCellCountLabel();
             } catch (FileNotFoundException e) {
@@ -289,6 +291,7 @@ public class MainWindowController implements Initializable {
         canvas.drawBoard(board.getBoard());
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
+        centerAndDrawBoard();
     }
 
     /**
@@ -308,8 +311,10 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void delete() {
-        board.deleteBoard();
+        pause();
+        board.clearBoard();
         canvas.drawBoard(board.getBoard());
+        centerAndDrawBoard();
         updateLivingCellCountLabel();
         updateGenerationCountLabel();
     }
@@ -367,10 +372,11 @@ public class MainWindowController implements Initializable {
     }
 
     /**
-     * Centres the board on the canvas.
+     * Calculates and sets the offset needed for the current board to be centered
+     * on the user visible part of the canvas, and then draws the board.
      */
     @FXML
-    private void centreBoardOnCanvas() {
+    private void centerAndDrawBoard() {
         double boardWidthCenter = (board.getBoard().get(0).size() * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
         double boardHeightCenter = (board.getBoard().size() * (canvas.getCellSize() + canvas.getSpaceBetweenCells()) / 2);
         double canvasWidthCenter = (canvas.getWidth() / 2);
@@ -415,15 +421,14 @@ public class MainWindowController implements Initializable {
         if (file != null && file.exists()) {
             try {
                 board = fileImporter.readGameBoardFromDisk(file);
-                centreBoardOnCanvas();
-                canvas.drawBoard(board.getBoard());
+                centerAndDrawBoard();
                 updateLivingCellCountLabel();
             } catch (FileNotFoundException e) {
                 DialogBoxes.ioException("No file found at: " + e.getMessage());
             } catch (IOException e) {
                 DialogBoxes.ioException("There was a problem reading the file: " + e.getMessage());
             } catch (PatternFormatException e) {
-                DialogBoxes.patternFormatError("There was an error parsing the file: " + e.getMessage());
+                DialogBoxes.patternFormatError(e.getMessage());
             }
         }
     }
@@ -444,8 +449,7 @@ public class MainWindowController implements Initializable {
         if (url.isPresent()) {
             try {
                 board = fileImporter.readGameBoardFromUrl(url.get());
-                centreBoardOnCanvas();
-                canvas.drawBoard(board.getBoard());
+                centerAndDrawBoard();
                 updateLivingCellCountLabel();
             } catch (MalformedURLException e) {
                 DialogBoxes.ioException("Given String is not a valid URL: " + e.getMessage());
@@ -520,18 +524,25 @@ public class MainWindowController implements Initializable {
         // ensure board is large enough that threads make a difference as 
         // creation of threads will also consume performance.
         if (board.getNumberOfCells() > 80000) {
-            board.nextGenerationConcurrent();
+            board.nextGenerationConcurrent();   
         } else {
             board.nextGeneration();
         }
-        // only draw cells that changed during last generational shift.
-        for (int row = 0; row < board.getChangedCells().size(); row++) {
-            for (int col = 0; col < board.getChangedCells().get(0).size(); col++) {
-                // cells that have changed are symbolised by the number 1.
-                if (board.getChangedCells().get(row).get(col) == 1) {
-                    canvas.drawCell(board.getBoard(), row, col);
-                }
+
+        // adjust offset if board grew
+        if (board.didExpand()) {
+            if (board.expandedWest()) {
+                int xOffset = 0 - (canvas.getCellSize() + canvas.getSpaceBetweenCells());
+                canvas.adjustOffset(xOffset, 0);
             }
+            if (board.expandedNorth()) {
+                int yOffset = 0 - (canvas.getCellSize() + canvas.getSpaceBetweenCells());
+                canvas.adjustOffset(0, yOffset);
+            }
+            canvas.drawBoard(board.getBoard());
+        } else {
+            // only draw cells that changed during last generational shift.
+            canvas.drawSpecificCells(board.getChangedCells(), board.getBoard());
         }
         updateLivingCellCountLabel();
         updateGenerationCountLabel();

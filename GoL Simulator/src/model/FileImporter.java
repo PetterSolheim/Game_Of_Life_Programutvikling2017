@@ -51,7 +51,8 @@ public class FileImporter {
      * its metadata. Values in {@link model.Rules} are also set according to the
      * rules defined in the pattern file.
      *
-     * @throws IOException
+     * @throws IOException which where thrown by its helper methods during
+     * file reading.
      * @throws PatternFormatException if FileImporter was unable to parse the
      * given file.
      */
@@ -70,7 +71,7 @@ public class FileImporter {
      * @param url a <code>String</code> specifying the URL to the pattern file.
      * @return a {@link model.BoardDynamic} object containing the pattern and
      * its metadata.
-     * @throws IOException
+     * @throws IOException thrown by its helper methods.
      * @throws PatternFormatException if FileImporter was unable to parse the
      * given file.
      */
@@ -427,7 +428,8 @@ public class FileImporter {
         if (m.find()) {
             if (!m.group(1).isEmpty()) {
                 detectedFileType = true;
-                life105Reader(lineList);
+                throw new PatternFormatException("Life 1.05 files are not"
+                        + " currently supported!");
             }
         }
 
@@ -577,193 +579,6 @@ public class FileImporter {
                 } else {
                     throw new PatternFormatException("Unable to interpret cell"
                             + "coordinates.");
-                }
-            }
-        }
-    }
-
-    /**
-     * Parses Life 1.05 (*.lif and *.life) pattern files.
-     *
-     * @param lineList the pattern.
-     * @throws PatternFormatException thrown by this methods helper methods.
-     */
-    private void life105Reader(ArrayList<String> lineList) throws PatternFormatException {
-        readLife105Comments(lineList);
-        readLife105Rules(lineList);
-        readLife105BoardSize(lineList);
-        readLife105Board(lineList);
-        board.setBoard(boardArray);
-        board.setMetadata(author, name, comment);
-    }
-
-    /**
-     * Reads and sets the patterns comments (name of author, board, etc).
-     *
-     * @param lineList the pattern.
-     */
-    private void readLife105Comments(ArrayList<String> lineList) {
-        Matcher m;
-        ArrayList<String> comments = new ArrayList<>();
-        Pattern commentPattern = Pattern.compile("(#D.*)");
-        for (int i = 0; i < lineList.size(); i++) {
-            m = commentPattern.matcher(lineList.get(i));
-            if (m.find()) {
-                if (!m.group(1).isEmpty()) {
-                    comments.add(m.group(1));
-                }
-            }
-        }
-
-        // get name of game board
-        commentPattern = Pattern.compile("(#D Name:|#D name:)(.+)");
-        for (int i = 0; i < comments.size(); i++) {
-            m = commentPattern.matcher(comments.get(i));
-            if (m.find()) {
-                if (!m.group(2).isEmpty()) {
-                    name = m.group(2).trim();
-                    comments.remove(i);
-                    i = comments.size();
-                }
-            }
-        }
-
-        // get author of game board
-        commentPattern = Pattern.compile("(#D Author:|#D author:)(.+)");
-        for (int i = 0; i < comments.size(); i++) {
-            m = commentPattern.matcher(comments.get(i));
-            if (m.find()) {
-                if (!m.group(2).isEmpty()) {
-                    author = m.group(2).trim();
-                    comments.remove(i);
-                    i = comments.size();
-                }
-            }
-        }
-
-        // get comments
-        commentPattern = Pattern.compile("(#D)(.+)");
-        StringBuilder commentStringBuilder = new StringBuilder();
-        for (int i = 0; i < comments.size(); i++) {
-            m = commentPattern.matcher(comments.get(i));
-            if (m.find()) {
-                if (!m.group(2).isEmpty()) {
-                    commentStringBuilder.append(m.group(2));
-                    commentStringBuilder.append("\n");
-                }
-            }
-            this.comment = commentStringBuilder.toString();
-        }
-    }
-
-    /**
-     * Determine and set the game rules.
-     *
-     * @param lineList the pattern.
-     * @throws PatternFormatException if no rules could be determined.
-     */
-    private void readLife105Rules(ArrayList<String> lineList) throws PatternFormatException {
-        Matcher m;
-        Pattern rulePattern = Pattern.compile("(#N|#R)+\\s*([0-8]*)\\/([0-8]*)");
-        for (int i = 0; i < lineList.size(); i++) {
-            m = rulePattern.matcher(lineList.get(i));
-            if (m.find()) {
-                if (m.group(1).equals("#N")) {
-                    rules.setSurviveRules(2, 3);
-                    rules.setBirthRules(3);
-                } else if (m.group(1).equals("#R")) {
-                    if (!m.group(2).isEmpty() && !m.group(3).isEmpty()) {
-                        try {
-                            String survive = m.group(2);
-                            String birth = m.group(3);
-                            String[] surviveStringArray = survive.split("");
-                            int[] survivalRules;
-                            survivalRules = new int[surviveStringArray.length];
-                            for (int j = 0; j < surviveStringArray.length; j++) {
-                                survivalRules[j] = Integer.parseInt(surviveStringArray[j]);
-                            }
-
-                            rules.setSurviveRules(survivalRules);
-
-                            String[] birthStringArray = birth.split("");
-                            int[] birthRules;
-                            birthRules = new int[birthStringArray.length];
-                            for (int j = 0; j < birthStringArray.length; j++) {
-                                birthRules[j] = Integer.parseInt(birthStringArray[j]);
-                            }
-
-                            rules.setBirthRules(birthRules);
-
-                        } catch (NumberFormatException e) {
-                            throw new PatternFormatException("Failed to determin"
-                                    + "rules.");
-                        }
-                    } else {
-                        throw new PatternFormatException("Failed to determin rules.");
-                    }
-                } else {
-                    throw new PatternFormatException("Failed to determin rules.");
-                }
-            }
-        }
-
-        // clear ArrayList of all comments as the format does not support them
-        Pattern commentPattern = Pattern.compile("(#.*)");
-        for (int i = 0; i < lineList.size(); i++) {
-            m = commentPattern.matcher(lineList.get(i));
-            if (m.find()) {
-                lineList.remove(i);
-                i--; // removal shifted index by negative one, compensate.
-            }
-        }
-
-    }
-
-    /**
-     * Determines and sets the game boards dimensions.
-     *
-     * @param lineList the pattern.
-     * @throws PatternFormatException if no board size can be determined.
-     */
-    private void readLife105BoardSize(ArrayList<String> lineList) throws PatternFormatException {
-        // remove blank lines
-        lineList.removeAll(Arrays.asList(null, ""));
-
-        int rows = lineList.size();
-        int cols = 0;
-
-        for (int i = 0; i < lineList.size(); i++) {
-            String lineLength = lineList.get(i).trim();
-            if (cols < lineLength.length()) {
-                cols = lineLength.length();
-            }
-        }
-
-        if (cols == 0) {
-            throw new PatternFormatException("Error reading board size");
-        }
-
-        boardArray = new byte[rows][cols];
-    }
-
-    /**
-     * Reads and sets the cell state from a Life 1.05 file.
-     *
-     * @param lineList the pattern.
-     * @throws PatternFormatException if unrecognized characters are used to
-     * describe cell states.
-     */
-    private void readLife105Board(ArrayList<String> lineList) throws PatternFormatException {
-        for (int row = 0; row < boardArray.length; row++) {
-            String[] boardRow = lineList.get(row).split("(?!^)");
-            for (int col = 0; col < boardRow.length; col++) {
-                if (boardRow[col].equals(".")) {
-                    boardArray[row][col] = 0;
-                } else if (boardRow[col].equals("*")) {
-                    boardArray[row][col] = 1;
-                } else {
-                    throw new PatternFormatException("Unrecognized character in"
-                            + "board definition " + boardRow[col]);
                 }
             }
         }
