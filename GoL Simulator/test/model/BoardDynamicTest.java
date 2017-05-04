@@ -5,6 +5,9 @@
  */
 package model;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import org.junit.Test;
 import static org.junit.Assert.*;
@@ -235,8 +238,8 @@ public class BoardDynamicTest {
     }
 
     /**
-     * test nextGeneration() (this is the non-threaded version).
-     * Test uses static rules.
+     * test nextGeneration() (this is the non-threaded version). Test uses
+     * static rules.
      */
     @Test
     public void testNextGeneration() {
@@ -309,8 +312,8 @@ public class BoardDynamicTest {
     }
 
     /**
-     * test nextGeneration() (this is the non-threaded version).
-     * Test uses dynamic rules.
+     * test nextGeneration() (this is the non-threaded version). Test uses
+     * dynamic rules.
      */
     @Test
     public void testNextGenerationDynamic() {
@@ -362,6 +365,39 @@ public class BoardDynamicTest {
         instance.setBoard(board);
         instance.nextGenerationConcurrent();
         org.junit.Assert.assertEquals("000111000", instance.toString());
+    }
+
+    /**
+     * Test that threaded nextGenerationConcurrent() is faster than the
+     * non-threaded nextGeneration() when taking the Turing Machine through 10
+     * generational shifts. Board is reset between tests to assure they are
+     * given equally hard tasks.
+     */
+    @Test
+    public void testThreadIsFaster() {
+        FileImporter instance = new FileImporter();
+        File f = Paths.get("test/model/testPatterns/RLE/turingmachine.rle").toFile();
+        try {
+            BoardDynamic testBoard = instance.readGameBoardFromDisk(f);
+            long timeNextGeneration = 0;
+            for (int i = 0; i < 10; i++) {
+                long start = System.currentTimeMillis();
+                testBoard.nextGeneration();
+                timeNextGeneration += System.currentTimeMillis() - start;
+            }
+            testBoard.resetBoard();
+            long timeNextGenerationConcurrent = 0;
+            for (int i = 0; i < 10; i++) {
+                long start = System.currentTimeMillis();
+                testBoard.nextGeneration();
+                timeNextGenerationConcurrent += System.currentTimeMillis() - start;
+                assertTrue(timeNextGeneration > timeNextGenerationConcurrent);
+            }
+        } catch (IOException e) {
+            fail("IOException encountered");
+        } catch (PatternFormatException e) {
+            fail("PatternFormatException encountered");
+        }
     }
 
     /**
