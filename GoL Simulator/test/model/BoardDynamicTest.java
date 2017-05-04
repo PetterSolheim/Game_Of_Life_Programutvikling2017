@@ -19,6 +19,9 @@ public class BoardDynamicTest {
 
     }
 
+    /**
+     * Test setBoard() using ArrayList.
+     */
     @Test
     public void testSetBoard_ArrayList() {
         System.out.println("setBoard");
@@ -47,6 +50,9 @@ public class BoardDynamicTest {
         assertEquals("000111000", instance.toString());
     }
 
+    /**
+     * Test setBoat() using byte[][].
+     */
     @Test
     public void testSetBoard_byteArrArr() {
         System.out.println("setBoard");
@@ -60,6 +66,9 @@ public class BoardDynamicTest {
         assertEquals("111000111", instance.toString());
     }
 
+    /**
+     * Test getBoard()
+     */
     @Test
     public void testGetBoard() {
         System.out.println("getBoard");
@@ -85,6 +94,9 @@ public class BoardDynamicTest {
         assertEquals(expResult, instance.getBoard());
     }
 
+    /**
+     * Test getChangedCells()
+     */
     @Test
     public void testGetChangedCells() {
         System.out.println("getChangedCells");
@@ -113,6 +125,9 @@ public class BoardDynamicTest {
         assertEquals(expResult, instance.getChangedCells());
     }
 
+    /**
+     * Test getNumberOfCells()
+     */
     @Test
     public void testGetNumberOfCells() {
         System.out.println("getNumberOfCells");
@@ -126,6 +141,9 @@ public class BoardDynamicTest {
         assertEquals(4, instance.getNumberOfCells());
     }
 
+    /**
+     * test getLivingCellCount()
+     */
     @Test
     public void testGetLivingCellCount() {
         System.out.println("getLivingCellCount");
@@ -151,6 +169,9 @@ public class BoardDynamicTest {
         assertEquals(4, instance.getLivingCellCount());
     }
 
+    /**
+     * testGetGenerationCount()
+     */
     @Test
     public void testGetGenerationCount() {
         System.out.println("getGenerationCount");
@@ -166,6 +187,9 @@ public class BoardDynamicTest {
         assertEquals(20, instance.getGenerationCount());
     }
 
+    /**
+     * test deepCopy()
+     */
     @Test
     public void testDeepCopy() {
         System.out.println("deepCopy");
@@ -176,7 +200,7 @@ public class BoardDynamicTest {
             {0, 0, 0}
         };
         instance.setBoard(instanceBoard);
-        
+
         for (int i = 0; i < 4; i++) {
             instance.nextGeneration();
         }
@@ -210,6 +234,10 @@ public class BoardDynamicTest {
         assertEquals(instance.getNumberOfCells(), 9);
     }
 
+    /**
+     * test nextGeneration() (this is the non-threaded version).
+     * Test uses static rules.
+     */
     @Test
     public void testNextGeneration() {
         System.out.println("nextGeneration");
@@ -278,6 +306,16 @@ public class BoardDynamicTest {
         instance.setBoard(board6);
         instance.nextGeneration();
         assertEquals("010", instance.toString());
+    }
+
+    /**
+     * test nextGeneration() (this is the non-threaded version).
+     * Test uses dynamic rules.
+     */
+    @Test
+    public void testNextGenerationDynamic() {
+        BoardDynamic instance = new BoardDynamic();
+        Rules rules = Rules.getInstance();
 
         // dynamic board test nr. 1 of 2
         rules.setDynamic(true);
@@ -304,6 +342,51 @@ public class BoardDynamicTest {
         assertEquals("000000111000000", instance.toString());
     }
 
+    /**
+     * Test nextGenerationConcurrent(). This is the threaded version. Test uses
+     * static rules.
+     */
+    @Test
+    public void testNextGenerationConcurrentStatic() {
+        System.out.println("nextGeneration");
+        BoardDynamic instance = new BoardDynamic();
+        Rules rules = Rules.getInstance();
+        rules.setDynamic(false);
+
+        // static board test nr. 1 of 6
+        byte[][] board = {
+            {0, 1, 0},
+            {0, 1, 0},
+            {0, 1, 0}
+        };
+        instance.setBoard(board);
+        instance.nextGenerationConcurrent();
+        org.junit.Assert.assertEquals("000111000", instance.toString());
+    }
+
+    /**
+     * Test nextGenerationConcurrent(). This is the threaded version. Test uses
+     * dynamic rules.
+     */
+    @Test
+    public void testNextGenerationConcurrentDynamic() {
+        // dynamic board test nr. 2 of 2
+        BoardDynamic instance = new BoardDynamic();
+        Rules rules = Rules.getInstance();
+        rules.setDynamic(true);
+        byte[][] board = {
+            {1},
+            {1},
+            {1}
+        };
+        instance.setBoard(board);
+        instance.nextGeneration();
+        assertEquals("000000111000000", instance.toString());
+    }
+
+    /**
+     * Tests toggleCellState()
+     */
     @Test
     public void testToggleCellState() {
         System.out.println("toggleCellState");
@@ -314,6 +397,9 @@ public class BoardDynamicTest {
         assertEquals("000000000", instance.toString());
     }
 
+    /**
+     * tests setCellState()
+     */
     @Test
     public void testSetCellStateAlive() {
         System.out.println("setCellStateAlive");
@@ -332,6 +418,9 @@ public class BoardDynamicTest {
         assertEquals("100000000", instance.toString());
     }
 
+    /**
+     * Tests resetBoard()
+     */
     @Test
     public void testResetBoard() {
         System.out.println("resetBoard");
@@ -344,6 +433,9 @@ public class BoardDynamicTest {
         assertEquals("010010010", instance.toString());
     }
 
+    /**
+     * Tests toString()
+     */
     @Test
     public void testToString() {
         System.out.println("toString");
