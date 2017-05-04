@@ -38,6 +38,7 @@ public class TimerTest {
 
     @After
     public void tearDown() {
+        instance = null;
     }
 
     /**
@@ -66,9 +67,8 @@ public class TimerTest {
     public void testSetFps() {
         System.out.println("testSetFps");
         //arrange
-        
-        //act
         double desiredFramesPerSecond = 4;
+        //act
         instance.setFps(desiredFramesPerSecond);
         //assert
         assertEquals(instance.getTimeBetweenGenerations(), 250000000);

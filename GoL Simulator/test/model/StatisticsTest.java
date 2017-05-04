@@ -18,24 +18,29 @@ import static org.junit.Assert.*;
  * @author peven
  */
 public class StatisticsTest {
-    
+
+    private Statistics instance;
+
     public StatisticsTest() {
     }
-    
+
     @BeforeClass
     public static void setUpClass() {
     }
-    
+
     @AfterClass
     public static void tearDownClass() {
     }
-    
+
     @Before
     public void setUp() {
+        BoardDynamic b = new BoardDynamic(4, 4);
+        instance = new Statistics(b, 3);
     }
-    
+
     @After
     public void tearDown() {
+        instance = null;
     }
 
     /**
@@ -44,25 +49,30 @@ public class StatisticsTest {
     @org.junit.Test
     public void testGetLastGeneration() {
         System.out.println("getLastGeneration");
-        Statistics instance = null;
-        int expResult = 0;
+        //arrange
+        int expected = 2;
+        //act
         int result = instance.getLastGeneration();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //assert
+        assertEquals(expected, result);
+        assertTrue(expected == result);
     }
 
     /**
      * Test of setIterationsAndLastGeneration method, of class Statistics.
      */
     @org.junit.Test
-    public void testSetIterations() {
+    public void testSetIterationsAndLastGeneration() {
         System.out.println("setIterations");
-        int i = 0;
-        Statistics instance = null;
-        instance.setIterationsAndLastGeneration(i);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //arrange
+        int iterations = 3; 
+        //act
+        int expectedIteration = 6;
+        int expectedGeneration = 5;
+        instance.setIterationsAndLastGeneration(iterations);
+        //assert
+        assertEquals(expectedIteration, instance.getIterations());
+        assertEquals(expectedGeneration, instance.getLastGeneration());
     }
 
     /**
@@ -71,12 +81,13 @@ public class StatisticsTest {
     @org.junit.Test
     public void testGetIterations() {
         System.out.println("getIterations");
-        Statistics instance = null;
-        int expResult = 0;
-        int result = instance.getIterations();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //arrange
+        int iterations = 4; 
+        //act
+        int expected = 7;
+        instance.setIterationsAndLastGeneration(iterations);
+        //assert
+        assertEquals(expected, instance.getIterations());
     }
 
     /**
@@ -85,12 +96,12 @@ public class StatisticsTest {
     @org.junit.Test
     public void testGetFirstGeneration() {
         System.out.println("getFirstGeneration");
-        Statistics instance = null;
-        int expResult = 0;
-        int result = instance.getFirstGeneration();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //arrange
+        int expected = 0;
+        //act
+        int actual = instance.getFirstGeneration();
+        //assert
+        assertEquals(expected, actual);
     }
 
     /**
@@ -99,27 +110,67 @@ public class StatisticsTest {
     @org.junit.Test
     public void testGetStatistics() {
         System.out.println("getStatistics");
-        Statistics instance = null;
-        XYChart.Series[] expResult = null;
-        XYChart.Series[] result = instance.getStatistics();
-        assertArrayEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //arrange
+        XYChart.Series[] result = new XYChart.Series[3];
+        //act
+        result = instance.getStatistics();
+        //assert
+        assertTrue(result.length == 3);
+        assertEquals("Living Cells", result[0].getName());
+        assertEquals("Population Change", result[1].getName());
+        assertEquals("Similarity Measure", result[2].getName());
     }
 
     /**
-     * Test of getSelectedIteration method, of class Statistics.
+     * Test of getSelectedGeneration method, of class Statistics.
      */
     @org.junit.Test
-    public void testGetSelectedIteration() {
+    public void testGetSelectedGeneration() {
         System.out.println("getSelectedIteration");
-        int generation = 0;
-        Statistics instance = null;
-        BoardDynamic expResult = null;
-        BoardDynamic result = instance.getSelectedIteration(generation);
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //arrange
+        int desiredGeneration = 1;
+        instance.getStatistics();
+        //act
+        BoardDynamic result = instance.getSelectedGeneration(desiredGeneration);
+        //assert
+        assertNotNull(result);
+        assertEquals("0000010000100000", result.toString());
     }
-    
+
+    /**
+     * Test of AudioStatistics method, of class Statistics.
+     */
+    @Test
+    public void testAudioStatistics() {
+        System.out.println("AudioStatistics");
+        //arrange
+
+        //act
+        //assert
+    }
+
+    /**
+     * Test of getSimilairtyFromFloat method, of class Statistics.
+     */
+    @Test
+    public void testGetSimilairtyFromFloat() {
+        System.out.println("getSimilairtyFromFloat");
+        //arrange
+        instance.getStatistics();
+        //act
+        //assert
+    }
+
+    /**
+     * Test of findMostSimilar method, of class Statistics.
+     */
+    @Test
+    public void testFindMostSimilar() {
+        System.out.println("findMostSimilar");
+        //arrange
+
+        //act
+        //assert
+    }
+
 }

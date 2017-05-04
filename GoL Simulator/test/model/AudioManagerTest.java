@@ -31,26 +31,20 @@ import static org.junit.Assert.*;
  */
 public class AudioManagerTest {
 
-    private AudioManager instance;
+    static AudioManager instance;
 
     public AudioManagerTest() {
     }
 
     @BeforeClass
     public static void setUpClass() {
-
-    }
-
-    @AfterClass
-    public static void tearDownClass() {
-    }
-
-    @Before
-    public void setUp() {;
+        instance = AudioManager.getSingelton();
     }
 
     @After
     public void tearDown() {
+        instance.getAllLoadedSongs().clear();
+        instance.closeLines();
     }
 
     /**
@@ -59,7 +53,6 @@ public class AudioManagerTest {
     @Test
     public void testIsCreatedTrue() {
         //arrange
-
         //act
         boolean isCrreated = AudioManager.isCreated();
         //assert
@@ -72,7 +65,6 @@ public class AudioManagerTest {
     @Test
     public void testGetSingelton() {
         //arrange
-
         //act
         AudioManager audioManager = AudioManager.getSingelton();
         //assert
@@ -93,49 +85,46 @@ public class AudioManagerTest {
         fail("The test case is a prototype.");
     }
 
-    private void setUpClip() {
-        AudioManager instance = AudioManager.getSingelton();
+    private void setUpClip() throws UnsupportedAudioFileException {
         File f = new File("test/sounds/cow_moo.wav");
         instance.addAbsolutePath(f);
-        try {
-            AudioInputStream testStream = AudioSystem.getAudioInputStream(f);
-            System.out.println(instance.getActiveSong().toString());
-            //instance.playPauseMusicPlayer();
-        } catch (UnsupportedAudioFileException ex) {
-            Logger.getLogger(AudioManagerTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(AudioManagerTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        instance.loadSong(f.getName());
     }
 
     /**
      * Test of volume method, of class AudioManager.
      */
     @Test
-    public void testVolumeMax() {
-        System.out.println("volume");
-        setUpClip();
-        FloatControl activeSongGain = (FloatControl) instance.getActiveSong().getControl(FloatControl.Type.MASTER_GAIN);
-        //act
-        float volume = 100f;
-        instance.volume(volume);
-        float Gain = activeSongGain.getMaximum();
-        //assert
-        assertFalse(Gain + 1f < activeSongGain.getMaximum());
+    public void testVolume() {
+        try {
+            System.out.println("volume");
+            setUpClip();
+            FloatControl activeSongGain = (FloatControl) instance.getActiveSong().getControl(FloatControl.Type.MASTER_GAIN);
+            //act
+            instance.volume(50);
+            float oldGain = activeSongGain.getValue();
+
+            instance.volume(100f);
+            float Gain = activeSongGain.getValue();
+            //assert
+            assertTrue(Gain > oldGain);
+        } catch (UnsupportedAudioFileException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
      * Test of addAbsolutePath method, of class AudioManager.
      */
     @Test
-
     public void testAddAbsolutePath() {
         System.out.println("addAbsolutePath");
-        File f = null;
-        AudioManager instance = null;
+        //arrage
+        File f = new File("test/sounds/cow_moo.wav");
+        //act
         instance.addAbsolutePath(f);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //assert
+        assertTrue(instance.getAllLoadedSongs().contains(f.getAbsolutePath()));
     }
 
     /**
@@ -144,25 +133,35 @@ public class AudioManagerTest {
     @Test
     public void testGetAllLoadedSongs() {
         System.out.println("getAllLoadedSongs");
-        AudioManager instance = null;
-        ArrayList<String> expResult = null;
+        //arrange
+        instance.addAbsolutePath(new File("test/sounds/cow_moo.wav"));
+        instance.addAbsolutePath(new File("test/sounds/test.wav"));
+        //act
         ArrayList<String> result = instance.getAllLoadedSongs();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        //assert
+        assertTrue(result.size() == 2);
+        assertTrue(result.get(0).contains("cow_moo.wav"));
+        assertTrue(result.get(1).contains("test.wav"));
     }
 
     /**
      * Test of loadSongFromAbsolutePath method, of class AudioManager.
      */
     @Test
-    public void testLoadSongFromAbsolutePath() throws Exception {
-        System.out.println("loadSongFromAbsolutePath");
-        String songName = "";
-        AudioManager instance = null;
-        instance.loadSongFromAbsolutePath(songName);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+    public void testLoadSong() {
+        try {
+            System.out.println("loadSongFromAbsolutePath");
+            //arrange
+            instance.addAbsolutePath(new File("test/sounds/cow_moo.wav"));
+            File f = new File(instance.getAllLoadedSongs().get(0));
+            //act
+            instance.loadSong(f.getName());
+            instance.playPauseMusicPlayer();
+            //assert
+            assertTrue(instance.getActiveSong().isActive());
+        } catch (UnsupportedAudioFileException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -170,11 +169,18 @@ public class AudioManagerTest {
      */
     @Test
     public void testResetSong() {
-        System.out.println("resetSong");
-        AudioManager instance = null;
-        instance.resetSong();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            System.out.println("resetSong");
+            //arrange
+            setUpClip();
+            //act
+            instance.resetSong();
+            //assert
+            assertTrue(instance.getActiveSong().getFramePosition() < 1);
+        } catch (UnsupportedAudioFileException ex) {
+            ex.printStackTrace();
+        }
+
     }
 
     /**
@@ -182,12 +188,7 @@ public class AudioManagerTest {
      */
     @Test
     public void testGenerateAudioSequence() {
-        System.out.println("generateAudioSequence");
-        ArrayList<ArrayList> data = null;
-        AudioManager instance = null;
-        instance.generateAudioSequence(data);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+
     }
 
     /**
@@ -195,13 +196,17 @@ public class AudioManagerTest {
      */
     @Test
     public void testGetActiveSong() {
-        System.out.println("getActiveSong");
-        AudioManager instance = null;
-        Clip expResult = null;
-        Clip result = instance.getActiveSong();
-        assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            System.out.println("getActiveSong");
+            //aarrange
+            setUpClip();
+            //act
+            Clip clip = instance.getActiveSong();
+            //assert
+            assertNotNull(clip);
+        } catch (UnsupportedAudioFileException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -209,11 +214,17 @@ public class AudioManagerTest {
      */
     @Test
     public void testPlayPauseMusicPlayer() {
-        System.out.println("playPauseMusicPlayer");
-        AudioManager instance = null;
-        instance.playPauseMusicPlayer();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            System.out.println("playPauseMusicPlayer");
+            //arrange
+            setUpClip();
+            //act
+            instance.playPauseMusicPlayer();
+            //assert
+            assertFalse(instance.getActiveSong().isActive());
+        } catch (UnsupportedAudioFileException ex) {
+            ex.printStackTrace();
+        }
     }
 
     /**
@@ -221,11 +232,17 @@ public class AudioManagerTest {
      */
     @Test
     public void testCloseLines() {
-        System.out.println("closeLines");
-        AudioManager instance = null;
-        instance.closeLines();
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        try {
+            System.out.println("closeLines");
+            //arrange
+            setUpClip();
+            //act
+            instance.closeLines();
+            //asert
+            assertFalse(instance.getActiveSong().isOpen());
+        } catch (UnsupportedAudioFileException ex) {
+            ex.printStackTrace();
+        }
     }
 
 }

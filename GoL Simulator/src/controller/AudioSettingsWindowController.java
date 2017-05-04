@@ -27,9 +27,10 @@ import model.Statistics;
 import view.DialogBoxes;
 
 /**
- * FXML Controller class for Audio settings window.
- * This class contains a ListVIew with an EventHandler that determines which songs are being played by the AudioManager, 
- * and most of the tasks regarding audio playback are triggered by this EVentHandler.
+ * FXML Controller class for Audio settings window. This class contains a
+ * ListVIew with an EventHandler that determines which songs are being played by
+ * the AudioManager, and most of the tasks regarding audio playback are
+ * triggered by this EVentHandler.
  */
 public class AudioSettingsWindowController implements Initializable {
 
@@ -64,12 +65,12 @@ public class AudioSettingsWindowController implements Initializable {
     @FXML
     private Button btnPlayBoard;
     /**
-     * This ListView controls what songs are being playing in the
-     * AudioManager, but the method that calls for change in the AudioManagers
-     * playstate is triggered by an EventListener. This means that what is
-     * selected is passed to the AudioManager every time a change occurs. Note
-     * that a LineListener in the AudioManager forces the ListView to select
-     * another song when the active song is finished, triggering the EventListener
+     * This ListView controls what songs are being playing in the AudioManager,
+     * but the method that calls for change in the AudioManagers playstate is
+     * triggered by an EventListener. This means that what is selected is passed
+     * to the AudioManager every time a change occurs. Note that a LineListener
+     * in the AudioManager forces the ListView to select another song when the
+     * active song is finished, triggering the EventListener
      */
     @FXML
     private ListView trackList;
@@ -79,6 +80,9 @@ public class AudioSettingsWindowController implements Initializable {
     /**
      * Initializes the controller class and various listeners. Also calls
      * <code>reloadSongList()</code> if an instance of AudioManager exist.
+     *
+     * @param url
+     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -110,11 +114,10 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     /**
-     * Sets the next item in the <code>trackList</code> as active, triggering
+     * Sets the next item in the <code>ListView</code> as active, triggering
      * it's eventListener. Calls <code>resetPlayList</code> if it is at the last
      * index.
      *
-     * @see #resetPlayList
      */
     @FXML
     public void playNextSong() {
@@ -135,8 +138,8 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     /**
-     * Sets the previous item in <code>trackList</code> as active on double
-     * click. On single click it calls <code>resetSong()</code>
+     * Sets the previous item in trackList as active on double click. On single
+     * click it calls resetSong()
      *
      * @see model.AudioManager#resetSong
      */
@@ -202,11 +205,10 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     /**
-     * Opens a <code>FileChooser</code> and passes the selected items to the
-     * AudioManager. <br>
-     * This class also checks if a song is already loaded.
-     *
-     * @see model.AudioManager#addAbsolutePath
+     * Opens a FileChooser and passes the selected items to the AudioManager.
+     * This class also calls the method updateSongList which refreshes the
+     * trackList checkIfSongIsLoaded is also called, displaying a dialog box if
+     * the song is loaded.
      */
     @FXML
     private void getAudioFile() {
@@ -233,9 +235,8 @@ public class AudioSettingsWindowController implements Initializable {
 
     /**
      * Loads previously loaded songs back into the track list by using the
-     * absolute paths stored in the AudioManager
-     *
-     * @param absolutePaths
+     * absolute paths stored in the AudioManager. This method is called in
+     * Initialize if an instance of AudioManager exists
      */
     private void reloadSongList(ArrayList<String> absolutePaths) {
         for (int i = 0; i < absolutePaths.size(); i++) {
@@ -255,11 +256,10 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     /**
-     *
-     * @param songName
-     * @return
+     * This method ensures that a song can only be loaded once by checking if
+     * the name of the song is in the songNames ArrayList
      */
-    public boolean checkIfSongIsLoaded(String songName) {
+    private boolean checkIfSongIsLoaded(String songName) {
         for (int i = 0; i < songNames.size(); i++) {
             if (songName.equals(songNames.get(i))) {
                 return true;
@@ -269,11 +269,12 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     /**
-     *
+     * This method is called when the selected item in the trackList changes. It
+     * calls loadSong() from AudioManager that starts the audio playback.
      */
     private void playSong() {
         try {
-            audioManager.loadSongFromAbsolutePath(trackList.getSelectionModel().getSelectedItem().toString());
+            audioManager.loadSong(trackList.getSelectionModel().getSelectedItem().toString());
             showPauseIcon();
         } catch (UnsupportedAudioFileException ex) {
             DialogBoxes.genericErrorMessage("Unsupported Audio File", "Try a different file\n" + ex.getMessage());
@@ -283,9 +284,9 @@ public class AudioSettingsWindowController implements Initializable {
 
     /**
      *
-     * @param newSong
+     * @param newSong the name of the song to be displayed in ListView trackList.
      */
-    public void updateSongList(String newSong) {
+    private void updateSongList(String newSong) {
         trackList.setItems(songNames);
         trackList.getSelectionModel().select(newSong);
     }
@@ -312,9 +313,10 @@ public class AudioSettingsWindowController implements Initializable {
      *
      * @see model.AudioManager#playPauseMusicPlayer
      */
-    public void toggleMusicPlayState() {
+    @FXML
+    private void toggleMusicPlayState() {
         if (audioManager.getActiveSong().isActive()) { // pause song
-            showPlayIcon();
+            showPauseIcon();
             audioManager.playPauseMusicPlayer();
         } else { // play song
             showPlayIcon();
@@ -333,7 +335,8 @@ public class AudioSettingsWindowController implements Initializable {
     /**
      *
      */
-    public void toggleAudioBoardPlayState() {
+    @FXML
+    private void toggleAudioBoardPlayState() {
         if (isPlaying) { // pause
             isPlaying = !isPlaying;
             btnPlayBoard.setText("Play");
