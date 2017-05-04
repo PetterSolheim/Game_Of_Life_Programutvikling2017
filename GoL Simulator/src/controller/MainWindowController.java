@@ -567,7 +567,7 @@ public class MainWindowController implements Initializable {
             stage.setScene(Scene);
             stage.setResizable(false);
             stage.initModality(Modality.APPLICATION_MODAL);
-            stage.show();
+            stage.showAndWait();
         } catch (IOException e) {
             DialogBoxes.ioException("There was an error displaying the game rules window!");
         }

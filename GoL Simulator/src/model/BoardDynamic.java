@@ -368,6 +368,10 @@ public class BoardDynamic {
         // reset list of changed cells.
         changedCells = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
 
+        expandedNorth = false;
+        expandedWest = false;
+        boardExpanded = false;
+        
         if (rules.isDynamic() && getNumberOfCells() < rules.getMaxNumberOfCells()) {
             expandBoardIfNeeded();
         }
@@ -400,7 +404,6 @@ public class BoardDynamic {
                     }
                 } else if (currentBoard.get(row).get(col) == 0 && rules.getBirthRules().contains(nrOfNeighbours)) {
                     addToIndexSum2(row + 1, col + 1);
-                    System.out.println("vanlig next generation");
                     nextGeneration.get(row).set(col, ALLIVE);
                     changedCells.get(row).set(col, CHANGED);
                     livingCells++;
@@ -451,6 +454,10 @@ public class BoardDynamic {
 
         // reset list of changed cells.
         changedCells = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
+        
+        expandedNorth = false;
+        expandedWest = false;
+        boardExpanded = false;
 
         // determin if board should expand
         if (rules.isDynamic() && getNumberOfCells() < rules.getMaxNumberOfCells()) {
@@ -550,10 +557,6 @@ public class BoardDynamic {
      * borders.
      */
     private void expandBoardIfNeeded() {
-        expandedNorth = false;
-        expandedWest = false;
-        boardExpanded = false;
-
         if (shouldExpandNorth()) {
             expandNorth();
             expandedNorth = true;
