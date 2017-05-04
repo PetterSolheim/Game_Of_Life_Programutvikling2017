@@ -387,6 +387,7 @@ public class BoardDynamic {
         for (int row = 0; row < nextGeneration.size(); row++) {
             for (int col = 0; col < nextGeneration.get(0).size(); col++) {
                 int nrOfNeighbours = countNeighbours(currentBoard, row, col);
+                
 
                 if (currentBoard.get(row).get(col) == 1 && !rules.getSurviveRules().contains(nrOfNeighbours)) {
                     nextGeneration.get(row).set(col, DEAD);
