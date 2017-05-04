@@ -1,6 +1,7 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 /**
  * This class contains the game board and its mechanics, such as moving a game
@@ -284,6 +285,9 @@ public class BoardDynamic {
 
     public float getIndexSum() {
         int divider = (int) rows.size();
+        ArrayList<Integer> rowsReversed = new ArrayList<Integer>();
+        rowsReversed.addAll(rows);
+        Collections.reverse(rowsReversed);
         float sum = 0;
         for (int i = 0; i < rows.size(); i++) {
             float row, col;
@@ -296,11 +300,7 @@ public class BoardDynamic {
                     sum += (row * col) + col;
                 }
             } else {
-                if (i < divider) {
-                    sum += (row * col) + (row * row);
-                } else {
-                    sum += (row * col) + (col * col);
-                }
+                sum += row + col;
             }
         }
         rows.clear();
