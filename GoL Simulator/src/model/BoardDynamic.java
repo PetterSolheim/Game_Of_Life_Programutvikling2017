@@ -29,7 +29,6 @@ public class BoardDynamic {
      */
     protected ArrayList<ArrayList<Byte>> originalBoard;
 
-
     private ArrayList<ArrayList<Byte>> nextGeneration;
 
     private int generationCount = 0;
@@ -41,7 +40,6 @@ public class BoardDynamic {
 
     private Rules rules = Rules.getInstance();
 
-
     private boolean expandedNorth, expandedWest, boardExpanded; //
 
     private String boardAuthor = "";
@@ -50,6 +48,13 @@ public class BoardDynamic {
 
     private int numWorkers = Runtime.getRuntime().availableProcessors();
     private ArrayList<Thread> workers = new ArrayList<Thread>();
+
+    /**
+     * Following ArrayLists are used to calculate the sum of the indexes to all
+     * living cells.
+     */
+    private ArrayList<Integer> rows = new ArrayList<Integer>();
+    private ArrayList<Integer> cols = new ArrayList<Integer>();
 
     /**
      * Board no-argument constructor initializes a game board consisting of 200
@@ -291,44 +296,25 @@ public class BoardDynamic {
             row = rows.get(i);
             col = cols.get(i);
             /**
+             * if (i < divider) {
+             * sum += (row * col) + row;
+             * System.out.println("Addition first: " + (row + col) + row);
+             * } else if (i > rows.size() - 1 - divider) { sum += (row * col) +
+             * col; System.out.println("Addition second: " + (row + col) + col);
+             * } else { if (i % 2 == 0) { if (middleFactor == true) {
+             * System.out.println("middle true"); sum += (row + col) + row;
+             * middleFactor = false; } else { System.out.println("Middlefalse");
+             * sum += (row + col) + col; middleFactor = true; } } else {
+             * System.out.println("normal sum"); sum += row + col; } }
+             *
+             *
+             * if(i % 2 == 0){ if(middleFactor){ sum += (row + col) * col;
+             * middleFactor = false; }else { sum += (row + col) * row;
+             * middleFactor = true; } } else { sum += row + col; }
+             *
+             *
+             */
             if (i < divider) {
-                sum += (row * col) + row;
-                System.out.println("Addition first: " + (row + col) + row);
-            } else if (i > rows.size() - 1 - divider) {
-                sum += (row * col) + col;
-                System.out.println("Addition second: " + (row + col) + col);
-            } else {
-                if (i % 2 == 0) {
-                    if (middleFactor == true) {
-                        System.out.println("middle true");
-                        sum += (row + col) + row;
-                        middleFactor = false;
-                    } else {
-                        System.out.println("Middlefalse");
-                        sum += (row + col) + col;
-                        middleFactor = true;
-                    }
-                } else {
-                    System.out.println("normal sum");
-                    sum += row + col;
-                }
-            }
-            
-            
-            if(i % 2 == 0){
-                if(middleFactor){
-                sum += (row + col) * col;
-                middleFactor = false;
-                }else {
-                    sum += (row + col) * row;
-                    middleFactor = true;
-                }
-            } else {
-                sum += row + col;
-            }
-        
-        **/
-            if(i < divider){
                 sum += (row * col) + col;
             } else {
                 sum += (row * col) + row;
@@ -369,7 +355,7 @@ public class BoardDynamic {
         expandedNorth = false;
         expandedWest = false;
         boardExpanded = false;
-        
+
         if (rules.isDynamic() && getNumberOfCells() < rules.getMaxNumberOfCells()) {
             expandBoardIfNeeded();
         }
@@ -377,7 +363,7 @@ public class BoardDynamic {
         // a copy of the board is used to test the rules, while changes are
         // applied to the actual board.
         nextGeneration = duplicateBoard(currentBoard);
-        
+
         // iterate through the board cells, count number of neighbours for each
         // cell, and apply changes based on the ruleset.
         for (int row = 0; row < nextGeneration.size(); row++) {
@@ -433,7 +419,7 @@ public class BoardDynamic {
 
         // reset list of changed cells.
         changedCells = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
-        
+
         expandedNorth = false;
         expandedWest = false;
         boardExpanded = false;
@@ -502,7 +488,7 @@ public class BoardDynamic {
                     nextGeneration.get(row).set(col, ALLIVE);
                     changedCells.get(row).set(col, CHANGED);
                     addToLivingCells(+1);
-                } 
+                }
             }
         }
     }
@@ -518,8 +504,6 @@ public class BoardDynamic {
     private synchronized void addToLivingCells(int i) {
         livingCells += i;
     }
-    private ArrayList<Integer> rows = new ArrayList<Integer>();
-    private ArrayList<Integer> cols = new ArrayList<Integer>();
 
     private synchronized void addToIndexSum2(int row, int col) {
         rows.add(row);
