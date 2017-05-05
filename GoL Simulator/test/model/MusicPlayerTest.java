@@ -3,6 +3,8 @@ package model;
 import controller.MusicPlayerWindowController;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
 import javax.sound.sampled.UnsupportedAudioFileException;
@@ -195,10 +197,17 @@ public class MusicPlayerTest {
      */
     @Test
     public void testPlayPauseMusicPlayer() {
+        
         try {
             System.out.println("playPauseMusicPlayer");
             //arrange
             setUpClip();
+            try {
+                // allow setUpClip() to finish
+                Thread.sleep(30);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MusicPlayerTest.class.getName()).log(Level.SEVERE, null, ex);
+            }
             //act
             instance.playPauseMusicPlayer();
             //assert

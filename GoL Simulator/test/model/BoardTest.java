@@ -104,6 +104,8 @@ public class BoardTest {
     public void testGetBoard() {
         System.out.println("getBoard");
         Board instance = new Board();
+        Rules rules = Rules.getInstance();
+        rules.setDynamic(false);
         byte[][] startingBoard = {
             {0, 0, 0},
             {1, 1, 1},
