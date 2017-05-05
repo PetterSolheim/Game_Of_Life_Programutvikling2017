@@ -604,14 +604,14 @@ public class MainWindowController implements Initializable {
     private void showMusicPlayer() {
         try {
             Stage soundSettings = new Stage();
-            soundSettings.setHeight(500);
+            soundSettings.setHeight(400);
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MusicPlayer.fxml"));
             VBox root = loader.load();
             MusicPlayerWindowController c = loader.getController();
             c.setThisStage(soundSettings);
             Scene scene = new Scene(root);
             soundSettings.setScene(scene);
-            soundSettings.setTitle("Game of Life Simulator - Audio Settings");
+            soundSettings.setTitle("Game of Life Simulator - Music Player");
             soundSettings.show();
         } catch (IOException exception) {
             DialogBoxes.ioException(exception.getMessage());
