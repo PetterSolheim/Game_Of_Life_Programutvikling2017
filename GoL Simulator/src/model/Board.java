@@ -132,7 +132,7 @@ public class Board {
      * @return an <code>int</code> specifying the number of cells, both living
      * and dead, on the current board.
      */
-    public int getNumberOfCells() {
+    public int getCellCount() {
         return currentBoard.length * currentBoard[0].length;
     }
 

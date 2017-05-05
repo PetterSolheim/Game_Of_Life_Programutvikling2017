@@ -223,7 +223,7 @@ public class BoardTest {
         assertEquals(instance.getRows(), newBoard.getRows());
         assertEquals(instance.getGenerationCount(), newBoard.getGenerationCount());
         assertEquals(instance.getLivingCellCount(), newBoard.getLivingCellCount());
-        assertEquals(instance.getNumberOfCells(), newBoard.getNumberOfCells());
+        assertEquals(instance.getCellCount(), newBoard.getCellCount());
 
         // make changes to the new board
         byte[][] board = {
@@ -242,7 +242,7 @@ public class BoardTest {
         assertEquals(instance.getRows(), 3);
         assertEquals(instance.getGenerationCount(), 4);
         assertEquals(instance.getLivingCellCount(), 4);
-        assertEquals(instance.getNumberOfCells(), 9);
+        assertEquals(instance.getCellCount(), 9);
 
     }
 
@@ -250,7 +250,7 @@ public class BoardTest {
     public void testGetNumberOfCells() {
         System.out.println("getNumberOfCells");
         Board instance = new Board();
-        assertEquals(40000, instance.getNumberOfCells());
+        assertEquals(40000, instance.getCellCount());
 
         byte[][] testBoard = {
             {1, 0, 1},
@@ -259,7 +259,7 @@ public class BoardTest {
             {1, 0, 1}
         };
         instance.setBoard(testBoard);
-        assertEquals(12, instance.getNumberOfCells());
+        assertEquals(12, instance.getCellCount());
     }
 
     @Test

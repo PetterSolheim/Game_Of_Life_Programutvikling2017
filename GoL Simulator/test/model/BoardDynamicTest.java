@@ -120,7 +120,7 @@ public class BoardDynamicTest {
     }
 
     /**
-     * Test getNumberOfCells()
+     * Test getCellCount()
      */
     @Test
     public void testGetNumberOfCells() {
@@ -128,11 +128,11 @@ public class BoardDynamicTest {
 
         // test using board of 200 x 200
         BoardDynamic instance = new BoardDynamic(200, 200);
-        assertEquals(40000, instance.getNumberOfCells());
+        assertEquals(40000, instance.getCellCount());
 
         // test using board of 2 x 2
         instance = new BoardDynamic(2, 2);
-        assertEquals(4, instance.getNumberOfCells());
+        assertEquals(4, instance.getCellCount());
     }
 
     /**
@@ -206,7 +206,7 @@ public class BoardDynamicTest {
         assertEquals(instance.getRows(), newBoard.getRows());
         assertEquals(instance.getGenerationCount(), newBoard.getGenerationCount());
         assertEquals(instance.getLivingCellCount(), newBoard.getLivingCellCount());
-        assertEquals(instance.getNumberOfCells(), newBoard.getNumberOfCells());
+        assertEquals(instance.getCellCount(), newBoard.getCellCount());
 
         // make changes to the new board
         byte[][] board = {
@@ -225,7 +225,7 @@ public class BoardDynamicTest {
         assertEquals(instance.getRows(), 3);
         assertEquals(instance.getGenerationCount(), 4);
         assertEquals(instance.getLivingCellCount(), 4);
-        assertEquals(instance.getNumberOfCells(), 9);
+        assertEquals(instance.getCellCount(), 9);
     }
 
     /**

@@ -14,7 +14,7 @@ public class BoardDynamic {
      * Represents the game board in its current game state. 1 represents live
      * cells, 0 represents dead cells.
      */
-    protected ArrayList<ArrayList<Byte>> currentBoard;
+    private ArrayList<ArrayList<Byte>> currentBoard;
 
     /**
      * Used to represent cells which have changed during the last generation
@@ -26,7 +26,7 @@ public class BoardDynamic {
      * Used to store the game board as it was before the game started. Allows
      * for resetting the game board.
      */
-    protected ArrayList<ArrayList<Byte>> originalBoard;
+    private ArrayList<ArrayList<Byte>> originalBoard;
 
     /**
      * Used when generating the next generation.
@@ -35,10 +35,10 @@ public class BoardDynamic {
 
     private int generationCount = 0;
 
-    protected int livingCells = 0;
-    protected final byte DEAD = 0;
-    protected final byte ALLIVE = 1;
-    protected final byte CHANGED = 1;
+    private int livingCells = 0;
+    private final byte DEAD = 0;
+    private final byte ALLIVE = 1;
+    private final byte CHANGED = 1;
 
     private Rules rules = Rules.getInstance();
 
@@ -271,7 +271,7 @@ public class BoardDynamic {
      * @return an <code>int</code> specifying the number of cells, both living
      * and dead, on the current board.
      */
-    public int getNumberOfCells() {
+    public int getCellCount() {
         return currentBoard.size() * currentBoard.get(0).size();
     }
 
@@ -308,6 +308,7 @@ public class BoardDynamic {
         b.countLivingCells();
         return b;
     }
+    
     /**
      * Used in <code>Statistics</code> to generate a similarity measure. 
      * @return <code>float</code> the sum of the index to all living cells.
@@ -360,7 +361,7 @@ public class BoardDynamic {
         expandedWest = false;
         boardExpanded = false;
 
-        if (rules.isDynamic() && getNumberOfCells() < rules.getMaxNumberOfCells()) {
+        if (rules.isDynamic() && getCellCount() < rules.getMaxNumberOfCells()) {
             expandBoardIfNeeded();
         }
 
@@ -426,7 +427,7 @@ public class BoardDynamic {
         boardExpanded = false;
 
         // determin if board should expand
-        if (rules.isDynamic() && getNumberOfCells() < rules.getMaxNumberOfCells()) {
+        if (rules.isDynamic() && getCellCount() < rules.getMaxNumberOfCells()) {
             expandBoardIfNeeded();
         }
 
@@ -725,7 +726,7 @@ public class BoardDynamic {
      * counted.
      * @return an <code>int</code> specifying the number of living neighbours.
      */
-    protected int countNeighbours(ArrayList<ArrayList<Byte>> board, int row, int col) {
+    private int countNeighbours(ArrayList<ArrayList<Byte>> board, int row, int col) {
         int neighbours = 0;
         int rowLastIndex = board.size() - 1;
         int colLastIndex = board.get(0).size() - 1;
@@ -835,7 +836,7 @@ public class BoardDynamic {
      * you want copied.
      * @return a <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code> copy.
      */
-    protected ArrayList<ArrayList<Byte>> duplicateBoard(ArrayList<ArrayList<Byte>> original) {
+    private ArrayList<ArrayList<Byte>> duplicateBoard(ArrayList<ArrayList<Byte>> original) {
         ArrayList<ArrayList<Byte>> boardCopy = new ArrayList<>();
         for (int row = 0; row < original.size(); row++) {
             boardCopy.add(row, new ArrayList<Byte>());

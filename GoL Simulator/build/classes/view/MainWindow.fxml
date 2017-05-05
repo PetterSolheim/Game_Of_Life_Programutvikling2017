@@ -53,16 +53,12 @@
                                 <KeyCodeCombination alt="UP" code="C" control="DOWN" meta="UP" shift="UP" shortcut="UP" />
                             </accelerator>
                         </MenuItem>
-                        <Menu mnemonicParsing="false" text="Settings">
-                            <items>
-                                <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Rules Settings" />
-                                <MenuItem mnemonicParsing="false" onAction="#showAudioSettingsWindow" text="Audio Settings" />
-                            </items>
-                        </Menu>
+                        <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Settings" />
                     </items>
                 </Menu>
                 <Menu text="_View" mnemonicParsing="true">
                     <items>
+                        <MenuItem mnemonicParsing="false" onAction="#showMusicPlayer" text="Music Player" />
                         <MenuItem mnemonicParsing="false" onAction="#showStatistics" text="Statistics" />
                         <MenuItem mnemonicParsing="false" onAction="#showMetadata" text="Metadata">
                             <accelerator>
@@ -174,7 +170,7 @@
                     <Text text="Zoom: " />
                     <Slider fx:id="cellSizeSlider" majorTickUnit="1.0" max = "20.0" min ="1.0" minorTickCount="0" snapToTicks="true" value="7.0"/>
                     <Text text="Animation speed: " />
-                    <Slider fx:id="fpsSlider" majorTickUnit="5.0" max="120.0" min="1.0" minorTickCount="0" snapToTicks="true" value="4.0" >
+                    <Slider fx:id="fpsSlider" majorTickUnit="5.0" max="120.0" min="1.0" minorTickCount="0" snapToTicks="true" value="10.0" >
                         <HBox.margin>
                             <Insets right="10.0" />
                         </HBox.margin>

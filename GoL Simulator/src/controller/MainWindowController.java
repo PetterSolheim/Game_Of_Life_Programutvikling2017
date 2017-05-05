@@ -44,7 +44,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.layout.GridPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Modality;
-import javafx.stage.WindowEvent;
 import view.DialogBoxes;
 
 /**
@@ -100,7 +99,7 @@ public class MainWindowController implements Initializable {
         backgroundColorPicker.setValue(canvas.getBackgroundColor());
 
         // prepare the FPS slider and add a listener.
-        fpsSlider.setValue(4.0);
+        fpsSlider.setValue(10.0);
         setFps();
         fpsSlider.valueProperty().addListener((observable) -> {
             setFps();
@@ -223,8 +222,8 @@ public class MainWindowController implements Initializable {
                 }
 
             } catch (IllegalArgumentException e) {
-                DialogBoxes.inputError("Entered value is not a number, or is to"
-                        + " high a number.");
+                DialogBoxes.inputError("Invalid input. Number is either to high,"
+                        + "to low, or not a number.");
             }
         });
     }
@@ -523,7 +522,7 @@ public class MainWindowController implements Initializable {
     public void createNextGeneration() {
         // ensure board is large enough that threads make a difference as 
         // creation of threads will also consume performance.
-        if (board.getNumberOfCells() > 80000) {
+        if (board.getCellCount() > 80000) {
             board.nextGenerationConcurrent();   
         } else {
             board.nextGeneration();

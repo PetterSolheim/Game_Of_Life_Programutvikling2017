@@ -11,7 +11,7 @@ import javafx.scene.control.ButtonType;
 public class DialogBoxes {
 
     /**
-     * A simple dialog box for displaying IOException messages.
+     * Display a simple dialog box for displaying IOException messages.
      * @param message a <code>String</code> specifying the message to be
      * displayed.
      */
@@ -23,7 +23,7 @@ public class DialogBoxes {
     }
 
     /**
-     * A simple dialog box for displaying PatternFormatException messages.
+     * Display a simple dialog box for displaying PatternFormatException messages.
      * @param message a <code>String</code> specifying the message to be
      * displayed.
      */
@@ -35,7 +35,7 @@ public class DialogBoxes {
     }
 
     /**
-     * A generic error message box in the style of AlertType.Error.
+     * Display a generic error message box in the style of AlertType.Error.
      * @param headerText a <code>String</code> specifying the header text.
      * @param message a <code>String</code> specifying the actually error.
      */
@@ -48,7 +48,7 @@ public class DialogBoxes {
 
     
     /**
-     * A simple dialog box for displaying input errors.
+     * Display a simple dialog box for displaying input errors.
      * @param message a <code>String</code> specifying the message to be
      * displayed.
      */
@@ -62,6 +62,7 @@ public class DialogBoxes {
     /**
      * Displays a confirmation warning box which return true if user selects ok,
      * and false if user selects cancel.
+     * 
      * @param message a <code>String</code> specifying the text to display with
      * the confirmation warning.
      * @return a <code>boolean</code> specifying user selection where true = 
@@ -81,7 +82,8 @@ public class DialogBoxes {
 
     
     /**
-     * A simple dialog box.
+     * Display a simple dialog box for displaying information boxes.
+     * 
      * @param message a <code>String</code> specifying the message to be
      * displayed.
      * @param title a <code>String</code> specifying the title for the dialog

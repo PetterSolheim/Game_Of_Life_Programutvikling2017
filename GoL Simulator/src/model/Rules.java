@@ -21,7 +21,7 @@ public class Rules {
 
     private ArrayList<Integer> survivalRules;
     private ArrayList<Integer> birthRules;
-    private boolean dynamic = false;
+    private boolean dynamic = true;
     private int maxNumberOfCells = 3000000;
     private static Rules rules;
 

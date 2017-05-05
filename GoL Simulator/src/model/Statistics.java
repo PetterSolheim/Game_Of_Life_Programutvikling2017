@@ -159,7 +159,7 @@ public class Statistics {
             b.getIndexSum();
             b.nextGeneration();
             averageLivingCells += b.getLivingCellCount();
-            averageDeadCells += (b.getNumberOfCells() - b.getLivingCellCount());
+            averageDeadCells += (b.getCellCount() - b.getLivingCellCount());
             generations.put(b.getGenerationCount(), new BoardDynamic(b.getBoard()));
             livingCellsPerGeneration.put(b.getGenerationCount(), b.getLivingCellCount());
             livingCells.getData().add(getLivingCells());
