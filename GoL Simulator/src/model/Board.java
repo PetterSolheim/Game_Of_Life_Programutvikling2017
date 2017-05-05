@@ -1,9 +1,9 @@
 package model;
 
 /**
- * This class contains the game board and its mechanics, such as moving the
- * game board to the next generation. This class has been deprecated and 
- * replaced by the {@link model.BoardDynamic} class.
+ * This class contains the game board and its mechanics, such as moving the game
+ * board to the next generation. This class has been deprecated and replaced by
+ * the {@link model.BoardDynamic} class.
  *
  * @deprecated use {@link model.BoardDynamic} instead
  * @see model.BoardDynamic
@@ -45,8 +45,7 @@ public class Board {
     }
 
     /**
-     * Board constructor. Allows one to define the starting size of the game
-     * board.
+     * Allows one to define the starting size of the game board.
      *
      * @param row the number of rows for the starting board.
      * @param col the number of columns for the starting board.
@@ -64,17 +63,24 @@ public class Board {
     }
 
     /**
+     * Constructor accepts a byte[][] representing the starting state of the
+     * board.
+     *
+     * @param board a <code>byte[][]</code> specifying the starting board.
+     */
+    public Board(byte[][] board) {
+        this.currentBoard = duplicateBoard(board);
+    }
+
+    /**
      * Sets a new game board.
      *
-     * @param newBoard the new game board.
+     * @param newBoard a <code>byte[][]</code> specifying the new game board.
      */
     public void setBoard(byte[][] newBoard) {
         originalBoard = duplicateBoard(newBoard);
         currentBoard = duplicateBoard(newBoard);
         countLivingCells();
-    }
-    public Board(byte [][] board){
-        this.currentBoard = duplicateBoard(board);
     }
 
     /**
@@ -112,12 +118,12 @@ public class Board {
         }
     }
 
-    public int getIndexSum (){
+    public int getIndexSum() {
         int sum = indexSum;
         indexSum = 0;
         return sum;
     }
-    
+
     /**
      * Gets the number of cells on the current board, both living and dead.
      *
@@ -374,7 +380,7 @@ public class Board {
     }
 
     /**
-     * Counts the number of living neighbour cells for a specified cell.
+     * Counts the number of living neighbour for a specified cell.
      *
      * @param board the game board containing the cell to have neighbours its
      * counted.
@@ -472,8 +478,8 @@ public class Board {
     private byte[][] duplicateBoard(byte[][] original) {
         byte[][] boardCopy = new byte[original.length][original[0].length];
 
-        for(int row = 0; row < original.length; row++) {
-            for(int col = 0; col < original[0].length; col++) {
+        for (int row = 0; row < original.length; row++) {
+            for (int col = 0; col < original[0].length; col++) {
                 boardCopy[row][col] = original[row][col];
             }
         }

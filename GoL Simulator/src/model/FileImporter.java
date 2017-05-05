@@ -9,7 +9,6 @@ import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,8 +16,11 @@ import java.util.regex.Pattern;
  * <p>
  * Class for converting external Game of Life pattern files to
  * {@link model.BoardDynamic} objects. Parses both the board and the pattern
- * files metadata. Class currently supports PlainText, Life 1.05, Life 1.06 and
- * RLE file formats.</p>
+ * files metadata. Class currently supports PlainText, Life 1.06 and RLE file
+ * formats.</p>
+ * <p>
+ * Game rules stored in the {@link model.Rules} class object will also be
+ * changed if the pattern file defines rules for the pattern.</p>
  *
  * <p>
  * Class was based on the file definitions outlined at
@@ -27,8 +29,6 @@ import java.util.regex.Pattern;
  *
  * @see
  * <a href="http://www.conwaylife.com/wiki/Plaintext" target="_blank">PlainText</a>
- * @see <a href="http://www.conwaylife.com/wiki/Life_1.05" target="_blank">Life
- * 1.05</a>
  * @see <a href="http://www.conwaylife.com/wiki/Life_1.06" target="_blank">Life
  * 1.06</a>
  * @see <a href="http://www.conwaylife.com/wiki/Rle" target="_blank">RLE</a>
@@ -41,18 +41,26 @@ public class FileImporter {
     private String name = "unknown";
     private String comment = "";
     private Rules rules = Rules.getInstance();
+    
+    /**
+     * Constructor takes no arguments.
+     */
+    public FileImporter() {
+        
+    }
 
     /**
      * Reads a pattern file from disk, and returns a {@link model.BoardDynamic}
-     * object containing the pattern and its metadata (if any is found).
+     * object containing the pattern and its metadata. If rules are defined in
+     * the pattern file, these will be applied to the Rules class object.
      *
      * @param f the File object containing the pattern file.
      * @return a {@link model.BoardDynamic} object containing the pattern and
      * its metadata. Values in {@link model.Rules} are also set according to the
      * rules defined in the pattern file.
      *
-     * @throws IOException which where thrown by its helper methods during
-     * file reading.
+     * @throws IOException which where thrown by its helper methods during file
+     * reading.
      * @throws PatternFormatException if FileImporter was unable to parse the
      * given file.
      */
@@ -63,10 +71,9 @@ public class FileImporter {
     }
 
     /**
-     * Reads a pattern file from an URL and parses it. Returns a
-     * {@link model.BoardDynamic} object containing the pattern and its
-     * metadata. Values in {@link model.Rules} are also set according to the
-     * rules defined in the pattern file.
+     * Reads a pattern file from disk, and returns a {@link model.BoardDynamic}
+     * object containing the pattern and its metadata. If rules are defined in
+     * the pattern file, these will be applied to the Rules class object.
      *
      * @param url a <code>String</code> specifying the URL to the pattern file.
      * @return a {@link model.BoardDynamic} object containing the pattern and
