@@ -47,8 +47,10 @@ public class Board {
     /**
      * Allows one to define the starting size of the game board.
      *
-     * @param row the number of rows for the starting board.
-     * @param col the number of columns for the starting board.
+     * @param row an <code>int</code> specifying the number of rows for the
+     * starting board.
+     * @param col an <code>int</code> specifying the number of columns for the
+     * starting board.
      * @throws IllegalArgumentException in the case that either the number of
      * rows of columns are defined to be bellow 1.
      */
@@ -63,8 +65,8 @@ public class Board {
     }
 
     /**
-     * Constructor accepts a byte[][] representing the starting state of the
-     * board.
+     * Constructor accepts a <code>byte[][]</code> representing the starting
+     * state of the board.
      *
      * @param board a <code>byte[][]</code> specifying the starting board.
      */
@@ -212,8 +214,7 @@ public class Board {
 
     /**
      * Checks the current board to see if it should be expanded. Requirement for
-     * expansion is if a living cells is touching one of the current boards
-     * borders.
+     * expansion is if a living cells is touching the edge of the game board.
      */
     private void expandBoardIfNeeded() {
         boolean boardExpanded = false;
@@ -382,12 +383,14 @@ public class Board {
     /**
      * Counts the number of living neighbour for a specified cell.
      *
-     * @param board the game board containing the cell to have neighbours its
-     * counted.
-     * @param row the row location of the cell to have its neighbours counted.
-     * @param col the column location of the cell to have its neighbours
-     * counted.
-     * @return an <code>int</code> specifying the number of living neighbours.
+     * @param board a <code>byte[][]</code> representing the board to have
+     * neighbours counted.
+     * @param row an <code>int</code> specifying the row location of the cell to
+     * have its neighbours counted.
+     * @param col an <code>int</code> specifying the column location of the cell
+     * to have its neighbours counted.
+     * @return an <code>int</code> specifying the number of living neighbours
+     * the specified cell has.
      */
     private int countNeighbours(byte[][] board, int row, int col) {
         int neighbours = 0;
@@ -433,8 +436,10 @@ public class Board {
      * Toggles the state of a specified cell in the current board. Live cell
      * becomes dead, dead cell becomes alive.
      *
-     * @param row the row position of the cell to toggle.
-     * @param col the column position of the cell to toggle.
+     * @param row an <code>int</code> specifying the row position of the cell to
+     * toggle.
+     * @param col an <code>int</code> specifying the column position of the cell
+     * to toggle.
      */
     public void toggleCellState(int row, int col) {
         if (currentBoard[row][col] == 1) {
@@ -449,8 +454,10 @@ public class Board {
     /**
      * Sets the state of a specified cell on the current board to alive.
      *
-     * @param row the row position of the cell to make alive.
-     * @param col the column position of the cell to make alive.
+     * @param row an <code>int</code> specifying the row position of the cell to
+     * make alive.
+     * @param col an <code>int</code> specifying the column position of the cell
+     * to make alive.
      */
     public void setCellStateAlive(int row, int col) {
         if (currentBoard[row][col] != 1) {
@@ -470,9 +477,9 @@ public class Board {
     }
 
     /**
-     * Gets a copy of the passed game board array.
+     * Creates a copy of the passed game board array.
      *
-     * @param original the board that you want to copy.
+     * @param original a <code>byte[][]</code> that you want copied.
      * @return a <code>byte[][]</code> copy.
      */
     private byte[][] duplicateBoard(byte[][] original) {
@@ -487,10 +494,10 @@ public class Board {
     }
 
     /**
-     * Provides a string representation of the current board.
+     * Each row of the game board is concatenated into a single string.
+     * Primarily meant for testing purposes.
      *
-     * @return a <code>String</code> representing the state of the current
-     * board.
+     * @return a <code>String</code> representing the current board state.
      */
     @Override
     public String toString() {

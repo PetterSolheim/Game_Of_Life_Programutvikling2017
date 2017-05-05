@@ -28,6 +28,9 @@ public class BoardDynamic {
      */
     protected ArrayList<ArrayList<Byte>> originalBoard;
 
+    /**
+     * Used when generating the next generation.
+     */
     private ArrayList<ArrayList<Byte>> nextGeneration;
 
     private int generationCount = 0;
@@ -39,12 +42,21 @@ public class BoardDynamic {
 
     private Rules rules = Rules.getInstance();
 
-    private boolean expandedNorth, expandedWest, boardExpanded; //
+    /**
+     * Specifies if board has expanded.
+     */
+    private boolean expandedNorth, expandedWest, boardExpanded;
 
+    /**
+     * Board metadata
+     */
     private String boardAuthor = "";
     private String boardName = "";
     private String boardComment = "";
 
+    /**
+     * Used for threading
+     */
     private int numWorkers = Runtime.getRuntime().availableProcessors();
     private ArrayList<Thread> workers = new ArrayList<Thread>();
 
@@ -83,8 +95,10 @@ public class BoardDynamic {
      * Board constructor. Allows one to define the starting size of the game
      * board.
      *
-     * @param row the number of rows for the starting board.
-     * @param col the number of columns for the starting board.
+     * @param row an <code>int</code> specifying the number of rows for the
+     * starting board.
+     * @param col an <code>int</code> specifying the number of columns for the
+     * starting board.
      * @throws IllegalArgumentException in the case that either the number of
      * rows of columns are defined to be bellow 1.
      */
@@ -163,7 +177,8 @@ public class BoardDynamic {
     /**
      * Sets a new game board.
      *
-     * @param newBoard the new game board.
+     * @param newBoard an <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>the
+     * representing the new game board.
      */
     public void setBoard(ArrayList<ArrayList<Byte>> newBoard) {
         originalBoard = duplicateBoard(newBoard);
@@ -174,7 +189,7 @@ public class BoardDynamic {
     /**
      * Sets a new game board.
      *
-     * @param newBoard the new game board.
+     * @param newBoard a <code>byte[][]</code> representing the new game board.
      */
     public void setBoard(byte[][] newBoard) {
         originalBoard = createEmptyBoard(newBoard.length, newBoard[0].length);
@@ -225,6 +240,14 @@ public class BoardDynamic {
         }
     }
 
+    /**
+     * Shifts all the living cells on the board in a given direction.
+     *
+     * @param xAxis an <code>int</code> specifying the number of rows to shift
+     * the board.
+     * @param yAxis an <code>int</code> specifying the number of cols to shift
+     * the board.
+     */
     public void moveBoardWithArrowKeys(int xAxis, int yAxis) {
         ArrayList<ArrayList<Byte>> newBoard = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
         for (int row = 0; row < currentBoard.size(); row++) {
@@ -327,7 +350,7 @@ public class BoardDynamic {
 
     /**
      * Runs the non-threaded method nextGeneration() a specified number of
-     * times, and prints the time it took to complete.
+     * times, and prints to the console the time it took to complete.
      *
      * @param iterations an <code>int</code> specifying the number of iterations
      * for the test.
@@ -391,7 +414,7 @@ public class BoardDynamic {
 
     /**
      * Runs the threaded method nextGenerationConcurrent() a specified number of
-     * times, and prints the time it took to complete.
+     * times, and prints to the console the time it took to complete.
      *
      * @param iterations an <code>int</code> specifying the number of iterations
      * for the test.
@@ -407,19 +430,16 @@ public class BoardDynamic {
     }
 
     /**
-     *
      * Iterates the current board to its next generation, playing by the rules
      * defined in the Rules class object. This method uses threads to improve
      * performance.
      *
      * @see model.Rules
-     *
      */
     public void nextGenerationConcurrent() {
 
-        // reset list of changed cells.
+        // reset values
         changedCells = createEmptyBoard(currentBoard.size(), currentBoard.get(0).size());
-
         expandedNorth = false;
         expandedWest = false;
         boardExpanded = false;
@@ -446,6 +466,10 @@ public class BoardDynamic {
         generationCount++;
     }
 
+    /**
+     * Creates a number of workers equal to the number of threads on the current
+     * system.
+     */
     private void createNextGenerationWorkers() {
         for (int i = 0; i < numWorkers; i++) {
             int workerNr = i;
@@ -455,8 +479,12 @@ public class BoardDynamic {
         }
     }
 
+    /**
+     * Starts the threads, and then waits for them to all finish.
+     *
+     * @throws InterruptedException
+     */
     private void runNextGenerationWorkers() throws InterruptedException {
-
         for (Thread t : workers) {
             t.start();
         }
@@ -467,8 +495,14 @@ public class BoardDynamic {
         }
     }
 
+    /**
+     * Assigns a worker its section of the game board for processing. its
+     * section is determined by its worker number, and the total number of
+     * workers.
+     *
+     * @param workerNr an <code>int</code> specifying a worker id number.
+     */
     private void partialNextGeneration(int workerNr) {
-
         int startCol = (nextGeneration.get(0).size() / numWorkers) * workerNr;
         int endCol;
         if (workerNr + 1 == numWorkers) {
@@ -495,10 +529,11 @@ public class BoardDynamic {
 
     /**
      *
-     * Allows for increasing of the number of living cells. Pass negative values
-     * to decrease. Method is synchronized and therefore safe to threaded use.
+     * Allows for adjusting the number of living cells. Pass positive values to
+     * increase, negative to decrease.
      *
-     * @param i
+     * @param i an <code>int</code> specifying the amount to increase or deduct
+     * the value by.
      *
      */
     private synchronized void addToLivingCells(int i) {
@@ -512,7 +547,7 @@ public class BoardDynamic {
 
     /**
      * Checks the current board to see if it should be expanded. Requirement for
-     * expansion is if a living cells is touching one of the current boards
+     * expansion is if a living cell is touching one of the current boards
      * borders.
      */
     private void expandBoardIfNeeded() {
@@ -569,6 +604,12 @@ public class BoardDynamic {
         return expandedWest;
     }
 
+    /**
+     * Check if the board expanded on any of its sides.
+     *
+     * @return a <code>boolean</code> specifying weather or not the board
+     * expanded.
+     */
     public boolean didExpand() {
         return boardExpanded;
     }
@@ -747,8 +788,10 @@ public class BoardDynamic {
      * Toggles the state of a specified cell in the current board. Live cell
      * becomes dead, dead cell becomes alive.
      *
-     * @param row the row position of the cell to toggle.
-     * @param col the column position of the cell to toggle.
+     * @param row an <code>int</code> specifying the row position of the cell to
+     * toggle.
+     * @param col an <code>int</code> specifying the column position of the cell
+     * to toggle.
      */
     public void toggleCellState(int row, int col) {
         if (currentBoard.get(row).get(col) == 1) {
@@ -763,8 +806,10 @@ public class BoardDynamic {
     /**
      * Sets the state of a specified cell on the current board to alive.
      *
-     * @param row the row position of the cell to make alive.
-     * @param col the column position of the cell to make alive.
+     * @param row an <code>int</code> specifying the row position of the cell to
+     * make alive.
+     * @param col an <code>int</code> specifying the column position of the cell
+     * to make alive.
      */
     public void setCellStateAlive(int row, int col) {
         if (currentBoard.get(row).get(col) != 1) {
@@ -786,7 +831,6 @@ public class BoardDynamic {
     /**
      * Replaces the current board with a new, empty board, of the same
      * dimensions, effectively clearing it.
-     *
      */
     public void clearBoard() {
         generationCount = 0;
@@ -796,20 +840,18 @@ public class BoardDynamic {
     }
 
     /**
-     * Stores the current board in the originalBoard variable. This allows the
-     * current board to become the board the application resets to. Method is
-     * called if generationCount variable is 0 indicating this is the first
-     * board of the game.
+     * Stores the current board in the originalBoard variable.
      */
     public void preserveBoard() {
         originalBoard = duplicateBoard(currentBoard);
     }
 
     /**
-     * Gets a new copy of the passed game board ArrayList
+     * Creates a copy of the passed game board ArrayList
      * <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>.
      *
-     * @param original the board that you want to copy.
+     * @param original the <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>
+     * you want copied.
      * @return a <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code> copy.
      */
     protected ArrayList<ArrayList<Byte>> duplicateBoard(ArrayList<ArrayList<Byte>> original) {
@@ -827,8 +869,8 @@ public class BoardDynamic {
      * Creates an <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>. where all
      * values are set to 0.
      *
-     * @param row the number of rows the list should have.
-     * @param col the number of columns the list should have.
+     * @param row an <code>int</code> specifying the number of rows the list should have.
+     * @param col an <code>int</code> specifying the number of columns the list should have.
      * @return the finished <code>ArrayList&lt;ArrayList&lt;Byte&gt;&gt;</code>.
      */
     private ArrayList<ArrayList<Byte>> createEmptyBoard(int row, int col) {
