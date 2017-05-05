@@ -98,8 +98,8 @@ public class StatisticsWindowController {
     private void changeWidth() {
         if (s != null) {
             double d = root.getWidth();
-            leftCanvas.setWidth(d / 2);
-            rightCanvas.setWidth(d / 2);
+            leftCanvas.setWidth((d / 2) - 10);
+            rightCanvas.setWidth((d / 2) - 10);
             chart.setPrefWidth(d);
             setInitialCanvasGeneration();
         }
@@ -180,8 +180,8 @@ public class StatisticsWindowController {
      * This displays the canvas' after user input.
      */
     private void defineCanvas() {
-        leftCanvas.widthProperty().set(root.getWidth() / 2);
-        rightCanvas.widthProperty().set(root.getWidth() / 2);
+        leftCanvas.widthProperty().set((root.getWidth() / 2) - 10);
+        rightCanvas.widthProperty().set((root.getWidth() / 2) - 10);
         leftCanvas.heightProperty().set(300);
         rightCanvas.heightProperty().set(300);
     }

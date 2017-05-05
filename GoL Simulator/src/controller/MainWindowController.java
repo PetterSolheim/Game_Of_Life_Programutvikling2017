@@ -607,20 +607,11 @@ public class MainWindowController implements Initializable {
             VBox root = loader.load();
             AudioSettingsWindowController c = loader.getController();
             c.setThisStage(soundSettings);
-            c.initializeBoardSound(board);
-            c.setMainBoard(board);
             Scene scene = new Scene(root);
             soundSettings.setScene(scene);
             soundSettings.setTitle("Game of Life Simulator - Audio Settings");
             soundSettings.initModality(Modality.APPLICATION_MODAL);
             //Stop audioplaybak of BoardSound if window is closed.
-            soundSettings.setOnCloseRequest(new EventHandler<WindowEvent>() {
-                @Override
-                public void handle(WindowEvent we) {
-                    c.setIsPlaying(false);
-                    c.setBoardIsActive(false);
-                }
-            });
             soundSettings.show();
         } catch (IOException exception) {
             DialogBoxes.ioException(exception.getMessage());

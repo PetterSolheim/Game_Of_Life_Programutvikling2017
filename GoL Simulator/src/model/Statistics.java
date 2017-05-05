@@ -123,35 +123,6 @@ public class Statistics {
     }
 
     /**
-     *
-     */
-    public void AudioStatistics() {
-        ArrayList<Integer> cellsPerGeneratin = new ArrayList<Integer>();
-        ArrayList<Integer> populationChange = new ArrayList<Integer>();
-        populationChange.add(0);
-        int totalCells = b.getNumberOfCells();
-        averageDeadCells = totalCells - b.getLivingCellCount();
-        averageLivingCells = b.getLivingCellCount();
-        int prevCellCount = 0;
-        while (b.getGenerationCount() <= lastGeneration) {
-            cellsPerGeneratin.add(b.getLivingCellCount());
-            prevCellCount = b.getLivingCellCount();
-            b.nextGeneration();
-            averageDeadCells += (totalCells - b.getLivingCellCount());
-            averageLivingCells += b.getLivingCellCount();
-            populationChange.add(getPopulationChange(prevCellCount));
-        }
-        int i = 0;
-
-        averageDeadCells = averageDeadCells / iterations;
-        averageLivingCells = averageLivingCells / iterations;
-        System.out.println(averageDeadCells + " " + averageLivingCells);
-        System.out.println(b.getNumberOfCells());
-        ArrayList<ArrayList> data = new ArrayList<>();
-
-    }
-
-    /**
      * This method is responsible for generating all the data for the
      * <code>XYChart</code>. It is structured in way that prevents iteration of
      * the board more than once and will therefore look dirty, but it doesn't
@@ -182,11 +153,10 @@ public class Statistics {
         //Needs initial generation data.
         livingCellsPerGeneration.put(b.getGenerationCount(), b.getLivingCellCount());
         generations.put(b.getGenerationCount(), new BoardDynamic(b.getBoard()));
-        averageLivingCells = b.getLivingCellCount();
-        averageDeadCells = b.getNumberOfCells() - b.getLivingCellCount();
         //This loop populates living Cells and populationChange series
         while (b.getGenerationCount() <= lastGeneration) {
             int prevPopulation = b.getLivingCellCount();
+            b.getIndexSum();
             b.nextGeneration();
             averageLivingCells += b.getLivingCellCount();
             averageDeadCells += (b.getNumberOfCells() - b.getLivingCellCount());
@@ -196,9 +166,7 @@ public class Statistics {
             popluationChange.getData().add(new XYChart.Data(b.getGenerationCount(), getPopulationChange(prevPopulation)));
             floatBoards.put(b.getGenerationCount(), convertBoardToFloat(b.getGenerationCount()));
         }
-        averageLivingCells = averageLivingCells / iterations;
-        averageDeadCells = averageDeadCells / iterations;
-        System.out.println("Average living: " + averageLivingCells + " average dead" + averageDeadCells);
+        
         //Populate similarity measure series
         int generationCount = firstGeneration + 1;
         while (generationCount <= lastGeneration) {
@@ -251,11 +219,9 @@ public class Statistics {
         float af = a * b.getLivingCellCount();
         float bf = be * (b.getLivingCellCount() - livingCellsPerGeneration.get(currentGeneration - 1));
         float indexSum = b.getIndexSum();
-        System.out.println("IndexSum: " + indexSum);
         float geometricFactor = y * indexSum;
         System.out.println("Geomtric factor " + geometricFactor + " " + y * indexSum);
         float board = af + bf + geometricFactor;
-        System.out.println("floatBoard: " + board);
         return board;
     }
 

@@ -10,11 +10,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Slider;
-import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -22,7 +19,6 @@ import javafx.stage.Stage;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import model.AudioManager;
 import model.BoardDynamic;
-import model.BoardSound;
 import model.Statistics;
 import view.DialogBoxes;
 
@@ -34,20 +30,17 @@ import view.DialogBoxes;
  */
 public class AudioSettingsWindowController implements Initializable {
 
-    private MainWindowController mainWindowController;
     /**
      * A reference to the main board.
      */
     private BoardDynamic mainBoard;
-    private BoardSound board;
     /**
      * A reference to the AudioManager. Used to call methods controlling audio
      * playback.
      */
     private AudioManager audioManager;
-    private AudioTimer timer;
     private Stage thisStage;
-    private boolean isPlaying;
+    ;
     /**
      * Contains what is displayed in the trackList
      */
@@ -59,11 +52,7 @@ public class AudioSettingsWindowController implements Initializable {
     @FXML
     private ImageView imgPlayPause;
     @FXML
-    private Slider volumeSlider, audioBoardSlider;
-    @FXML
-    private CheckBox generationAudio, cellAudio;
-    @FXML
-    private Button btnPlayBoard;
+    private Slider volumeSlider;
     /**
      * This ListView controls what songs are being playing in the AudioManager,
      * but the method that calls for change in the AudioManagers playstate is
@@ -74,8 +63,6 @@ public class AudioSettingsWindowController implements Initializable {
      */
     @FXML
     private ListView trackList;
-    @FXML
-    private TextField txtGenerations;
 
     /**
      * Initializes the controller class and various listeners. Also calls
@@ -93,28 +80,17 @@ public class AudioSettingsWindowController implements Initializable {
         }
         audioManager = AudioManager.getSingelton();
         audioManager.setController(this);
-        timer = new AudioTimer(this);
         volumeSlider.valueProperty().addListener((observable) -> {
             changeVolume();
-        });
-        audioBoardSlider.valueProperty().addListener(observalbe -> {
-            setFpsAndCellTimer();
-        });
-        generationAudio.selectedProperty().addListener((observable) -> {
-            toggleGenerationAudio();
-        });
-        cellAudio.selectedProperty().addListener((observable) -> {
-            toggleCellAudio();
         });
         trackList.getSelectionModel().selectedItemProperty().addListener((observable) -> {
             playSong();
         });
-        Platform.runLater(this::setFpsAndCellTimer);
         Platform.runLater(this::changeVolume);
     }
 
     /**
-     * Sets the next item in the <code>ListView</code> as active, triggering
+     * Sets the next item in the <code>ListView</code> as selected, triggering
      * it's eventListener. Calls <code>resetPlayList</code> if it is at the last
      * index.
      *
@@ -132,9 +108,9 @@ public class AudioSettingsWindowController implements Initializable {
      * Resets the trackList, pauses the music and displays the play icon.
      */
     private void resetPlayList() {
-        showPlayIcon();
         trackList.getSelectionModel().select(0);
-        audioManager.playPauseMusicPlayer();
+        audioManager.getActiveSong().stop();
+        //showPlayIcon();
     }
 
     /**
@@ -155,59 +131,9 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     /**
-     *
-     */
-    public void resetBoard() {
-        board.resetBoard();
-    }
-
-    private void toggleGenerationAudio() {
-        if (generationAudio.isSelected()) {
-            board.setGenerationAudio(true);
-        } else {
-            board.setGenerationAudio(false);
-        }
-    }
-
-    private void toggleCellAudio() {
-        if (cellAudio.isSelected()) {
-            board.setCellAudio(true);
-        } else {
-            board.setCellAudio(false);
-        }
-    }
-
-    /**
-     *
-     */
-    public void createNextGeneration() {
-        Thread newThread = new Thread(board);
-        newThread.run();
-        timer.stop();
-    }
-
-    /**
-     *
-     * @param board
-     */
-    public void initializeBoardSound(BoardDynamic board) {
-        BoardSound b = new BoardSound(board);
-        this.board = b;
-        timer.stop();
-    }
-
-    /**
-     *
-     * @param audioLength
-     */
-    public void setBoardAudioLength(long audioLength) {
-        board.setAudioLength(audioLength);
-    }
-
-    /**
      * Opens a FileChooser and passes the selected items to the AudioManager.
      * This class also calls the method updateSongList which refreshes the
-     * trackList checkIfSongIsLoaded is also called, displaying a dialog box if
+     * trackList. checkIfSongIsLoaded is also called, displaying a dialog box if
      * the song is loaded.
      */
     @FXML
@@ -275,7 +201,6 @@ public class AudioSettingsWindowController implements Initializable {
     private void playSong() {
         try {
             audioManager.loadSong(trackList.getSelectionModel().getSelectedItem().toString());
-            showPauseIcon();
         } catch (UnsupportedAudioFileException ex) {
             DialogBoxes.genericErrorMessage("Unsupported Audio File", "Try a different file\n" + ex.getMessage());
             ex.printStackTrace();
@@ -284,7 +209,8 @@ public class AudioSettingsWindowController implements Initializable {
 
     /**
      *
-     * @param newSong the name of the song to be displayed in ListView trackList.
+     * @param newSong the name of the song to be displayed in ListView
+     * trackList.
      */
     private void updateSongList(String newSong) {
         trackList.setItems(songNames);
@@ -316,51 +242,16 @@ public class AudioSettingsWindowController implements Initializable {
     @FXML
     private void toggleMusicPlayState() {
         if (audioManager.getActiveSong().isActive()) { // pause song
-            showPauseIcon();
             audioManager.playPauseMusicPlayer();
         } else { // play song
-            showPlayIcon();
             audioManager.playPauseMusicPlayer();
         }
-    }
-
-    /**
-     *
-     * @param isPlaying
-     */
-    public void setIsPlaying(boolean isPlaying) {
-        this.isPlaying = isPlaying;
-    }
-
-    /**
-     *
-     */
-    @FXML
-    private void toggleAudioBoardPlayState() {
-        if (isPlaying) { // pause
-            isPlaying = !isPlaying;
-            btnPlayBoard.setText("Play");
-            timer.stop();
-        } else { // play
-            isPlaying = !isPlaying;
-            btnPlayBoard.setText("Pause");
-            timer.start();
-        }
-    }
-
-    /**
-     *
-     */
-    public void findSong() {
-        Statistics statistics = new Statistics(mainBoard, 20);
-        statistics.AudioStatistics();
-        //audioManager.generateAudioSequence();
     }
 
     /**
      * Swaps the play icon with the pause icon.
      */
-    private void showPauseIcon() {
+    public void showPauseIcon() {
         Image pause = new Image("/img/pause.png");
         imgPlayPause.setImage(pause);
     }
@@ -368,47 +259,8 @@ public class AudioSettingsWindowController implements Initializable {
     /**
      * Swaps the pause icon with the play icon.
      */
-    private void showPlayIcon() {
+    public void showPlayIcon() {
         Image play = new Image("/img/play.png");
         imgPlayPause.setImage(play);
-    }
-
-    private void setFpsAndCellTimer() {
-        long newTimer = (long) (1000000000 / audioBoardSlider.getValue());
-        timer.setFps(newTimer);
-        timer.setTimeBetweenCellAudioTimer(board.getNrOfCells());
-        board.setAudioLength(timer.getTimeBetweenCellAudioTimer());
-    }
-
-    /**
-     *
-     * @param isActive
-     */
-    public void setBoardIsActive(boolean isActive) {
-        board.setIsActive(isActive);
-    }
-
-    /**
-     *
-     * @param mainWindowController
-     */
-    public void setMainWindowConttroller(MainWindowController mainWindowController) {
-        this.mainWindowController = mainWindowController;
-    }
-
-    /**
-     *
-     * @param mainBoard
-     */
-    public void setMainBoard(BoardDynamic mainBoard) {
-        this.mainBoard = mainBoard;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public BoardDynamic getMainBoard() {
-        return mainBoard;
     }
 }

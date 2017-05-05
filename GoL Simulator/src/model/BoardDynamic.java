@@ -308,39 +308,20 @@ public class BoardDynamic {
         b.countLivingCells();
         return b;
     }
-
+    /**
+     * Used in <code>Statistics</code> to generate a similarity measure. 
+     * @return <code>float</code> the sum of the index to all living cells.
+     */
     public float getIndexSum() {
-        int divider = (int) ((float) rows.size() * 0.5f);
-        System.out.println("Divider : " + divider);
         float sum = 0;
-        boolean middleFactor = true;
         for (int i = 0; i < rows.size(); i++) {
             float row, col;
             row = rows.get(i);
             col = cols.get(i);
-            /**
-             * if (i < divider) {
-             * sum += (row * col) + row;
-             * System.out.println("Addition first: " + (row + col) + row);
-             * } else if (i > rows.size() - 1 - divider) { sum += (row * col) +
-             * col; System.out.println("Addition second: " + (row + col) + col);
-             * } else { if (i % 2 == 0) { if (middleFactor == true) {
-             * System.out.println("middle true"); sum += (row + col) + row;
-             * middleFactor = false; } else { System.out.println("Middlefalse");
-             * sum += (row + col) + col; middleFactor = true; } } else {
-             * System.out.println("normal sum"); sum += row + col; } }
-             *
-             *
-             * if(i % 2 == 0){ if(middleFactor){ sum += (row + col) * col;
-             * middleFactor = false; }else { sum += (row + col) * row;
-             * middleFactor = true; } } else { sum += row + col; }
-             *
-             *
-             */
-            if (i < divider) {
-                sum += (row * col) + col;
+            if (i % 2 == 0) {
+                    sum += (row + col) * row;
             } else {
-                sum += (row * col) + row;
+                sum += (row + col)  * col; 
             }
         }
         rows.clear();

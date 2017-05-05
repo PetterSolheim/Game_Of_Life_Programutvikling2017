@@ -95,8 +95,9 @@ public class AudioManager {
     }
 
     /**
-     * Determines the new volume, by adjusting the gain, based on desired volume.
-     * The new volume is relative to the system volume.
+     * Determines the new volume, by adjusting the gain, based on desired
+     * volume. The new volume is relative to the system volume.
+     *
      * @param volume float desired volume, ranging from 0 - 100.
      */
     public void volume(float volume) {
@@ -107,13 +108,11 @@ public class AudioManager {
     }
 
     /**
-     * Helper method used to convert the gain level of a Clip to
-     * match the desired volume.
+     * Helper method used to convert the gain level of a Clip to match the
+     * desired volume.
      *
-     * @param minGain float minimum possible gain of the Clip
-     * object.
-     * @param maxGain float maximum possible gain of the Clip
-     * object.
+     * @param minGain float minimum possible gain of the Clip object.
+     * @param maxGain float maximum possible gain of the Clip object.
      * @param desiredVolume float desired volume.
      * @return
      */
@@ -125,7 +124,9 @@ public class AudioManager {
     }
 
     /**
-     * Stores the path to the selected File in an ArrayList so it can be reused later.
+     * Stores the path to the selected File in an ArrayList so it can be reused
+     * later.
+     *
      * @param f the <code>File</code> to be stored.
      */
     public void addAbsolutePath(File f) {
@@ -142,7 +143,8 @@ public class AudioManager {
     }
 
     /**
-     *  Loads the desired 
+     * Loads the desired
+     *
      * @param songName <code>String</code> name of the song
      * @throws UnsupportedAudioFileException if the file is corrupted or not
      * supported
@@ -155,6 +157,7 @@ public class AudioManager {
                     inputStream = AudioSystem.getAudioInputStream(file);
                     setActiveSong(inputStream);
                     playPauseMusicPlayer();
+                    controller.showPauseIcon();
                 } catch (IOException ex) {
                     DialogBoxes.genericErrorMessage("Failed to load audio file", "Try again\n" + ex.getMessage());
                 }
@@ -177,20 +180,16 @@ public class AudioManager {
      */
     private void setActiveSong(AudioInputStream song) {
         try {
+            activeSong.stop();
+            activeSong.close();
             activeSong.open(song);
         } catch (LineUnavailableException ex) {
+            ex.printStackTrace();
             DialogBoxes.genericErrorMessage("No lines available", ex.getMessage());
         } catch (IOException ex) {
+            ex.printStackTrace();
             DialogBoxes.genericErrorMessage("Failed to load audio file", "Try again\n" + ex.getMessage());
         }
-    }
-
-    /**
-     *
-     * @param data
-     */
-    public void generateAudioSequence(ArrayList<ArrayList> data) {
-
     }
 
     /**
@@ -210,8 +209,10 @@ public class AudioManager {
     public void playPauseMusicPlayer() {
         if (activeSong.isActive()) {
             activeSong.stop();
+            controller.showPauseIcon();
         } else {
             activeSong.start();
+            controller.showPlayIcon();
         }
     }
 

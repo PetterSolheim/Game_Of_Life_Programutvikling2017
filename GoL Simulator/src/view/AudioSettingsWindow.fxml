@@ -66,37 +66,10 @@
         </Label>
         <VBox>
             <children>
-                <Text text="Generate audio for the currently active board."/>
-            </children>
-        </VBox>
-        <HBox>
-            <children>
-                <Button text="Start" onAction="#findSong"/>
-            </children>
-        </HBox>
-        <VBox>
-            <children>
                 <Text text="Volume " />
                 <Slider fx:id="volumeSlider" max = "100.0" min ="0.0" minorTickCount="0" snapToTicks="true" majorTickUnit="1.0" value="100.0"/>
             </children>
         </VBox>
-        <Label text="Represent board with sound">
-            <font>
-                <Font name="System Bold" size="13.0" />
-            </font>
-        </Label>
-        <CheckBox fx:id="generationAudio" mnemonicParsing="false" text="Audio after each generation." />
-        <CheckBox fx:id="cellAudio" mnemonicParsing="false" text="Audio for each cell state" />
-        <HBox>
-            <children>
-                <Slider fx:id="audioBoardSlider" max = "5" min ="0.1" minorTickCount="0"  value="1"/>
-                <Button fx:id="btnResetBoard" onAction="#resetBoard" text="Reset Board"/>
-                <Button fx:id="btnPlayBoard" onAction="#toggleAudioBoardPlayState" text="Play"/>
-            </children>
-            <padding>
-                <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
-            </padding>
-        </HBox>
     </children>
     <padding>
         <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
