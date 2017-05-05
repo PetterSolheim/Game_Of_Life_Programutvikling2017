@@ -5,6 +5,7 @@ import javafx.animation.AnimationTimer;
 /**
  * This class is responsible for triggering the call to <code>createNextGeneration</code> that iterates the game to the next generation.
  * @see controller.MainWindowController#createNextGeneration() 
+ * @see model.BoardDynamic#nextGeneration()
  */
 public class Timer extends AnimationTimer {
 

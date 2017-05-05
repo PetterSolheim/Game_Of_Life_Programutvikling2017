@@ -45,6 +45,7 @@ public class TimerTest {
         try {
             instance.handle(currentTime);
         } catch (Exception e) {
+            e.printStackTrace();
         }
         // assert
         assertTrue(instance.getNextGeneration() > currentTime);

@@ -163,8 +163,7 @@ public class MusicPlayer {
                     File file = new File(absolutePathForLoadedSongs.get(i));
                     inputStream = AudioSystem.getAudioInputStream(file);
                     setActiveSong(inputStream);
-                    playPauseMusicPlayer();
-                    
+                    playPauseMusicPlayer();             
                 } catch (IOException ex) {
                     DialogBoxes.genericErrorMessage("Failed to load audio file", "Try again\n" + ex.getMessage());
                 }
@@ -215,12 +214,9 @@ public class MusicPlayer {
      */
     public void playPauseMusicPlayer() {
         if (activeSong.isRunning()) {
-            
-            activeSong.stop();
-            
+            activeSong.stop();       
         } else {
             activeSong.start();
-            
         }
     }
 

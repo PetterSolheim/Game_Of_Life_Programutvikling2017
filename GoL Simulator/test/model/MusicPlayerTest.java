@@ -53,20 +53,6 @@ public class MusicPlayerTest {
         assertNotNull(audioManager);
     }
 
-    /**
-     * Test of setController method, of class MusicPlayer.
-     */
-    @Test
-    public void testSetController() {
-        System.out.println("setController");
-        //arrange
-        MusicPlayerWindowController controller = new MusicPlayerWindowController();
-        //act
-        instance.setController(controller);
-        //assert
-        fail("The test case is a prototype.");
-    }
-
     private void setUpClip() throws UnsupportedAudioFileException {
         File f = new File("test/sounds/cow_moo.wav");
         instance.addAbsolutePath(f);
@@ -77,19 +63,39 @@ public class MusicPlayerTest {
      * Test of volume method, of class MusicPlayer.
      */
     @Test
-    public void testVolume() {
+    public void testVolumeMax() {
         try {
-            System.out.println("volume");
+            System.out.println("volume max");
             setUpClip();
             FloatControl activeSongGain = (FloatControl) instance.getActiveSong().getControl(FloatControl.Type.MASTER_GAIN);
             //act
             instance.volume(50);
             float oldGain = activeSongGain.getValue();
-
             instance.volume(100f);
             float Gain = activeSongGain.getValue();
             //assert
             assertTrue(Gain > oldGain);
+        } catch (UnsupportedAudioFileException ex) {
+            ex.printStackTrace();
+        }
+    }
+    
+        /**
+     * Test of volume method, of class MusicPlayer.
+     */
+    @Test
+    public void testVolumeMin() {
+        try {
+            System.out.println("volume min");
+            setUpClip();
+            FloatControl activeSongGain = (FloatControl) instance.getActiveSong().getControl(FloatControl.Type.MASTER_GAIN);
+            //act
+            instance.volume(50);
+            float oldGain = activeSongGain.getValue();
+            instance.volume(0f);
+            float newGain = activeSongGain.getValue();
+            //assert
+            assertTrue(newGain < oldGain);
         } catch (UnsupportedAudioFileException ex) {
             ex.printStackTrace();
         }
@@ -135,12 +141,13 @@ public class MusicPlayerTest {
             System.out.println("loadSongFromAbsolutePath");
             //arrange
             instance.addAbsolutePath(new File("test/sounds/cow_moo.wav"));
-            File f = new File(instance.getAllLoadedSongs().get(0));
+            ArrayList<String> songs = instance.getAllLoadedSongs();
+            File file = new File(songs.get(0));
             //act
-            instance.loadSong(f.getName());
-            instance.playPauseMusicPlayer();
+            instance.loadSong(file.getName());
+            //instance.playPauseMusicPlayer();
             //assert
-            assertTrue(instance.getActiveSong().isActive());
+            assertTrue(instance.getActiveSong().isOpen());
         } catch (UnsupportedAudioFileException ex) {
             ex.printStackTrace();
         }
