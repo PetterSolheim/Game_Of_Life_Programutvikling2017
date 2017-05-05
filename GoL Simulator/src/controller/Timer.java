@@ -3,8 +3,11 @@ package controller;
 import javafx.animation.AnimationTimer;
 
 /**
- * This class is responsible for triggering the call to <code>createNextGeneration</code> that iterates the game to the next generation.
- * @see controller.MainWindowController#createNextGeneration() 
+ * This class is responsible for triggering the call to
+ * <code>createNextGeneration</code> that iterates the game to the next
+ * generation.
+ *
+ * @see controller.MainWindowController#createNextGeneration()
  * @see model.BoardDynamic#nextGeneration()
  */
 public class Timer extends AnimationTimer {
@@ -15,12 +18,14 @@ public class Timer extends AnimationTimer {
      */
     private long nextGeneration = 0;
     /**
-     * Determines how often createNextGeneration is called. 
+     * Determines how often createNextGeneration is called.
      */
     private long timeBetweenGeneration;
+
     /**
-     * Timer constructor. Takes a reference to the main controller so it can call
-     * <code>createNextGeneration</code>
+     * Timer constructor. Takes a reference to the main controller so it can
+     * call <code>createNextGeneration</code>
+     *
      * @param controller <code>MainWindowController</code>
      */
     public Timer(MainWindowController controller) {
@@ -28,8 +33,11 @@ public class Timer extends AnimationTimer {
     }
 
     /**
-     * This method is called every frame and checks whether or not it is time to call <code>createNextGeneration</code>
-     * @param currentTime 
+     * This method is called every frame and checks whether or not it is time to
+     * call <code>createNextGeneration</code>
+     *
+     * @param currentTime a <code>long</code> specifying the current system time
+     * in nanoseconds.
      */
     @Override
     public void handle(long currentTime) {
@@ -40,24 +48,27 @@ public class Timer extends AnimationTimer {
     }
 
     /**
-     * Sets the desired FPS for the animation.
+     * Set the desired FPS for the animation.
      *
-     * @param timeInNanoSeconds
+     * @param desiredFramesPerSecond a <code>double</code> specifying the desired
+     * frames rate.
      */
     public void setFps(double desiredFramesPerSecond) {
         long timeBetweenGenerations = (long) (1000000000 / desiredFramesPerSecond);
         this.timeBetweenGeneration = timeBetweenGenerations;
     }
-    /*
-     * Used for testing
-    */
-    public long getTimeBetweenGenerations (){
-        return this.timeBetweenGeneration;
-    }
+
     /*
      * Used for testing
      */
-    public long getNextGeneration (){
+    public long getTimeBetweenGenerations() {
+        return this.timeBetweenGeneration;
+    }
+
+    /*
+     * Used for testing
+     */
+    public long getNextGeneration() {
         return this.nextGeneration;
     }
 }
