@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.Collections;
 
 /**
  * This class contains the game board and its mechanics, such as moving a game
@@ -276,6 +275,7 @@ public class BoardDynamic {
     public BoardDynamic deepCopy() {
         BoardDynamic b = new BoardDynamic();
         b.currentBoard = duplicateBoard(this.currentBoard);
+        b.changedCells = duplicateBoard(this.changedCells);
         b.originalBoard = duplicateBoard(this.originalBoard);
         b.generationCount = this.generationCount;
         b.countLivingCells();

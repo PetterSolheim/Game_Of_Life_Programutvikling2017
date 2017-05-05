@@ -155,6 +155,7 @@ public class Board {
     public Board deepCopy() {
         Board b = new Board();
         b.currentBoard = duplicateBoard(this.currentBoard);
+        b.changedCells = duplicateBoard(this.currentBoard);
         b.originalBoard = duplicateBoard(this.originalBoard);
         b.changedCells = duplicateBoard(this.changedCells);
         b.livingCells = this.livingCells;

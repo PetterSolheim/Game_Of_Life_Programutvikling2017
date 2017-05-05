@@ -359,39 +359,6 @@ public class BoardDynamicTest {
     }
 
     /**
-     * Test that threaded nextGenerationConcurrent() is faster than the
-     * non-threaded nextGeneration() when taking the Turing Machine through 10
-     * generational shifts. Board is reset between tests to assure they are
-     * given equally hard tasks.
-     */
-    @Test
-    public void testThreadIsFaster() {
-        FileImporter instance = new FileImporter();
-        File f = Paths.get("test/model/testPatterns/RLE/turingmachine.rle").toFile();
-        try {
-            BoardDynamic testBoard = instance.readGameBoardFromDisk(f);
-            long timeNextGeneration = 0;
-            for (int i = 0; i < 10; i++) {
-                long start = System.currentTimeMillis();
-                testBoard.nextGeneration();
-                timeNextGeneration += System.currentTimeMillis() - start;
-            }
-            testBoard.resetBoard();
-            long timeNextGenerationConcurrent = 0;
-            for (int i = 0; i < 10; i++) {
-                long start = System.currentTimeMillis();
-                testBoard.nextGeneration();
-                timeNextGenerationConcurrent += System.currentTimeMillis() - start;
-                assertTrue(timeNextGeneration > timeNextGenerationConcurrent);
-            }
-        } catch (IOException e) {
-            fail("IOException encountered");
-        } catch (PatternFormatException e) {
-            fail("PatternFormatException encountered");
-        }
-    }
-
-    /**
      * Test nextGenerationConcurrent(). This is the threaded version. Test uses
      * dynamic rules.
      */

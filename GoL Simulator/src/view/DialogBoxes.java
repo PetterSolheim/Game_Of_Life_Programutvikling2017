@@ -34,6 +34,11 @@ public class DialogBoxes {
         alert.showAndWait();
     }
 
+    /**
+     * A generic error message box in the style of AlertType.Error.
+     * @param headerText a <code>String</code> specifying the header text.
+     * @param message a <code>String</code> specifying the actually error.
+     */
     public static void genericErrorMessage (String headerText, String message){
         Alert a = new Alert(Alert.AlertType.ERROR);
         a.setHeaderText(headerText);
