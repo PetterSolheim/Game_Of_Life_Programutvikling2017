@@ -577,7 +577,8 @@ public class MainWindowController implements Initializable {
      * Displays the statistics window where the user can see information on
      * future generations of the <strong>active</strong> board.
      */
-    public void showStatistics() {
+    @FXML
+    private void showStatistics() {
         try {
             Stage statistics = new Stage();
             statistics.setWidth(800);
@@ -599,19 +600,18 @@ public class MainWindowController implements Initializable {
      * Displays the audio settings window where the user can access sound
      * options.
      */
-    public void showAudioSettingsWindow() {
+    @FXML
+    private void showMusicPlayer() {
         try {
             Stage soundSettings = new Stage();
-            soundSettings.setHeight(700);
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/AudioSettingsWindow.fxml"));
+            soundSettings.setHeight(500);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MusicPlayer.fxml"));
             VBox root = loader.load();
-            AudioSettingsWindowController c = loader.getController();
+            MusicPlayerWindowController c = loader.getController();
             c.setThisStage(soundSettings);
             Scene scene = new Scene(root);
             soundSettings.setScene(scene);
             soundSettings.setTitle("Game of Life Simulator - Audio Settings");
-            soundSettings.initModality(Modality.APPLICATION_MODAL);
-            //Stop audioplaybak of BoardSound if window is closed.
             soundSettings.show();
         } catch (IOException exception) {
             DialogBoxes.ioException(exception.getMessage());
@@ -738,7 +738,7 @@ public class MainWindowController implements Initializable {
      */
     @FXML
     private void quit() {
-        AudioManager.getSingelton().closeLines();
+        MusicPlayer.getSingelton().closeLines();
         Platform.exit();
     }
 

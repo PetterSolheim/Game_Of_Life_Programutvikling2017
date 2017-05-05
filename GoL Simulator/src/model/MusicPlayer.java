@@ -1,6 +1,6 @@
 package model;
 
-import controller.AudioSettingsWindowController;
+import controller.MusicPlayerWindowController;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,6 +8,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 import javax.sound.sampled.FloatControl;
+import javax.sound.sampled.LineEvent;
 import javax.sound.sampled.LineUnavailableException;
 import javax.sound.sampled.UnsupportedAudioFileException;
 import view.DialogBoxes;
@@ -21,10 +22,10 @@ import view.DialogBoxes;
  * it's audio playback. <br>This is done to ensure that the GUI always stay in
  * sync with the audio.
  */
-public class AudioManager {
+public class MusicPlayer {
 
-    private AudioSettingsWindowController controller;
-    static AudioManager instance;
+    private MusicPlayerWindowController controller;
+    static MusicPlayer instance;
     private Clip activeSong;
     private ArrayList<String> absolutePathForLoadedSongs = new ArrayList<String>();
     private AudioInputStream inputStream;
@@ -33,7 +34,7 @@ public class AudioManager {
      * AudiomManager no-argument constructor. Because this is a singelton the
      * constructor stores a reference to this class.
      */
-    private AudioManager() {
+    private MusicPlayer() {
         instance = this;
         try {
             activeSong = AudioSystem.getClip();
@@ -41,6 +42,12 @@ public class AudioManager {
                 //plays the next song in the queue if the current song is finished
                 if (activeSong.getFramePosition() == activeSong.getFrameLength()) {
                     playNextSong();
+                }
+                LineEvent.Type type = listener.getType();
+                if(type == LineEvent.Type.STOP || type == LineEvent.Type.CLOSE){
+                    controller.showPlayIcon();
+                } else if (type == LineEvent.Type.START || type == LineEvent.Type.OPEN){
+                    controller.showPauseIcon();
                 }
             });
         } catch (LineUnavailableException ex) {
@@ -52,7 +59,7 @@ public class AudioManager {
      * This method is used in AudioSettingsController to load in previously
      * loaded songs to the trackList.
      *
-     * @return <code>boolean</code> true if an instance of AudioManager exists.
+     * @return <code>boolean</code> true if an instance of MusicPlayer exists.
      */
     public static boolean isCreated() {
         if (instance == null) {
@@ -62,17 +69,17 @@ public class AudioManager {
     }
 
     /**
-     * Static method which ensures that only one AudioManager can ever exists
-     * within the application. Returns a new AudioManager if no AudioManager
-     * exists.
+     * Static method which ensures that only one MusicPlayer can ever exists
+ within the application. Returns a new MusicPlayer if no MusicPlayer
+ exists.
      *
-     * @return <code>AudioManager</code>
+     * @return <code>MusicPlayer</code>
      */
-    public static AudioManager getSingelton() {
+    public static MusicPlayer getSingelton() {
         if (instance != null) {
             return instance;
         }
-        return new AudioManager();
+        return new MusicPlayer();
     }
 
     /**
@@ -90,7 +97,7 @@ public class AudioManager {
      *
      * @param controller
      */
-    public void setController(AudioSettingsWindowController controller) {
+    public void setController(MusicPlayerWindowController controller) {
         this.controller = controller;
     }
 
@@ -157,7 +164,7 @@ public class AudioManager {
                     inputStream = AudioSystem.getAudioInputStream(file);
                     setActiveSong(inputStream);
                     playPauseMusicPlayer();
-                    controller.showPauseIcon();
+                    
                 } catch (IOException ex) {
                     DialogBoxes.genericErrorMessage("Failed to load audio file", "Try again\n" + ex.getMessage());
                 }
@@ -207,12 +214,13 @@ public class AudioManager {
      * engaging in I/O activity, or not.
      */
     public void playPauseMusicPlayer() {
-        if (activeSong.isActive()) {
+        if (activeSong.isRunning()) {
+            
             activeSong.stop();
-            controller.showPauseIcon();
+            
         } else {
             activeSong.start();
-            controller.showPlayIcon();
+            
         }
     }
 

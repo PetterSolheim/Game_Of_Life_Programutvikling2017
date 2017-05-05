@@ -17,28 +17,28 @@ import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javax.sound.sampled.UnsupportedAudioFileException;
-import model.AudioManager;
+import model.MusicPlayer;
 import model.BoardDynamic;
 import model.Statistics;
 import view.DialogBoxes;
 
 /**
  * FXML Controller class for Audio settings window. This class contains a
- * ListVIew with an EventHandler that determines which songs are being played by
- * the AudioManager, and most of the tasks regarding audio playback are
- * triggered by this EVentHandler.
+ ListVIew with an EventHandler that determines which songs are being played by
+ the MusicPlayer, and most of the tasks regarding audio playback are
+ triggered by this EVentHandler.
  */
-public class AudioSettingsWindowController implements Initializable {
+public class MusicPlayerWindowController implements Initializable {
 
     /**
      * A reference to the main board.
      */
     private BoardDynamic mainBoard;
     /**
-     * A reference to the AudioManager. Used to call methods controlling audio
+     * A reference to the MusicPlayer. Used to call methods controlling audio
      * playback.
      */
-    private AudioManager audioManager;
+    private MusicPlayer audioManager;
     private Stage thisStage;
     ;
     /**
@@ -54,31 +54,31 @@ public class AudioSettingsWindowController implements Initializable {
     @FXML
     private Slider volumeSlider;
     /**
-     * This ListView controls what songs are being playing in the AudioManager,
-     * but the method that calls for change in the AudioManagers playstate is
-     * triggered by an EventListener. This means that what is selected is passed
-     * to the AudioManager every time a change occurs. Note that a LineListener
-     * in the AudioManager forces the ListView to select another song when the
-     * active song is finished, triggering the EventListener
+     * This ListView controls what songs are being playing in the MusicPlayer,
+ but the method that calls for change in the AudioManagers playstate is
+ triggered by an EventListener. This means that what is selected is passed
+ to the MusicPlayer every time a change occurs. Note that a LineListener
+ in the MusicPlayer forces the ListView to select another song when the
+ active song is finished, triggering the EventListener
      */
     @FXML
     private ListView trackList;
 
     /**
      * Initializes the controller class and various listeners. Also calls
-     * <code>reloadSongList()</code> if an instance of AudioManager exist.
+     * <code>reloadSongList()</code> if an instance of MusicPlayer exist.
      *
      * @param url
      * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        if (AudioManager.isCreated()) {
-            audioManager = AudioManager.getSingelton();
+        if (MusicPlayer.isCreated()) {
+            audioManager = MusicPlayer.getSingelton();
             ArrayList<String> paths = audioManager.getAllLoadedSongs();
             reloadSongList(paths);
         }
-        audioManager = AudioManager.getSingelton();
+        audioManager = MusicPlayer.getSingelton();
         audioManager.setController(this);
         volumeSlider.valueProperty().addListener((observable) -> {
             changeVolume();
@@ -117,7 +117,7 @@ public class AudioSettingsWindowController implements Initializable {
      * Sets the previous item in trackList as active on double click. On single
      * click it calls resetSong()
      *
-     * @see model.AudioManager#resetSong
+     * @see model.MusicPlayer#resetSong
      */
     @FXML
     private void playPreviousSongOrResetActiveSong() {
@@ -131,7 +131,7 @@ public class AudioSettingsWindowController implements Initializable {
     }
 
     /**
-     * Opens a FileChooser and passes the selected items to the AudioManager.
+     * Opens a FileChooser and passes the selected items to the MusicPlayer.
      * This class also calls the method updateSongList which refreshes the
      * trackList. checkIfSongIsLoaded is also called, displaying a dialog box if
      * the song is loaded.
@@ -161,8 +161,8 @@ public class AudioSettingsWindowController implements Initializable {
 
     /**
      * Loads previously loaded songs back into the track list by using the
-     * absolute paths stored in the AudioManager. This method is called in
-     * Initialize if an instance of AudioManager exists
+ absolute paths stored in the MusicPlayer. This method is called in
+ Initialize if an instance of MusicPlayer exists
      */
     private void reloadSongList(ArrayList<String> absolutePaths) {
         for (int i = 0; i < absolutePaths.size(); i++) {
@@ -196,7 +196,7 @@ public class AudioSettingsWindowController implements Initializable {
 
     /**
      * This method is called when the selected item in the trackList changes. It
-     * calls loadSong() from AudioManager that starts the audio playback.
+ calls loadSong() from MusicPlayer that starts the audio playback.
      */
     private void playSong() {
         try {
@@ -237,15 +237,11 @@ public class AudioSettingsWindowController implements Initializable {
      * Calls <code>playPauseMusicPlayer</code> that determines whether or not
      * the music is playing.
      *
-     * @see model.AudioManager#playPauseMusicPlayer
+     * @see model.MusicPlayer#playPauseMusicPlayer
      */
     @FXML
     private void toggleMusicPlayState() {
-        if (audioManager.getActiveSong().isActive()) { // pause song
-            audioManager.playPauseMusicPlayer();
-        } else { // play song
-            audioManager.playPauseMusicPlayer();
-        }
+        audioManager.playPauseMusicPlayer();
     }
 
     /**

@@ -1,6 +1,6 @@
 package model;
 
-import controller.AudioSettingsWindowController;
+import controller.MusicPlayerWindowController;
 import java.io.File;
 import java.util.ArrayList;
 import javax.sound.sampled.Clip;
@@ -11,16 +11,16 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
 
-public class AudioManagerTest {
+public class MusicPlayerTest {
 
-    static AudioManager instance;
+    static MusicPlayer instance;
 
-    public AudioManagerTest() {
+    public MusicPlayerTest() {
     }
 
     @BeforeClass
     public static void setUpClass() {
-        instance = AudioManager.getSingelton();
+        instance = MusicPlayer.getSingelton();
     }
 
     @After
@@ -30,37 +30,37 @@ public class AudioManagerTest {
     }
 
     /**
-     * Test of isCreated method, of class AudioManager.
+     * Test of isCreated method, of class MusicPlayer.
      */
     @Test
     public void testIsCreatedTrue() {
         //arrange
         //act
-        boolean isCrreated = AudioManager.isCreated();
+        boolean isCrreated = MusicPlayer.isCreated();
         //assert
         assertTrue(isCrreated);
     }
 
     /**
-     * Test of getSingelton method, of class AudioManager.
+     * Test of getSingelton method, of class MusicPlayer.
      */
     @Test
     public void testGetSingelton() {
         //arrange
         //act
-        AudioManager audioManager = AudioManager.getSingelton();
+        MusicPlayer audioManager = MusicPlayer.getSingelton();
         //assert
         assertNotNull(audioManager);
     }
 
     /**
-     * Test of setController method, of class AudioManager.
+     * Test of setController method, of class MusicPlayer.
      */
     @Test
     public void testSetController() {
         System.out.println("setController");
         //arrange
-        AudioSettingsWindowController controller = new AudioSettingsWindowController();
+        MusicPlayerWindowController controller = new MusicPlayerWindowController();
         //act
         instance.setController(controller);
         //assert
@@ -74,7 +74,7 @@ public class AudioManagerTest {
     }
 
     /**
-     * Test of volume method, of class AudioManager.
+     * Test of volume method, of class MusicPlayer.
      */
     @Test
     public void testVolume() {
@@ -96,7 +96,7 @@ public class AudioManagerTest {
     }
 
     /**
-     * Test of addAbsolutePath method, of class AudioManager.
+     * Test of addAbsolutePath method, of class MusicPlayer.
      */
     @Test
     public void testAddAbsolutePath() {
@@ -110,7 +110,7 @@ public class AudioManagerTest {
     }
 
     /**
-     * Test of getAllLoadedSongs method, of class AudioManager.
+     * Test of getAllLoadedSongs method, of class MusicPlayer.
      */
     @Test
     public void testGetAllLoadedSongs() {
@@ -127,7 +127,7 @@ public class AudioManagerTest {
     }
 
     /**
-     * Test of loadSongFromAbsolutePath method, of class AudioManager.
+     * Test of loadSongFromAbsolutePath method, of class MusicPlayer.
      */
     @Test
     public void testLoadSong() {
@@ -147,7 +147,7 @@ public class AudioManagerTest {
     }
 
     /**
-     * Test of resetSong method, of class AudioManager.
+     * Test of resetSong method, of class MusicPlayer.
      */
     @Test
     public void testResetSong() {
@@ -166,7 +166,7 @@ public class AudioManagerTest {
     }
 
     /**
-     * Test of getActiveSong method, of class AudioManager.
+     * Test of getActiveSong method, of class MusicPlayer.
      */
     @Test
     public void testGetActiveSong() {
@@ -184,7 +184,7 @@ public class AudioManagerTest {
     }
 
     /**
-     * Test of playPauseMusicPlayer method, of class AudioManager.
+     * Test of playPauseMusicPlayer method, of class MusicPlayer.
      */
     @Test
     public void testPlayPauseMusicPlayer() {
@@ -202,7 +202,7 @@ public class AudioManagerTest {
     }
 
     /**
-     * Test of closeLines method, of class AudioManager.
+     * Test of closeLines method, of class MusicPlayer.
      */
     @Test
     public void testCloseLines() {

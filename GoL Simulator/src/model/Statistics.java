@@ -220,7 +220,6 @@ public class Statistics {
         float bf = be * (b.getLivingCellCount() - livingCellsPerGeneration.get(currentGeneration - 1));
         float indexSum = b.getIndexSum();
         float geometricFactor = y * indexSum;
-        System.out.println("Geomtric factor " + geometricFactor + " " + y * indexSum);
         float board = af + bf + geometricFactor;
         return board;
     }

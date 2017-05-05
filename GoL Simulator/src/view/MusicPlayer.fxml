@@ -12,7 +12,7 @@
 <?import javafx.scene.image.Image?>
 <?import javafx.scene.image.ImageView?>
 
-<VBox id="root" prefHeight="400.0" prefWidth="600.0" spacing="5" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.AudioSettingsWindowController">
+<VBox id="root" prefHeight="400.0" prefWidth="600.0" spacing="5" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MusicPlayerWindowController">
 
     <children> 
         <Label text="Audio Settings">

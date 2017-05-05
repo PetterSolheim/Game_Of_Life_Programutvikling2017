@@ -56,7 +56,7 @@
                         <Menu mnemonicParsing="false" text="Settings">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#showGameRulesWindow" text="Rules Settings" />
-                                <MenuItem mnemonicParsing="false" onAction="#showAudioSettingsWindow" text="Audio Settings" />
+                                <MenuItem mnemonicParsing="false" onAction="#showMusicPlayer" text="Audio Settings" />
                             </items>
                         </Menu>
                     </items>
