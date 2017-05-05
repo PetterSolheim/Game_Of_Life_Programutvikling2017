@@ -166,14 +166,6 @@ public class AudioManagerTest {
     }
 
     /**
-     * Test of generateAudioSequence method, of class AudioManager.
-     */
-    @Test
-    public void testGenerateAudioSequence() {
-
-    }
-
-    /**
      * Test of getActiveSong method, of class AudioManager.
      */
     @Test

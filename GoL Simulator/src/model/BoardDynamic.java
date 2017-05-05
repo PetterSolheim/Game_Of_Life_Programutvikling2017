@@ -290,8 +290,6 @@ public class BoardDynamic {
      * @return <code>float</code> the sum of the index to all living cells.
      */
     public float getIndexSum() {
-        int divider = (int) ((float) rows.size() * 0.34f);
-        System.out.println(divider);
         float sum = 0;
         for (int i = 0; i < rows.size(); i++) {
             float row, col;

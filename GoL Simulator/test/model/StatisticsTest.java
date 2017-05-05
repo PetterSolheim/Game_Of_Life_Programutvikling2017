@@ -26,6 +26,10 @@ public class StatisticsTest {
     @Before
     public void setUp() {
         BoardDynamic b = new BoardDynamic(4, 4);
+        b.setCellStateAlive(0, 0);
+        b.setCellStateAlive(0, 1);
+        b.setCellStateAlive(1, 0);
+        b.setCellStateAlive(1, 1);
         instance = new Statistics(b, 3);
     }
 
@@ -125,31 +129,7 @@ public class StatisticsTest {
         BoardDynamic result = instance.getSelectedGeneration(desiredGeneration);
         //assert
         assertNotNull(result);
-        assertEquals("0000010000100000", result.toString());
-    }
-
-    /**
-     * Test of AudioStatistics method, of class Statistics.
-     */
-    @Test
-    public void testAudioStatistics() {
-        System.out.println("AudioStatistics");
-        //arrange
-
-        //act
-        //assert
-    }
-
-    /**
-     * Test of getSimilairtyFromFloat method, of class Statistics.
-     */
-    @Test
-    public void testGetSimilairtyFromFloat() {
-        System.out.println("getSimilairtyFromFloat");
-        //arrange
-        instance.getStatistics();
-        //act
-        //assert
+        assertEquals("1100110000000000", result.toString());
     }
 
     /**
@@ -159,9 +139,19 @@ public class StatisticsTest {
     public void testFindMostSimilar() {
         System.out.println("findMostSimilar");
         //arrange
-
+        BoardDynamic b = new BoardDynamic(4, 4);
+        b.setCellStateAlive(0, 1);
+        b.setCellStateAlive(1, 1);
+        b.setCellStateAlive(2, 1);
+        instance = new Statistics(b, 4);
         //act
+        instance.getStatistics();
+        int expectedSimilarity = 100;
+        int expectedGeneration = 3;
         //assert
+        SimilarityMeasure measure = instance.getSimilarityMeasure(1);
+        assertEquals(measure.getGeneration(), expectedGeneration);
+        assertEquals(measure.getSimilairtyValue(), expectedSimilarity);
     }
 
 }
