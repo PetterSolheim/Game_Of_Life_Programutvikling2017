@@ -1,5 +1,7 @@
 package controller;
 
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javafx.fxml.FXML;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
@@ -14,6 +16,7 @@ import javafx.scene.text.Text;
 import model.BoardDynamic;
 import model.SimilarityMeasure;
 import model.Statistics;
+import view.DialogBoxes;
 import view.GameCanvas;
 
 /**
@@ -97,7 +100,7 @@ public class StatisticsWindowController {
      */
     private void changeWidth() {
         if (s != null) {
-            double d = root.getWidth();
+            double d = root.getWidth() - 20;
             leftCanvas.setWidth((d / 2) - 10);
             rightCanvas.setWidth((d / 2) - 10);
             chart.setPrefWidth(d);
@@ -192,18 +195,25 @@ public class StatisticsWindowController {
      */
     @FXML
     public void showInformation() {
-        if (s == null) {
-            shuffleSceneGraph();
-            defineChart();
-            defineCanvas();
-            getStatistics();
-            populateComboBoxes();
+        Pattern op = Pattern.compile("\\d+");
+        Matcher m = op.matcher(txtIterations.getText());
+        boolean match = m.matches();
+        if (match == true) {
+            if (s == null) {
+                shuffleSceneGraph();
+                defineChart();
+                defineCanvas();
+                getStatistics();
+                populateComboBoxes();
+            } else {
+                chart.getData().clear();
+                xAxis.setUpperBound(b.getGenerationCount() + Integer.parseInt(txtIterations.getText()));
+                s.setIterationsAndLastGeneration(Integer.parseInt(txtIterations.getText()));
+                getStatistics();
+                populateComboBoxes();
+            }
         } else {
-            chart.getData().clear();
-            xAxis.setUpperBound(b.getGenerationCount() + Integer.parseInt(txtIterations.getText()));
-            s.setIterationsAndLastGeneration(Integer.parseInt(txtIterations.getText()));
-            getStatistics();
-            populateComboBoxes();
+            DialogBoxes.genericErrorMessage("Invalid input", "Only integers are allowed");
         }
     }
 
@@ -237,6 +247,7 @@ public class StatisticsWindowController {
     /**
      * Used in MainWindowController to store a reference of the active board
      * that is later used to generate data.
+     *
      * @param b a <code>BoardDynamic</code> object.
      */
     public void setBoard(BoardDynamic b) {
