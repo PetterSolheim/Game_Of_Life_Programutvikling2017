@@ -95,7 +95,7 @@ public class MusicPlayer {
      * Sets the AudioSettingsController so <code>playNextSong()</code> can be
      * called.
      *
-     * @param controller
+     * @param controller the controller to set to the music player.
      */
     public void setController(MusicPlayerWindowController controller) {
         this.controller = controller;

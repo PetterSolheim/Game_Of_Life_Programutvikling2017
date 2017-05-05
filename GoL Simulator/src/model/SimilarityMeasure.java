@@ -20,7 +20,7 @@ public class SimilarityMeasure {
 
     /**
      *
-     * @return <ocde>int</code> the most similar generation
+     * @return <code>int</code> the most similar generation
      */
     public int getGeneration() {
         return generation;

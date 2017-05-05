@@ -24,9 +24,9 @@ import view.DialogBoxes;
 
 /**
  * FXML Controller class for Audio settings window. This class contains a
- ListVIew with an EventHandler that determines which songs are being played by
- the MusicPlayer, and most of the tasks regarding audio playback are
- triggered by this EVentHandler.
+ * ListVIew with an EventHandler that determines which songs are being played by
+ * the MusicPlayer, and most of the tasks regarding audio playback are triggered
+ * by this EVentHandler.
  */
 public class MusicPlayerWindowController implements Initializable {
 
@@ -55,11 +55,11 @@ public class MusicPlayerWindowController implements Initializable {
     private Slider volumeSlider;
     /**
      * This ListView controls what songs are being playing in the MusicPlayer,
- but the method that calls for change in the AudioManagers playstate is
- triggered by an EventListener. This means that what is selected is passed
- to the MusicPlayer every time a change occurs. Note that a LineListener
- in the MusicPlayer forces the ListView to select another song when the
- active song is finished, triggering the EventListener
+     * but the method that calls for change in the AudioManagers playstate is
+     * triggered by an EventListener. This means that what is selected is passed
+     * to the MusicPlayer every time a change occurs. Note that a LineListener
+     * in the MusicPlayer forces the ListView to select another song when the
+     * active song is finished, triggering the EventListener
      */
     @FXML
     private ListView trackList;
@@ -68,8 +68,6 @@ public class MusicPlayerWindowController implements Initializable {
      * Initializes the controller class and various listeners. Also calls
      * <code>reloadSongList()</code> if an instance of MusicPlayer exist.
      *
-     * @param url
-     * @param rb
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -161,8 +159,8 @@ public class MusicPlayerWindowController implements Initializable {
 
     /**
      * Loads previously loaded songs back into the track list by using the
- absolute paths stored in the MusicPlayer. This method is called in
- Initialize if an instance of MusicPlayer exists
+     * absolute paths stored in the MusicPlayer. This method is called in
+     * Initialize if an instance of MusicPlayer exists
      */
     private void reloadSongList(ArrayList<String> absolutePaths) {
         for (int i = 0; i < absolutePaths.size(); i++) {
@@ -196,7 +194,7 @@ public class MusicPlayerWindowController implements Initializable {
 
     /**
      * This method is called when the selected item in the trackList changes. It
- calls loadSong() from MusicPlayer that starts the audio playback.
+     * calls loadSong() from MusicPlayer that starts the audio playback.
      */
     private void playSong() {
         try {
@@ -218,8 +216,8 @@ public class MusicPlayerWindowController implements Initializable {
     }
 
     /**
-     *
-     * @param stage
+     * Sets the stage.
+     * @param stage the stage.
      */
     public void setThisStage(Stage stage) {
         this.thisStage = stage;

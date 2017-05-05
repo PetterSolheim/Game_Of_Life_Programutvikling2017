@@ -172,7 +172,7 @@ public class StatisticsWindowController {
         SimilarityMeasure measure = s.getSimilarityMeasure(i);
         rightCanvasComboBox.setValue(Integer.toString(measure.getGeneration()));
         String txt = "The most similar generation for generation " + findSimilarComboBox.getValue() + " is generation ";
-        txt +=measure.getGeneration() + " with a similarity rating of " + Integer.toString(measure.getSimilairtyValue());
+        txt += measure.getGeneration() + " with a similarity rating of " + Integer.toString(measure.getSimilairtyValue());
         similarityMeasure.setText(txt);
     }
 
@@ -237,6 +237,7 @@ public class StatisticsWindowController {
     /**
      * Used in MainWindowController to store a reference of the active board
      * that is later used to generate data.
+     * @param b a <code>BoardDynamic</code> object.
      */
     public void setBoard(BoardDynamic b) {
         this.b = b;
